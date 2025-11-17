@@ -1,15 +1,17 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings as SettingsIcon, User, Bell, Moon, Type, Globe, Save } from "lucide-react";
+import { Settings as SettingsIcon, User, Bell, Moon, Type, Globe, Save, Heart, Sun } from "lucide-react";
 import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import InterestsSelector from "../components/InterestsSelector";
+import Breadcrumb from "../components/Breadcrumb";
 
 export default function Settings() {
   const [user, setUser] = useState(null);
@@ -21,19 +23,13 @@ export default function Settings() {
     push: false,
     fatwa_updates: true,
     new_content: true,
-  });
-  const [appSettings, setAppSettings] = useState(() => {
-    const savedSettings = localStorage.getItem('appSettings');
-    return savedSettings ? JSON.parse(savedSettings) : {
-      features: { azkar: true, library: true },
-      languages: { ar: true, en: true, fr: true, ur: true }
-    };
+    live_streams: true,
+    scheduled_meetings: true
   });
 
   useEffect(() => {
     loadUser();
     loadNotificationSettings();
-    loadAppSettings();
   }, []);
 
   const loadUser = async () => {
@@ -41,7 +37,7 @@ export default function Settings() {
       const userData = await base44.auth.me();
       setUser(userData);
     } catch (error) {
-      console.error("Error loading user:", error);
+      console.log("User not logged in");
     }
   };
 
@@ -52,12 +48,12 @@ export default function Settings() {
     }
   };
 
-  const loadAppSettings = () => {
-    const saved = localStorage.getItem('appSettings');
-    if (saved) {
-      setAppSettings(JSON.parse(saved));
-    }
-  };
+  const { data: userPreferences } = useQuery({
+    queryKey: ['user_preferences', user?.email],
+    queryFn: () => user ? base44.entities.UserPreference.filter({ user_email: user.email }) : [],
+    enabled: !!user,
+    initialData: [],
+  });
 
   const updateUserMutation = useMutation({
     mutationFn: (data) => base44.auth.updateMe(data),
@@ -66,7 +62,7 @@ export default function Settings() {
       loadUser();
     },
     onError: (error) => {
-        console.error("Error updating user:", error);
+        console.log("Error updating user:", error);
         alert('حدث خطأ أثناء حفظ التغييرات');
     }
   });
@@ -108,198 +104,303 @@ export default function Settings() {
     }
   };
 
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window && 'serviceWorker' in navigator) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        handleNotificationChange('push', true);
+        alert('تم تفعيل الإشعارات بنجاح');
+      } else {
+        alert('لم يتم منح إذن الإشعارات');
+      }
+    }
+  };
+
   const languageOptions = [
     { value: 'ar', label: 'العربية', flag: '🇸🇦' },
-    { value: 'en', label: 'English', flag: '🇪🇬' },
+    { value: 'en', label: 'English', flag: '🇬🇧' },
     { value: 'fr', label: 'Français', flag: '🇫🇷' },
     { value: 'ur', label: 'اردو', flag: '🇵🇰' },
   ];
 
-  const availableLanguages = languageOptions.filter(lang => appSettings.languages[lang.value]);
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6 flex items-center justify-center">
+        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4">
+          <CardContent className="p-6 md:p-12 text-center">
+            <SettingsIcon className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-6" />
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+              يرجى تسجيل الدخول
+            </h3>
+            <p className="text-gray-600 mb-8 text-sm md:text-base">
+              سجل الدخول للوصول إلى إعداداتك
+            </p>
+            <button
+              onClick={() => base44.auth.redirectToLogin()}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
+            >
+              تسجيل الدخول
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
+        <div className="mb-4">
+          <Breadcrumb items={[{ label: "الإعدادات" }]} />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <SettingsIcon className="w-8 h-8 text-white" />
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg">
+            <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">
             الإعدادات
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-base md:text-lg lg:text-xl text-gray-600 px-4">
             تخصيص تجربتك في التطبيق
           </p>
         </motion.div>
 
-        <div className="space-y-6">
-          {/* معلومات الحساب */}
-          <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5 text-blue-600" />
-                معلومات الحساب
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="name">الاسم الكامل</Label>
-                <Input
-                  id="name"
-                  value={user?.full_name || ''}
-                  onChange={(e) => setUser({ ...user, full_name: e.target.value })}
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">البريد الإلكتروني</Label>
-                <Input
-                  id="email"
-                  value={user?.email || ''}
-                  disabled
-                  className="mt-2 bg-gray-50"
-                />
-              </div>
-              <Button
-                onClick={handleSaveProfile}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 w-full"
-                disabled={updateUserMutation.isLoading}
-              >
-                <Save className="w-4 h-4 ml-2" />
-                {updateUserMutation.isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-              </Button>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-6 md:mb-8">
+            <TabsTrigger value="profile" className="text-xs md:text-sm">الحساب</TabsTrigger>
+            <TabsTrigger value="notifications" className="text-xs md:text-sm">الإشعارات</TabsTrigger>
+            <TabsTrigger value="appearance" className="text-xs md:text-sm">المظهر</TabsTrigger>
+            <TabsTrigger value="interests" className="text-xs md:text-sm">الاهتمامات</TabsTrigger>
+          </TabsList>
 
-          {/* إعدادات الإشعارات */}
-          <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bell className="w-5 h-5 text-purple-600" />
-                إعدادات الإشعارات
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+          <TabsContent value="profile">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                  <User className="w-5 h-5 text-blue-600" />
+                  معلومات الحساب
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div>
-                  <p className="font-medium">إشعارات البريد الإلكتروني</p>
-                  <p className="text-sm text-gray-500">تلقي الإشعارات عبر البريد</p>
+                  <Label htmlFor="name" className="text-sm md:text-base">الاسم الكامل</Label>
+                  <Input
+                    id="name"
+                    value={user?.full_name || ''}
+                    onChange={(e) => setUser({ ...user, full_name: e.target.value })}
+                    className="mt-2"
+                  />
                 </div>
-                <Switch
-                  checked={notifications.email}
-                  onCheckedChange={(checked) => handleNotificationChange('email', checked)}
-                />
-              </div>
-              <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">تحديثات الفتاوى</p>
-                  <p className="text-sm text-gray-500">إشعار عند الرد على فتواك</p>
+                  <Label htmlFor="email" className="text-sm md:text-base">البريد الإلكتروني</Label>
+                  <Input
+                    id="email"
+                    value={user?.email || ''}
+                    disabled
+                    className="mt-2 bg-gray-50"
+                  />
                 </div>
-                <Switch
-                  checked={notifications.fatwa_updates}
-                  onCheckedChange={(checked) => handleNotificationChange('fatwa_updates', checked)}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">محتوى جديد</p>
-                  <p className="text-sm text-gray-500">إشعار عند إضافة محتوى جديد</p>
-                </div>
-                <Switch
-                  checked={notifications.new_content}
-                  onCheckedChange={(checked) => handleNotificationChange('new_content', checked)}
-                />
-              </div>
-            </CardContent>
-          </Card>
+                <Button
+                  onClick={handleSaveProfile}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 w-full"
+                  disabled={updateUserMutation.isLoading}
+                >
+                  <Save className="w-4 h-4 ml-2" />
+                  {updateUserMutation.isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          {/* إعدادات المظهر */}
-          <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Moon className="w-5 h-5 text-indigo-600" />
-                إعدادات المظهر
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">الوضع الليلي</p>
-                  <p className="text-sm text-gray-500">تفعيل المظهر الداكن</p>
+          <TabsContent value="notifications">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                  <Bell className="w-5 h-5 text-purple-600" />
+                  إعدادات الإشعارات
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">إشعارات المتصفح</p>
+                    <p className="text-xs md:text-sm text-gray-500">تلقي إشعارات في المتصفح</p>
+                  </div>
+                  {notifications.push ? (
+                    <Switch
+                      checked={notifications.push}
+                      onCheckedChange={(checked) => handleNotificationChange('push', checked)}
+                    />
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={requestNotificationPermission}
+                      className="bg-purple-500 hover:bg-purple-600 text-xs md:text-sm"
+                    >
+                      تفعيل
+                    </Button>
+                  )}
                 </div>
-                <Switch
-                  checked={darkMode}
-                  onCheckedChange={handleDarkModeToggle}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="fontSize" className="flex items-center gap-2 mb-2">
-                  <Type className="w-4 h-4" />
-                  حجم الخط
-                </Label>
-                <Select value={fontSize} onValueChange={handleFontSizeChange}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="small">صغير</SelectItem>
-                    <SelectItem value="medium">متوسط</SelectItem>
-                    <SelectItem value="large">كبير</SelectItem>
-                    <SelectItem value="xlarge">كبير جداً</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">إشعارات البريد الإلكتروني</p>
+                    <p className="text-xs md:text-sm text-gray-500">تلقي الإشعارات عبر البريد</p>
+                  </div>
+                  <Switch
+                    checked={notifications.email}
+                    onCheckedChange={(checked) => handleNotificationChange('email', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">تحديثات الفتاوى</p>
+                    <p className="text-xs md:text-sm text-gray-500">إشعار عند الرد على فتواك</p>
+                  </div>
+                  <Switch
+                    checked={notifications.fatwa_updates}
+                    onCheckedChange={(checked) => handleNotificationChange('fatwa_updates', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">محتوى جديد</p>
+                    <p className="text-xs md:text-sm text-gray-500">إشعار عند إضافة محتوى جديد</p>
+                  </div>
+                  <Switch
+                    checked={notifications.new_content}
+                    onCheckedChange={(checked) => handleNotificationChange('new_content', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">البث المباشر</p>
+                    <p className="text-xs md:text-sm text-gray-500">إشعار عند بدء بث مباشر</p>
+                  </div>
+                  <Switch
+                    checked={notifications.live_streams}
+                    onCheckedChange={(checked) => handleNotificationChange('live_streams', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">مواعيد اللقاءات</p>
+                    <p className="text-xs md:text-sm text-gray-500">تذكير بمواعيد اللقاءات المجدولة</p>
+                  </div>
+                  <Switch
+                    checked={notifications.scheduled_meetings}
+                    onCheckedChange={(checked) => handleNotificationChange('scheduled_meetings', checked)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          {/* إعدادات اللغة */}
-          <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-emerald-600" />
-                اللغة
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Select value={language} onValueChange={handleLanguageChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableLanguages.map((lang) => (
-                    <SelectItem key={lang.value} value={lang.value}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">{lang.flag}</span>
-                        <span>{lang.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-sm text-gray-500 mt-2">
-                سيتم إعادة تحميل التطبيق عند تغيير اللغة
-              </p>
-            </CardContent>
-          </Card>
+          <TabsContent value="appearance">
+            <div className="space-y-4 md:space-y-6">
+              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                    {darkMode ? <Moon className="w-5 h-5 text-indigo-600" /> : <Sun className="w-5 h-5 text-amber-500" />}
+                    إعدادات المظهر
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="font-medium text-sm md:text-base">الوضع الليلي</p>
+                      <p className="text-xs md:text-sm text-gray-500">تفعيل المظهر الداكن</p>
+                    </div>
+                    <Switch
+                      checked={darkMode}
+                      onCheckedChange={handleDarkModeToggle}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="fontSize" className="flex items-center gap-2 mb-2 text-sm md:text-base">
+                      <Type className="w-4 h-4" />
+                      حجم الخط
+                    </Label>
+                    <Select value={fontSize} onValueChange={handleFontSizeChange}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="small">صغير</SelectItem>
+                        <SelectItem value="medium">متوسط</SelectItem>
+                        <SelectItem value="large">كبير</SelectItem>
+                        <SelectItem value="xlarge">كبير جداً</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
 
-          {/* زر تسجيل الخروج */}
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-red-500 to-red-600 text-white">
-            <CardContent className="p-6">
-              <Button
-                onClick={() => base44.auth.logout()}
-                variant="ghost"
-                className="w-full text-white hover:bg-white/20 hover:text-white"
-              >
-                تسجيل الخروج
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                    <Globe className="w-5 h-5 text-emerald-600" />
+                    اللغة
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Select value={language} onValueChange={handleLanguageChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {languageOptions.map((lang) => (
+                        <SelectItem key={lang.value} value={lang.value}>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl md:text-2xl">{lang.flag}</span>
+                            <span className="text-sm md:text-base">{lang.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs md:text-sm text-gray-500 mt-2">
+                    سيتم إعادة تحميل التطبيق عند تغيير اللغة
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="interests">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                  <Heart className="w-5 h-5 text-rose-600" />
+                  إدارة الاهتمامات
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
+                  اختر المواضيع التي تهمك لتحصل على توصيات أفضل
+                </p>
+                <InterestsSelector userEmail={user?.email} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-red-500 to-red-600 text-white mt-6 md:mt-8">
+          <CardContent className="p-4 md:p-6">
+            <Button
+              onClick={() => base44.auth.logout()}
+              variant="ghost"
+              className="w-full text-white hover:bg-white/20 hover:text-white text-sm md:text-base"
+            >
+              تسجيل الخروج
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

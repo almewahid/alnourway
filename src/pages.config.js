@@ -24,6 +24,8 @@ import ContactTeacher from './pages/ContactTeacher';
 import ReconciliationCommittee from './pages/ReconciliationCommittee';
 import LiveStreams from './pages/LiveStreams';
 import AdvancedAnalytics from './pages/AdvancedAnalytics';
+import Chat from './pages/Chat';
+import Recommendations from './pages/Recommendations';
 import Layout from './Layout.jsx';
 
 
@@ -54,6 +56,8 @@ export const PAGES = {
     "ReconciliationCommittee": ReconciliationCommittee,
     "LiveStreams": LiveStreams,
     "AdvancedAnalytics": AdvancedAnalytics,
+    "Chat": Chat,
+    "Recommendations": Recommendations,
 }
 
 export const pagesConfig = {

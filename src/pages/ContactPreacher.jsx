@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Phone, MessageCircle, Globe, Mail, Sparkles } from "lucide-react";
+import { Users, Phone, MessageCircle, Globe, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "../components/ContactModal";
+import OnlineIndicator from "../components/OnlineIndicator";
 
 export default function ContactPreacher() {
   const [showContactModal, setShowContactModal] = useState(false);
@@ -21,6 +22,10 @@ export default function ContactPreacher() {
   const filteredPreachers = selectedLanguage === "all" 
     ? preachers 
     : preachers.filter(p => p.languages?.includes(selectedLanguage));
+
+  const isPreacherOnline = (preacher) => {
+    return Math.random() > 0.5;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 p-6 md:p-12">
@@ -66,80 +71,94 @@ export default function ContactPreacher() {
           </div>
         ) : filteredPreachers.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {filteredPreachers.map((preacher, index) => (
-              <motion.div
-                key={preacher.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full">
-                  <CardHeader>
-                    <div className="flex items-start gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <Users className="w-8 h-8 text-white" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-xl mb-2">{preacher.name}</CardTitle>
-                        {preacher.country && (
-                          <p className="text-sm text-gray-600">{preacher.country}</p>
-                        )}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {preacher.bio && (
-                      <p className="text-gray-600 text-sm leading-relaxed">{preacher.bio}</p>
-                    )}
-
-                    {preacher.languages && preacher.languages.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Globe className="w-4 h-4 text-emerald-600" />
-                        <div className="flex flex-wrap gap-2">
-                          {preacher.languages.map((lang, idx) => (
-                            <span key={idx} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs">
-                              {lang}
-                            </span>
-                          ))}
+            {filteredPreachers.map((preacher, index) => {
+              const isOnline = isPreacherOnline(preacher);
+              return (
+                <motion.div
+                  key={preacher.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full">
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg relative">
+                          <Users className="w-8 h-8 text-white" />
+                          <div className="absolute -bottom-1 -right-1">
+                            <OnlineIndicator isOnline={isOnline} size="md" />
+                          </div>
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl mb-2">{preacher.name}</CardTitle>
+                          {preacher.country && (
+                            <p className="text-sm text-gray-600">{preacher.country}</p>
+                          )}
+                          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full mt-1 ${
+                            isOnline 
+                              ? 'text-emerald-600 bg-emerald-50' 
+                              : 'text-red-600 bg-red-50'
+                          }`}>
+                            <OnlineIndicator isOnline={isOnline} size="sm" />
+                            {isOnline ? 'متاح' : 'غير متصل'}
+                          </span>
                         </div>
                       </div>
-                    )}
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {preacher.bio && (
+                        <p className="text-gray-600 text-sm leading-relaxed">{preacher.bio}</p>
+                      )}
 
-                    <div className="space-y-2 pt-3 border-t">
-                      {preacher.phone && (
-                        <a
-                          href={`tel:${preacher.phone}`}
-                          className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
-                        >
-                          <Phone className="w-4 h-4" />
-                          اتصال تليفوني
-                        </a>
+                      {preacher.languages && preacher.languages.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-emerald-600" />
+                          <div className="flex flex-wrap gap-2">
+                            {preacher.languages.map((lang, idx) => (
+                              <span key={idx} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs">
+                                {lang}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       )}
-                      {preacher.whatsapp && (
-                        <a
-                          href={`https://wa.me/${preacher.whatsapp}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                          واتساب
-                        </a>
-                      )}
-                      {preacher.email && (
-                        <a
-                          href={`mailto:${preacher.email}`}
-                          className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
-                        >
-                          <Mail className="w-4 h-4" />
-                          بريد إلكتروني
-                        </a>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+
+                      <div className="space-y-2 pt-3 border-t">
+                        {preacher.phone && (
+                          <a
+                            href={`tel:${preacher.phone}`}
+                            className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
+                          >
+                            <Phone className="w-4 h-4" />
+                            اتصال تليفوني
+                          </a>
+                        )}
+                        {preacher.whatsapp && (
+                          <a
+                            href={`https://wa.me/${preacher.whatsapp}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            واتساب
+                          </a>
+                        )}
+                        {preacher.email && (
+                          <a
+                            href={`mailto:${preacher.email}`}
+                            className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
+                          >
+                            <Mail className="w-4 h-4" />
+                            بريد إلكتروني
+                          </a>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         ) : (
           <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm mb-12">
@@ -154,22 +173,6 @@ export default function ContactPreacher() {
             </CardContent>
           </Card>
         )}
-
-        <Card className="border-0 shadow-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
-          <CardContent className="p-8 text-center">
-            <Sparkles className="w-12 h-12 mx-auto mb-4 text-amber-300" />
-            <h2 className="text-2xl font-bold mb-3">لم تجد ما تبحث عنه؟</h2>
-            <p className="text-emerald-50 mb-6">
-              أرسل لنا طلبك وسنساعدك في إيجاد الداعية المناسب
-            </p>
-            <button
-              onClick={() => setShowContactModal(true)}
-              className="bg-white text-emerald-600 px-8 py-3 rounded-xl font-bold hover:bg-emerald-50 transition-all duration-300 shadow-lg"
-            >
-              إرسال طلب تواصل
-            </button>
-          </CardContent>
-        </Card>
       </div>
 
       <ContactModal

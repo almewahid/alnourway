@@ -18,6 +18,7 @@ export default function Fatwa() {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedFatwa, setSelectedFatwa] = useState(null);
+  const [onlineMuftis, setOnlineMuftis] = useState(0);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -26,7 +27,17 @@ export default function Fatwa() {
       const fatwa = fatwas.find(f => f.id === fatwaId);
       if (fatwa) setSelectedFatwa(fatwa);
     }
+    loadOnlineMuftis();
   }, []);
+
+  const loadOnlineMuftis = async () => {
+    try {
+      const muftis = await base44.entities.Scholar.filter({ type: 'mufti', is_available: true });
+      setOnlineMuftis(muftis.length);
+    } catch (error) {
+      console.log('Error loading muftis:', error);
+    }
+  };
 
   const { data: fatwas, isLoading } = useQuery({
     queryKey: ['fatwas'],
@@ -63,7 +74,9 @@ export default function Fatwa() {
       description: "تحدث مباشرة مع عالم",
       color: "from-purple-100 to-purple-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8f4f91aed_.png",
-      action: () => setShowContactModal(true)
+      action: () => setShowContactModal(true),
+      onlineCount: onlineMuftis,
+      countLabel: "مفتي متاح"
     }
   ];
 
@@ -155,7 +168,6 @@ export default function Fatwa() {
             احصل على إجابات شرعية موثوقة من علماء متخصصين
           </p>
 
-          {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto mb-8">
             <Input
               id="search-input"
@@ -170,7 +182,6 @@ export default function Fatwa() {
           </div>
         </motion.div>
 
-        {/* Quick Actions - 3 في الموبايل والديسكتوب */}
         <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-8">
           {quickActions.map((action, index) => (
             <motion.div
@@ -181,8 +192,14 @@ export default function Fatwa() {
             >
               <Card
                 onClick={action.action}
-                className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${action.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl cursor-pointer`}
+                className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${action.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl cursor-pointer relative`}
               >
+                {action.onlineCount > 0 && (
+                  <div className="absolute top-2 left-2 z-10 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                    {action.onlineCount} {action.countLabel}
+                  </div>
+                )}
                 <CardContent className="p-6 md:p-8 text-center">
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg overflow-hidden">
                     <img src={action.image} alt={action.title} className="w-12 h-12 md:w-14 md:h-14 object-contain" />
@@ -195,7 +212,6 @@ export default function Fatwa() {
           ))}
         </div>
 
-        {/* Fatwas List */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading ? (
             <div className="col-span-full text-center py-12">

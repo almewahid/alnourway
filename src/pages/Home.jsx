@@ -30,6 +30,7 @@ export default function Home() {
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'ar');
   const [randomQuote] = useState(() => allQuotes[Math.floor(Math.random() * allQuotes.length)]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [onlineCount, setOnlineCount] = useState({ scholars: 0, preachers: 0, teachers: 0 });
   const [appSettings, setAppSettings] = useState({
     features: { azkar: true, library: true, lectures: true, stories: true, fatwas: true },
     languages: { ar: true, en: true, fr: true, ur: true }
@@ -41,7 +42,26 @@ export default function Home() {
       setAppSettings(JSON.parse(saved));
     }
     trackEvent('view', 'page', 'home');
+    loadOnlineCounts();
   }, []);
+
+  const loadOnlineCounts = async () => {
+    try {
+      const [scholars, preachers, teachers] = await Promise.all([
+        base44.entities.Scholar.filter({ type: 'mufti', is_available: true }),
+        base44.entities.Scholar.filter({ type: 'preacher', is_available: true }),
+        base44.entities.Scholar.filter({ type: 'teacher', is_available: true })
+      ]);
+      
+      setOnlineCount({
+        scholars: scholars.length,
+        preachers: preachers.length,
+        teachers: teachers.length
+      });
+    } catch (error) {
+      console.log('Error loading online counts:', error);
+    }
+  };
 
   const trackEvent = async (eventType, contentType, contentId) => {
     try {
@@ -85,7 +105,9 @@ export default function Home() {
       title: "طلب فتوى",
       description: "احصل على إجابات شرعية موثوقة",
       color: "from-emerald-100 to-emerald-200",
-      link: createPageUrl("Fatwa")
+      link: createPageUrl("Fatwa"),
+      onlineCount: onlineCount.scholars,
+      countLabel: "مفتي متاح"
     },
     {
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/2d618ad07_.png",
@@ -105,7 +127,9 @@ export default function Home() {
       iconColor: "text-teal-700",
       link: createPageUrl("QuranCourses"),
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/631c6f8fc_.png",
-      show: true
+      show: true,
+      onlineCount: onlineCount.teachers,
+      countLabel: "محفظ متاح"
     },
     {
       icon: Calendar,
@@ -170,7 +194,13 @@ export default function Home() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
           {features.map((feature, index) => (
             <Link key={index} to={feature.link} onClick={() => trackEvent('view', 'section', feature.title)}>
-              <Card className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl`}>
+              <Card className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative`}>
+                {feature.onlineCount > 0 && (
+                  <div className="absolute top-2 left-2 z-10 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                    {feature.onlineCount} {feature.countLabel}
+                  </div>
+                )}
                 <CardContent className="p-6 md:p-8 text-center">
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg overflow-hidden">
                     <img src={feature.image} alt={feature.title} className="w-12 h-12 md:w-14 md:h-14 object-contain" />
@@ -187,7 +217,13 @@ export default function Home() {
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
           {additionalFeatures.filter(f => f.show).map((feature, index) => (
             <Link key={index} to={feature.link} onClick={() => trackEvent('view', 'section', feature.title)}>
-              <Card className={`group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl`}>
+              <Card className={`group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative`}>
+                {feature.onlineCount > 0 && (
+                  <div className="absolute top-2 left-2 z-10 bg-teal-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                    {feature.onlineCount} {feature.countLabel}
+                  </div>
+                )}
                 <CardContent className="p-6 md:p-8 text-center">
                   <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg overflow-hidden`}>
                     {feature.image ? (

@@ -25,7 +25,7 @@ export default function ContactScholar() {
 
   // محاكاة حالة Online (في التطبيق الحقيقي، ستأتي من قاعدة البيانات)
   const isScholarOnline = (scholar) => {
-    // يمكن إضافة منطق حقيقي هنا
+    // يمكن إضافة منطق حقيقي هنا - مثلاً التحقق من آخر نشاط
     return Math.random() > 0.5;
   };
 
@@ -69,19 +69,19 @@ export default function ContactScholar() {
                     <CardHeader className="text-center pb-4 relative">
                       <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-xl relative">
                         <User className="w-12 h-12 text-white" />
-                        {isOnline && (
-                          <div className="absolute -bottom-1 -right-1">
-                            <OnlineIndicator isOnline={true} size="lg" />
-                          </div>
-                        )}
+                        <div className="absolute bottom-0 right-0">
+                          <OnlineIndicator isOnline={isOnline} size="lg" />
+                        </div>
                       </div>
                       <CardTitle className="text-2xl mb-2">{scholar.name}</CardTitle>
-                      {isOnline && (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
-                          <OnlineIndicator isOnline={true} size="sm" />
-                          متاح الآن
-                        </span>
-                      )}
+                      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${
+                        isOnline 
+                          ? 'text-emerald-600 bg-emerald-50' 
+                          : 'text-red-600 bg-red-50'
+                      }`}>
+                        <OnlineIndicator isOnline={isOnline} size="sm" />
+                        {isOnline ? 'متاح الآن' : 'غير متصل'}
+                      </span>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {scholar.specialization && (

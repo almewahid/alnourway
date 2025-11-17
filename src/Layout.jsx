@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, BookOpen, Heart, MessageSquare, Menu, Bell, User as UserIcon, Sparkles, Users, GraduationCap, Video, Shield } from "lucide-react";
+import { Home, BookOpen, Heart, MessageSquare, Menu, Bell, User as UserIcon, Sparkles, Users, GraduationCap, Shield, Star, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -32,22 +32,26 @@ const quickLinks = [
   { title: "تواصل مع داعية", url: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
   { title: "تواصل مع محفظ", url: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-purple-600" },
   { title: "دورات القرآن", url: createPageUrl("QuranCourses"), icon: GraduationCap, color: "text-teal-600" },
+  { title: "التوصيات المخصصة", url: createPageUrl("Recommendations"), icon: Star, color: "text-purple-600" },
+  { title: "الإعدادات", url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
 ];
 
 const bottomNavItems = [
-  { title: "الرئيسية", url: createPageUrl("Home"), icon: Home },
-  { title: "المحتوى", url: createPageUrl("Content"), icon: BookOpen },
-  { title: "الإشعارات", url: createPageUrl("Notifications"), icon: Bell },
-  { title: "الحساب", url: createPageUrl("Profile"), icon: UserIcon },
+  { title: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "from-teal-500 to-teal-600" },
+  { title: "المحتوى", url: createPageUrl("Content"), icon: BookOpen, color: "from-blue-500 to-blue-600" },
+  { title: "الإشعارات", url: createPageUrl("Notifications"), icon: Bell, color: "from-amber-500 to-amber-600" },
+  { title: "الحساب", url: createPageUrl("Profile"), icon: UserIcon, color: "from-purple-500 to-purple-600" },
 ];
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   React.useEffect(() => {
     loadUser();
+    registerServiceWorker();
   }, []);
 
   const loadUser = async () => {
@@ -61,8 +65,25 @@ export default function Layout({ children, currentPageName }) {
     }
   };
 
+  const registerServiceWorker = async () => {
+    if ('serviceWorker' in navigator) {
+      try {
+        await navigator.serviceWorker.register('/service-worker.js');
+        console.log('Service Worker registered');
+      } catch (error) {
+        console.log('Service Worker registration failed:', error);
+      }
+    }
+  };
+
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
-    <SidebarProvider>
+    <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
       <style>{`
         * { direction: rtl; text-align: right; }
         :root {
@@ -73,17 +94,18 @@ export default function Layout({ children, currentPageName }) {
         }
       `}</style>
 
-      {/* Notification Manager */}
       <NotificationManager />
       <Toaster position="top-center" richColors />
 
-      {/* إضافة Favicon */}
       <link rel="icon" type="image/png" sizes="192x192" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" />
       <link rel="icon" type="image/png" sizes="512x512" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/760ac07b0_android-chrome-512x512.png" />
+      <link rel="manifest" href="/manifest.json" />
+      <meta name="theme-color" content="#059669" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       
       <div className="min-h-screen flex w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50">
-        {/* Desktop Sidebar */}
-        <Sidebar side="right" className="border-r border-emerald-100 hidden md:flex">
+        <Sidebar side="right" className="border-r border-emerald-100">
           <SidebarHeader className="border-b border-emerald-100 p-6 bg-gradient-to-br from-emerald-600 to-emerald-700">
             <div className="flex items-center justify-center gap-3">
               <img 
@@ -101,7 +123,7 @@ export default function Layout({ children, currentPageName }) {
                   {navigationItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild className={`hover:bg-emerald-50 transition-all duration-300 rounded-xl mb-2 ${location.pathname === item.url ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md' : ''}`}>
-                        <Link to={item.url} className="flex items-center gap-3 px-4 py-3">
+                        <Link to={item.url} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-3">
                           <item.icon className={`w-5 h-5 ${location.pathname === item.url ? 'text-white' : item.color}`} />
                           <span className="font-semibold text-base">{item.title}</span>
                         </Link>
@@ -112,7 +134,6 @@ export default function Layout({ children, currentPageName }) {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {/* روابط سريعة */}
             <SidebarGroup className="mt-6">
               <SidebarGroupLabel className="px-4 py-2 text-sm font-semibold text-gray-500">
                 روابط سريعة
@@ -122,7 +143,7 @@ export default function Layout({ children, currentPageName }) {
                   {quickLinks.map((link) => (
                     <SidebarMenuItem key={link.title}>
                       <SidebarMenuButton asChild className="hover:bg-emerald-50 transition-all duration-300 rounded-xl mb-1">
-                        <Link to={link.url} className="flex items-center gap-3 px-4 py-2">
+                        <Link to={link.url} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
                           <link.icon className={`w-4 h-4 ${link.color}`} />
                           <span className="text-sm">{link.title}</span>
                         </Link>
@@ -133,7 +154,6 @@ export default function Layout({ children, currentPageName }) {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {/* قسم المدير */}
             {!loading && user?.role === 'admin' && (
               <SidebarGroup className="mt-6">
                 <SidebarGroupLabel className="px-4 py-2 text-sm font-semibold text-red-500">
@@ -143,7 +163,7 @@ export default function Layout({ children, currentPageName }) {
                   <SidebarMenu>
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Admin") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
-                        <Link to={createPageUrl("Admin")} className="flex items-center gap-3 px-4 py-2">
+                        <Link to={createPageUrl("Admin")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
                           <Shield className={`w-4 h-4 ${location.pathname === createPageUrl("Admin") ? 'text-white' : 'text-red-600'}`} />
                           <span className="text-sm">إدارة المحتوى</span>
                         </Link>
@@ -151,7 +171,7 @@ export default function Layout({ children, currentPageName }) {
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
-                        <Link to={createPageUrl("AdvancedAnalytics")} className="flex items-center gap-3 px-4 py-2">
+                        <Link to={createPageUrl("AdvancedAnalytics")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
                           <Sparkles className={`w-4 h-4 ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'text-white' : 'text-red-600'}`} />
                           <span className="text-sm">التحليلات المتقدمة</span>
                         </Link>
@@ -164,39 +184,47 @@ export default function Layout({ children, currentPageName }) {
           </SidebarContent>
         </Sidebar>
 
-        <main className="flex-1 flex flex-col min-h-screen">
-          {/* Mobile Header */}
-          <header className="bg-white border-b border-emerald-100 px-6 py-4 block md:hidden shadow-sm">
-            <div className="flex items-center gap-4 justify-between">
-              <SidebarTrigger className="hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200">
+        <main className="flex-1 flex flex-col min-h-screen w-full overflow-x-hidden">
+          <header className="bg-white border-b border-emerald-100 px-4 md:px-6 py-4 block md:hidden shadow-sm">
+            <div className="flex items-center gap-4 justify-between max-w-full">
+              <SidebarTrigger onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200">
                 <Menu className="w-6 h-6 text-emerald-700" />
               </SidebarTrigger>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" 
                   alt="طريق النور" 
-                  className="w-8 h-8"
+                  className="w-8 h-8 flex-shrink-0"
                 />
-                <h2 className="text-xl font-bold text-emerald-700">طريق النور</h2>
+                <h2 className="text-lg md:text-xl font-bold text-emerald-700 truncate">طريق النور</h2>
               </div>
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto pb-20">
+          <div className="flex-1 overflow-auto pb-20 md:pb-16 w-full">
             {children}
           </div>
 
-          {/* Bottom Navigation - Always Visible */}
-          <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-emerald-100 shadow-2xl">
-            <div className="flex items-center justify-around px-2 py-2 max-w-screen-lg mx-auto">
+          <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-lg border-t border-gray-200 shadow-2xl">
+            <div className="flex items-center justify-around px-2 py-1.5 w-full max-w-full">
               {bottomNavItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
-                  <Link key={item.title} to={item.url} className="flex flex-col items-center justify-center gap-1 py-2 px-3 flex-1 min-w-0 transition-all duration-200">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${isActive ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg scale-105' : 'bg-transparent hover:bg-gray-50'}`}>
-                      <item.icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                  <Link 
+                    key={item.title} 
+                    to={item.url} 
+                    className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 flex-1 min-w-0 transition-all duration-200"
+                  >
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                      isActive 
+                        ? `bg-gradient-to-br ${item.color} shadow-lg scale-105` 
+                        : 'bg-transparent hover:bg-gray-50'
+                    }`}>
+                      <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                     </div>
-                    <span className={`text-xs font-medium truncate w-full text-center ${isActive ? 'text-emerald-600' : 'text-gray-600'}`}>
+                    <span className={`text-[9px] font-medium truncate w-full text-center ${
+                      isActive ? 'text-gray-900' : 'text-gray-600'
+                    }`}>
                       {item.title}
                     </span>
                   </Link>

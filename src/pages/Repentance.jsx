@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Video, CheckCircle, Sparkles, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "../components/ContactModal";
+import { base44 } from "@/api/base44Client";
 
 export default function Repentance() {
   const [showContactModal, setShowContactModal] = useState(false);
+  const [onlineScholars, setOnlineScholars] = useState(0);
+
+  useEffect(() => {
+    loadOnlineScholars();
+  }, []);
+
+  const loadOnlineScholars = async () => {
+    try {
+      const scholars = await base44.entities.Scholar.filter({ type: 'mufti', is_available: true });
+      setOnlineScholars(scholars.length);
+    } catch (error) {
+      console.log('Error loading scholars:', error);
+    }
+  };
 
   const sections = [
     {
@@ -17,7 +32,9 @@ export default function Repentance() {
       description: "احصل على إرشاد شخصي من علماء متخصصين",
       color: "from-emerald-100 to-emerald-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8f4f91aed_.png",
-      link: createPageUrl("ContactScholar")
+      link: createPageUrl("ContactScholar"),
+      onlineCount: onlineScholars,
+      countLabel: "شيخ متاح"
     },
     {
       icon: Video,
@@ -85,7 +102,6 @@ export default function Repentance() {
           </p>
         </motion.div>
 
-        {/* الأقسام الرئيسية - 3 في الموبايل والديسكتوب */}
         <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-8">
           {sections.map((section, index) => (
             <motion.div
@@ -95,7 +111,13 @@ export default function Repentance() {
               transition={{ delay: index * 0.1 }}
             >
               <Link to={section.link}>
-                <Card className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${section.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl`}>
+                <Card className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${section.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative`}>
+                  {section.onlineCount > 0 && (
+                    <div className="absolute top-2 left-2 z-10 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                      {section.onlineCount} {section.countLabel}
+                    </div>
+                  )}
                   <CardContent className="p-6 md:p-8 text-center">
                     <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg overflow-hidden">
                       <img src={section.image} alt={section.title} className="w-12 h-12 md:w-14 md:h-14 object-contain" />
@@ -109,7 +131,6 @@ export default function Repentance() {
           ))}
         </div>
 
-        {/* شروط التوبة */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -158,7 +179,6 @@ export default function Repentance() {
           </Card>
         </motion.div>
 
-        {/* دعوة للتواصل */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
