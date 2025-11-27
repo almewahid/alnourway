@@ -1,4 +1,3 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -33,27 +32,21 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Google Login
 const googleProvider = new GoogleAuthProvider();
 export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
 
-// Anonymous Login
 export const signInAnon = () => signInAnonymously(auth);
 
-// Email & Password
 export const signUpEmail = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
 
 export const signInEmail = (email, password) =>
   signInWithEmailAndPassword(auth, email, password);
 
-// Logout
 export const signOutUser = () => signOut(auth);
 
-// Watch Auth State
 export const onAuthChanged = (cb) => onAuthStateChanged(auth, cb);
 
-// Ensure User Document
 export async function ensureUserDoc(user) {
   if (!user) return;
   const docRef = doc(db, "users", user.uid);
