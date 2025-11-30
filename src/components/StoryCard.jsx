@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, ChevronDown, ChevronUp } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function StoryCard({ story }) {
@@ -17,9 +17,11 @@ export default function StoryCard({ story }) {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-      checkIfFavorite(userData.email);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+        checkIfFavorite(authUser.email);
+      }
     } catch (error) {
       console.error("Error loading user:", error);
     }
@@ -27,12 +29,8 @@ export default function StoryCard({ story }) {
 
   const checkIfFavorite = async (email) => {
     try {
-      const favorites = await base44.entities.Favorite.filter({ 
-        user_email: email, 
-        item_type: 'story',
-        item_id: story.id 
-      });
-      setIsFavorite(favorites.length > 0);
+      const { data: favorites } = await supabase.from('Favorite').select('*').eq('user_email', email).eq('item_type', 'story').eq('item_id', story.id);
+      setIsFavorite(favorites && favorites.length > 0);
     } catch (error) {
       console.error("Error checking favorite:", error);
     }
@@ -41,16 +39,12 @@ export default function StoryCard({ story }) {
   const toggleFavoriteMutation = useMutation({
     mutationFn: async () => {
       if (isFavorite) {
-        const favorites = await base44.entities.Favorite.filter({ 
-          user_email: user.email, 
-          item_type: 'story',
-          item_id: story.id 
-        });
-        if (favorites[0]) {
-          await base44.entities.Favorite.delete(favorites[0].id);
+        const { data: favorites } = await supabase.from('Favorite').select('*').eq('user_email', user.email).eq('item_type', 'story').eq('item_id', story.id);
+        if (favorites && favorites[0]) {
+          await supabase.from('Favorite').delete().eq('id', favorites[0].id);
         }
       } else {
-        await base44.entities.Favorite.create({
+        await supabase.from('Favorite').insert({
           user_email: user.email,
           item_type: 'story',
           item_id: story.id,

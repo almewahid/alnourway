@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +30,10 @@ export default function JoinTeam() {
   });
 
   const createRequestMutation = useMutation({
-    mutationFn: (data) => base44.entities.JoinTeamRequest.create(data),
+    mutationFn: async (data) => {
+      const { error } = await supabase.from('JoinTeamRequest').insert(data);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['join_team_requests'] });
       setSubmitted(true);

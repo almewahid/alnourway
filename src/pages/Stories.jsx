@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "@/supabaseClient";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,13 +21,9 @@ export default function Stories() {
   const { data: stories, isLoading } = useQuery({
     queryKey: ['stories'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('Story')
-        .select('*')
-        .order('created_date', { ascending: false });
-      
+      const { data, error } = await supabase.from('Story').select('*').order('created_date', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return data;
     },
     initialData: [],
   });

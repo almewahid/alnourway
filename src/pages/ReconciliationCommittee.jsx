@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,10 @@ export default function ReconciliationCommittee() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -26,7 +28,11 @@ export default function ReconciliationCommittee() {
 
   const { data: committee, isLoading } = useQuery({
     queryKey: ['reconciliation_committee'],
-    queryFn: () => base44.entities.ReconciliationCommittee.filter({ is_active: true }),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('ReconciliationCommittee').select('*').eq('is_active', true);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 

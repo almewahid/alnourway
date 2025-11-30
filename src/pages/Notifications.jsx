@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,10 @@ export default function Notifications() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.log("User not logged in");
     } finally {
@@ -30,20 +32,31 @@ export default function Notifications() {
 
   const { data: notifications, isLoading: notificationsLoading } = useQuery({
     queryKey: ['notifications', user?.email],
-    queryFn: () => user ? base44.entities.Notification.filter({ user_email: user.email }, '-created_date') : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('Notification').select('*').eq('user_email', user.email).order('created_date', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
   });
 
   const markAsReadMutation = useMutation({
-    mutationFn: (id) => base44.entities.Notification.update(id, { is_read: true }),
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('Notification').update({ is_read: true }).eq('id', id);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', user?.email] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Notification.delete(id),
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('Notification').delete().eq('id', id);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', user?.email] });
     },
@@ -51,10 +64,8 @@ export default function Notifications() {
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const unreadNotifications = notifications.filter(n => !n.is_read);
-      await Promise.all(
-        unreadNotifications.map(n => base44.entities.Notification.update(n.id, { is_read: true }))
-      );
+      const { error } = await supabase.from('Notification').update({ is_read: true }).eq('user_email', user?.email);
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', user?.email] });
@@ -63,9 +74,8 @@ export default function Notifications() {
 
   const deleteAllMutation = useMutation({
     mutationFn: async () => {
-      await Promise.all(
-        notifications.map(n => base44.entities.Notification.delete(n.id))
-      );
+      const { error } = await supabase.from('Notification').delete().eq('user_email', user?.email);
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', user?.email] });
@@ -104,12 +114,13 @@ export default function Notifications() {
               <p className="text-gray-600 mb-8">
                 سجل الدخول لمشاهدة إشعاراتك
               </p>
-              <Button
-                onClick={() => base44.auth.redirectToLogin()}
-                className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 py-5 md:py-6 px-8 md:px-10 text-base md:text-lg rounded-2xl"
-              >
-                تسجيل الدخول
-              </Button>
+              <Link to="/auth">
+                <Button
+                  className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 py-5 md:py-6 px-8 md:px-10 text-base md:text-lg rounded-2xl"
+                >
+                  تسجيل الدخول
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Mail, LogOut, Shield } from "lucide-react";
@@ -15,16 +15,19 @@ export default function Account() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.error("Error loading user:", error);
     }
     setLoading(false);
   };
 
-  const handleLogout = () => {
-    base44.auth.logout();
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/';
   };
 
   if (loading) {
@@ -120,7 +123,7 @@ export default function Account() {
                 يرجى تسجيل الدخول للوصول إلى حسابك
               </p>
               <Button
-                onClick={() => base44.auth.redirectToLogin()}
+                onClick={() => window.location.href = '/auth'}
                 className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
               >
                 تسجيل الدخول

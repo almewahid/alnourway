@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
@@ -14,18 +13,24 @@ export default function AdminTable({ entity, fields, showPendingOnly }) {
   const { data: items, isLoading } = useQuery({
     queryKey: [entity, showPendingOnly],
     queryFn: async () => {
+      let query = supabase.from(entity).select('*').order('created_date', { ascending: false });
       if (showPendingOnly) {
-        return base44.entities[entity].filter({ is_approved: false });
+        query = query.eq('is_approved', false);
       }
-      return base44.entities[entity].list("-created_date");
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
     },
     initialData: [],
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities[entity].delete(id),
+    mutationFn: async (id) => {
+      const { error } = await supabase.from(entity).delete().eq('id', id);
+      if (error) throw error;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [entity, showPendingOnly] }); // Invalidate with updated queryKey
+      queryClient.invalidateQueries({ queryKey: [entity, showPendingOnly] });
     },
   });
 

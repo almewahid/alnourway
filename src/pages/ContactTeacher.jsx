@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Phone, MessageCircle, Globe, Mail, User } from "lucide-react";
@@ -13,7 +13,11 @@ export default function ContactTeacher() {
 
   const { data: teachers, isLoading } = useQuery({
     queryKey: ['teachers'],
-    queryFn: () => base44.entities.Scholar.filter({ type: "teacher", is_available: true }),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Scholar').select('*').eq('type', 'teacher').eq('is_available', true);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 

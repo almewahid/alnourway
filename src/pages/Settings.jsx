@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,8 +34,10 @@ export default function Settings() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -50,13 +52,21 @@ export default function Settings() {
 
   const { data: userPreferences } = useQuery({
     queryKey: ['user_preferences', user?.email],
-    queryFn: () => user ? base44.entities.UserPreference.filter({ user_email: user.email }) : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('UserPreference').select('*').eq('user_email', user.email);
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
   });
 
   const updateUserMutation = useMutation({
-    mutationFn: (data) => base44.auth.updateMe(data),
+    mutationFn: async (data) => {
+      const { error } = await supabase.auth.updateUser({ data });
+      if (error) throw error;
+    },
     onSuccess: () => {
       alert('تم حفظ التغييرات بنجاح');
       loadUser();
@@ -136,7 +146,7 @@ export default function Settings() {
               سجل الدخول للوصول إلى إعداداتك
             </p>
             <button
-              onClick={() => base44.auth.redirectToLogin()}
+              onClick={() => window.location.href = '/auth'}
               className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
             >
               تسجيل الدخول
@@ -393,7 +403,10 @@ export default function Settings() {
         <Card className="border-0 shadow-xl bg-gradient-to-br from-red-500 to-red-600 text-white mt-6 md:mt-8">
           <CardContent className="p-4 md:p-6">
             <Button
-              onClick={() => base44.auth.logout()}
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = '/';
+              }}
               variant="ghost"
               className="w-full text-white hover:bg-white/20 hover:text-white text-sm md:text-base"
             >

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,11 @@ export default function LiveStreams() {
 
   const { data: streams, isLoading } = useQuery({
     queryKey: ['live_streams'],
-    queryFn: () => base44.entities.LiveStream.list("-scheduled_time"),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('LiveStream').select('*').order('scheduled_time', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,10 @@ export default function RatingWidget({ contentType, contentId }) {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -30,26 +32,31 @@ export default function RatingWidget({ contentType, contentId }) {
 
   const { data: ratings } = useQuery({
     queryKey: ['ratings', contentType, contentId],
-    queryFn: () => base44.entities.Rating.filter({ 
-      content_type: contentType, 
-      content_id: contentId 
-    }),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Rating').select('*').eq('content_type', contentType).eq('content_id', contentId);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 
   const { data: userRating } = useQuery({
     queryKey: ['user_rating', contentType, contentId, user?.email],
-    queryFn: () => user ? base44.entities.Rating.filter({ 
-      content_type: contentType, 
-      content_id: contentId,
-      user_email: user.email
-    }) : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('Rating').select('*').eq('content_type', contentType).eq('content_id', contentId).eq('user_email', user.email);
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
   });
 
   const addRatingMutation = useMutation({
-    mutationFn: (data) => base44.entities.Rating.create(data),
+    mutationFn: async (data) => {
+      const { error } = await supabase.from('Rating').insert(data);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ratings', contentType, contentId] });
       queryClient.invalidateQueries({ queryKey: ['user_rating', contentType, contentId, user?.email] });
@@ -59,7 +66,10 @@ export default function RatingWidget({ contentType, contentId }) {
   });
 
   const updateRatingMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Rating.update(id, data),
+    mutationFn: async ({ id, data }) => {
+      const { error } = await supabase.from('Rating').update(data).eq('id', id);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ratings', contentType, contentId] });
       queryClient.invalidateQueries({ queryKey: ['user_rating', contentType, contentId, user?.email] });

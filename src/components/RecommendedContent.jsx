@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,9 +18,11 @@ export default function RecommendedContent() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-      await generateRecommendations(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+        await generateRecommendations({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -28,7 +30,12 @@ export default function RecommendedContent() {
 
   const { data: userPreferences } = useQuery({
     queryKey: ['user_preferences', user?.email],
-    queryFn: () => user ? base44.entities.UserPreference.filter({ user_email: user.email }) : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('UserPreference').select('*').eq('user_email', user.email);
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
   });
@@ -40,11 +47,15 @@ export default function RecommendedContent() {
       const viewHistory = prefs?.view_history || [];
       
       // Fetch content based on interests
-      const [lectures, books, fatwas] = await Promise.all([
-        base44.entities.Lecture.list('-views_count', 10),
-        base44.entities.Book.list('-created_date', 10),
-        base44.entities.Fatwa.list('-created_date', 10)
+      const [lecturesResponse, booksResponse, fatwasResponse] = await Promise.all([
+        supabase.from('Lecture').select('*').order('views_count', { ascending: false }).limit(10),
+        supabase.from('Book').select('*').order('created_date', { ascending: false }).limit(10),
+        supabase.from('Fatwa').select('*').order('created_date', { ascending: false }).limit(10)
       ]);
+
+      const lectures = lecturesResponse.data || [];
+      const books = booksResponse.data || [];
+      const fatwas = fatwasResponse.data || [];
 
       // Simple recommendation algorithm
       const recommended = [];

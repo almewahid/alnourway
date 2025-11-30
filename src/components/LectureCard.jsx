@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Video, Music, Clock, User, Heart, Eye, ThumbsUp, Share2, Play } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import ShareButtons from "./ShareButtons";
@@ -26,9 +26,12 @@ export default function LectureCard({ lecture, onClick, isDetailView = false }) 
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-      checkIfFavorite(userData.email);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const userData = { ...authUser, role: 'user' };
+        setUser(userData);
+        checkIfFavorite(userData.email);
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -36,12 +39,8 @@ export default function LectureCard({ lecture, onClick, isDetailView = false }) 
 
   const checkIfFavorite = async (email) => {
     try {
-      const favorites = await base44.entities.Favorite.filter({ 
-        user_email: email, 
-        item_type: 'lecture',
-        item_id: lecture.id 
-      });
-      setIsFavorite(favorites.length > 0);
+      const { data: favorites } = await supabase.from('Favorite').select('*').eq('user_email', email).eq('item_type', 'lecture').eq('item_id', lecture.id);
+      setIsFavorite(favorites && favorites.length > 0);
     } catch (error) {
       console.log("Error checking favorite");
     }
@@ -49,9 +48,7 @@ export default function LectureCard({ lecture, onClick, isDetailView = false }) 
 
   const incrementViews = async () => {
     try {
-      await base44.entities.Lecture.update(lecture.id, {
-        views_count: (lecture.views_count || 0) + 1
-      });
+      await supabase.from('Lecture').update({ views_count: (lecture.views_count || 0) + 1 }).eq('id', lecture.id);
     } catch (error) {
       console.log("Error incrementing views");
     }
@@ -60,16 +57,12 @@ export default function LectureCard({ lecture, onClick, isDetailView = false }) 
   const toggleFavoriteMutation = useMutation({
     mutationFn: async () => {
       if (isFavorite) {
-        const favorites = await base44.entities.Favorite.filter({ 
-          user_email: user.email, 
-          item_type: 'lecture',
-          item_id: lecture.id 
-        });
-        if (favorites[0]) {
-          await base44.entities.Favorite.delete(favorites[0].id);
+        const { data: favorites } = await supabase.from('Favorite').select('*').eq('user_email', user.email).eq('item_type', 'lecture').eq('item_id', lecture.id);
+        if (favorites && favorites[0]) {
+          await supabase.from('Favorite').delete().eq('id', favorites[0].id);
         }
       } else {
-        await base44.entities.Favorite.create({
+        await supabase.from('Favorite').insert({
           user_email: user.email,
           item_type: 'lecture',
           item_id: lecture.id,

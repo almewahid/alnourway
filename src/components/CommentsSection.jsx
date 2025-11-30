@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,10 @@ export default function CommentsSection({ contentType, contentId, contentTitle }
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -28,16 +30,19 @@ export default function CommentsSection({ contentType, contentId, contentTitle }
 
   const { data: comments, isLoading } = useQuery({
     queryKey: ['comments', contentType, contentId],
-    queryFn: () => base44.entities.Comment.filter({ 
-      content_type: contentType, 
-      content_id: contentId,
-      is_approved: true 
-    }),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Comment').select('*').eq('content_type', contentType).eq('content_id', contentId).eq('is_approved', true);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 
   const addCommentMutation = useMutation({
-    mutationFn: (data) => base44.entities.Comment.create(data),
+    mutationFn: async (data) => {
+      const { error } = await supabase.from('Comment').insert(data);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', contentType, contentId] });
       setCommentText("");

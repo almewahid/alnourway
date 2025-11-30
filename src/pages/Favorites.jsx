@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Trash2, Video, BookOpen, MessageSquare } from "lucide-react";
@@ -14,8 +14,10 @@ export default function Favorites() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await base44.auth.me();
-        setUser(userData);
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          setUser({ ...authUser, role: 'user' });
+        }
       } catch (error) {
         console.error("Error loading user:", error);
       }
@@ -25,13 +27,21 @@ export default function Favorites() {
 
   const { data: favorites, isLoading } = useQuery({
     queryKey: ['favorites', user?.email],
-    queryFn: () => user ? base44.entities.Favorite.filter({ user_email: user.email }) : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('Favorite').select('*').eq('user_email', user.email);
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
   });
 
   const deleteFavoriteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Favorite.delete(id),
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('Favorite').delete().eq('id', id);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
     },

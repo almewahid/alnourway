@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Bell } from "lucide-react";
@@ -16,9 +16,11 @@ export default function NotificationManager() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-      requestNotificationPermission();
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+        requestNotificationPermission();
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -31,7 +33,10 @@ export default function NotificationManager() {
   };
 
   const createNotificationMutation = useMutation({
-    mutationFn: (data) => base44.entities.Notification.create(data),
+    mutationFn: async (data) => {
+      const { error } = await supabase.from('Notification').insert(data);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
@@ -74,28 +79,27 @@ export default function NotificationManager() {
       const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
 
       // فحص البثوث المباشرة القادمة
-      const liveStreams = await base44.entities.LiveStream.filter({
-        is_live: false,
-        notification_sent: false
-      });
+      const { data: liveStreams } = await supabase.from('LiveStream').select('*').eq('is_live', false).eq('notification_sent', false);
 
-      liveStreams.forEach(stream => {
-        const scheduledTime = new Date(stream.scheduled_time);
-        if (scheduledTime <= oneHourFromNow && scheduledTime > now) {
-          sendNotification(
-            '🔴 بث مباشر قريباً',
-            `${stream.title} - ${stream.speaker} سيبدأ خلال ساعة`,
-            `/LiveStreams?id=${stream.id}`,
-            'live_stream'
-          );
-          
-          // تحديث لتجنب إرسال الإشعار مرة أخرى
-          base44.entities.LiveStream.update(stream.id, { notification_sent: true });
-        }
-      });
+      if (liveStreams) {
+        liveStreams.forEach(async (stream) => {
+          const scheduledTime = new Date(stream.scheduled_time);
+          if (scheduledTime <= oneHourFromNow && scheduledTime > now) {
+            sendNotification(
+              '🔴 بث مباشر قريباً',
+              `${stream.title} - ${stream.speaker} سيبدأ خلال ساعة`,
+              `/LiveStreams?id=${stream.id}`,
+              'live_stream'
+            );
+            
+            // تحديث لتجنب إرسال الإشعار مرة أخرى
+            await supabase.from('LiveStream').update({ notification_sent: true }).eq('id', stream.id);
+          }
+        });
+      }
 
       // فحص دورات القرآن
-      const courses = await base44.entities.QuranCourse.filter({ is_active: true });
+      const { data: courses } = await supabase.from('QuranCourse').select('*').eq('is_active', true);
       // يمكن إضافة منطق مشابه للدورات
     } catch (error) {
       console.error('Error checking meetings:', error);
@@ -104,9 +108,9 @@ export default function NotificationManager() {
 
   const checkLiveStreams = async () => {
     try {
-      const liveStreams = await base44.entities.LiveStream.filter({ is_live: true });
+      const { data: liveStreams } = await supabase.from('LiveStream').select('*').eq('is_live', true);
       
-      if (liveStreams.length > 0) {
+      if (liveStreams && liveStreams.length > 0) {
         liveStreams.forEach(stream => {
           sendNotification(
             '🔴 بث مباشر الآن',

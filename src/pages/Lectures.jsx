@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/supabaseClient";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,13 +25,9 @@ export default function Lectures() {
   const { data: lectures, isLoading } = useQuery({
     queryKey: ['lectures'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('Lecture')
-        .select('*')
-        .order('created_date', { ascending: false });
-      
+      const { data, error } = await supabase.from('Lecture').select('*').order('created_date', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return data;
     },
     initialData: [],
   });

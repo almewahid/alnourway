@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -28,11 +28,11 @@ export default function CourseEnrollmentModal({ course, user, open, onClose }) {
 
   const enrollMutation = useMutation({
     mutationFn: async (data) => {
-      await base44.entities.CourseEnrollment.create(data);
+      await supabase.from('CourseEnrollment').insert(data);
       // تحديث عدد الطلاب في الدورة
-      await base44.entities.QuranCourse.update(course.id, {
+      await supabase.from('QuranCourse').update({
         current_students: (course.current_students || 0) + 1
-      });
+      }).eq('id', course.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quran_courses'] });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, TrendingUp, BookOpen, Video, Heart, Star } from "lucide-react";
@@ -19,9 +19,12 @@ export default function Recommendations() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-      await loadRecommendations(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const userData = { ...authUser, role: 'user' };
+        setUser(userData);
+        await loadRecommendations(userData);
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -29,48 +32,69 @@ export default function Recommendations() {
 
   const { data: userPreferences } = useQuery({
     queryKey: ['user_preferences', user?.email],
-    queryFn: () => user ? base44.entities.UserPreference.filter({ user_email: user.email }) : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('UserPreference').select('*').eq('user_email', user.email);
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
   });
 
   const { data: lectures, isLoading: lecturesLoading } = useQuery({
     queryKey: ['lectures'],
-    queryFn: () => base44.entities.Lecture.list('-views_count', 20),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Lecture').select('*').order('views_count', { ascending: false }).limit(20);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 
   const { data: stories, isLoading: storiesLoading } = useQuery({
     queryKey: ['stories'],
-    queryFn: () => base44.entities.Story.list('-created_date', 20),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Story').select('*').order('created_date', { ascending: false }).limit(20);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 
   const { data: fatwas, isLoading: fatwasLoading } = useQuery({
     queryKey: ['fatwas'],
-    queryFn: () => base44.entities.Fatwa.list('-created_date', 20),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Fatwa').select('*').order('created_date', { ascending: false }).limit(20);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 
   const { data: books, isLoading: booksLoading } = useQuery({
     queryKey: ['books'],
-    queryFn: () => base44.entities.Book.list('-created_date', 20),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Book').select('*').order('created_date', { ascending: false }).limit(20);
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 
   const loadRecommendations = async (userData) => {
     try {
-      const prefs = await base44.entities.UserPreference.filter({ user_email: userData.email });
-      const userPref = prefs[0];
+      const { data: prefs } = await supabase.from('UserPreference').select('*').eq('user_email', userData.email);
+      const userPref = prefs?.[0];
 
       const topics = userPref?.interested_topics || [];
       const viewHistory = userPref?.view_history || [];
       const searchHistory = userPref?.search_history || [];
 
-      const allLectures = await base44.entities.Lecture.list('-views_count', 50);
-      const allStories = await base44.entities.Story.list('-created_date', 50);
-      const allFatwas = await base44.entities.Fatwa.list('-created_date', 50);
-      const allBooks = await base44.entities.Book.list('-created_date', 50);
+      const { data: allLectures } = await supabase.from('Lecture').select('*').order('views_count', { ascending: false }).limit(50);
+      const { data: allStories } = await supabase.from('Story').select('*').order('created_date', { ascending: false }).limit(50);
+      const { data: allFatwas } = await supabase.from('Fatwa').select('*').order('created_date', { ascending: false }).limit(50);
+      const { data: allBooks } = await supabase.from('Book').select('*').order('created_date', { ascending: false }).limit(50);
 
       const scoredLectures = allLectures
         .map(item => ({ ...item, score: calculateScore(item, topics, searchHistory, 'lecture') }))
@@ -143,12 +167,13 @@ export default function Recommendations() {
             <p className="text-gray-600 mb-8 text-sm md:text-base">
               سجل الدخول للحصول على توصيات مخصصة بناءً على اهتماماتك
             </p>
-            <button
-              onClick={() => base44.auth.redirectToLogin()}
-              className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
-            >
-              تسجيل الدخول
-            </button>
+            <Link to="/auth">
+              <button
+                className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
+              >
+                تسجيل الدخول
+              </button>
+            </Link>
           </CardContent>
         </Card>
       </div>

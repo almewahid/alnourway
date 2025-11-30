@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Heart, MessageSquare, Users, Globe, Calendar, Library, Video, Search, User, Handshake } from "lucide-react";
-import { supabase } from "@/supabaseClient";
+import { supabase } from "@/components/api/supabaseClient";
 
 const verses = [
   { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", ref: "سورة الشرح - آية 6" },
@@ -47,31 +47,16 @@ export default function Home() {
 
   const loadOnlineCounts = async () => {
     try {
-      // Get scholars count
-      const { data: scholars, error: scholarsError } = await supabase
-        .from('Scholar')
-        .select('*')
-        .eq('type', 'mufti')
-        .eq('is_available', true);
+      const [scholars, preachers, teachers] = await Promise.all([
+        supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'mufti').eq('is_available', true),
+        supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'preacher').eq('is_available', true),
+        supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'teacher').eq('is_available', true)
+      ]);
 
-      // Get preachers count
-      const { data: preachers, error: preachersError } = await supabase
-        .from('Scholar')
-        .select('*')
-        .eq('type', 'preacher')
-        .eq('is_available', true);
-
-      // Get teachers count
-      const { data: teachers, error: teachersError } = await supabase
-        .from('Scholar')
-        .select('*')
-        .eq('type', 'teacher')
-        .eq('is_available', true);
-      
       setOnlineCount({
-        scholars: scholars?.length || 0,
-        preachers: preachers?.length || 0,
-        teachers: teachers?.length || 0
+        scholars: scholars.count || 0,
+        preachers: preachers.count || 0,
+        teachers: teachers.count || 0
       });
     } catch (error) {
       console.log('Error loading online counts:', error);
@@ -80,19 +65,14 @@ export default function Home() {
 
   const trackEvent = async (eventType, contentType, contentId) => {
     try {
-      // Get current user (if authenticated)
       const { data: { user } } = await supabase.auth.getUser();
-      
-      // Track analytics event
-      await supabase
-        .from('AnalyticsEvent')
-        .insert({
-          event_type: eventType,
-          user_email: user?.email || 'guest',
-          content_type: contentType,
-          content_id: contentId,
-          device_type: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
-        });
+      await supabase.from('AnalyticsEvent').insert({
+        event_type: eventType,
+        user_email: user?.email || 'guest',
+        content_type: contentType,
+        content_id: contentId,
+        device_type: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+      });
     } catch (error) {
       console.log('Analytics error:', error);
     }

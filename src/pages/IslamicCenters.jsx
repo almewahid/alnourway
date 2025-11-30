@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,11 @@ export default function IslamicCenters() {
 
   const { data: centers, isLoading } = useQuery({
     queryKey: ['islamic_centers'],
-    queryFn: () => base44.entities.IslamicCenter.list("-created_date"),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('IslamicCenter').select('*').order('created_date', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
     initialData: [],
   });
 

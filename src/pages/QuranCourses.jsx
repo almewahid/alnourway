@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/supabaseClient";
-import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/components/api/supabaseClient";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,8 +21,10 @@ export default function QuranCourses() {
 
   const loadUser = async () => {
     try {
-      const { data: { user: userData } } = await supabase.auth.getUser();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.error("Error loading user:", error);
     }
@@ -31,19 +33,15 @@ export default function QuranCourses() {
   const { data: courses, isLoading } = useQuery({
     queryKey: ['quran_courses'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('QuranCourse')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_date', { ascending: false });
-      
+      const { data, error } = await supabase.from('QuranCourse').select('*').eq('is_active', true);
       if (error) throw error;
-      return data || [];
+      return data;
     },
     initialData: [],
   });
 
   const filteredCourses = courses.filter(course => {
+    // Modified logic for gender filtering
     const matchesGender = selectedGender === "all" || course.gender === selectedGender;
     const matchesType = selectedType === "all" || course.type === selectedType;
     return matchesGender && matchesType;

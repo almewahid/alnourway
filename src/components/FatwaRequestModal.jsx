@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -24,7 +24,10 @@ export default function FatwaRequestModal({ open, onClose }) {
   });
 
   const createRequestMutation = useMutation({
-    mutationFn: (data) => base44.entities.FatwaRequest.create(data),
+    mutationFn: async (data) => {
+      const { error } = await supabase.from('FatwaRequest').insert(data);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fatwa_requests'] });
       setSubmitted(true);

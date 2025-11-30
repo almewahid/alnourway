@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,12 @@ export default function InterestsSelector({ user, compact = false }) {
 
   const { data: preferences } = useQuery({
     queryKey: ['user_preferences', user?.email],
-    queryFn: () => user ? base44.entities.UserPreference.filter({ user_email: user.email }) : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('UserPreference').select('*').eq('user_email', user.email);
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
   });
@@ -36,11 +41,13 @@ export default function InterestsSelector({ user, compact = false }) {
   }, [preferences]);
 
   const savePreferencesMutation = useMutation({
-    mutationFn: (data) => {
+    mutationFn: async (data) => {
       if (preferences?.[0]) {
-        return base44.entities.UserPreference.update(preferences[0].id, data);
+        const { error } = await supabase.from('UserPreference').update(data).eq('id', preferences[0].id);
+        if (error) throw error;
       } else {
-        return base44.entities.UserPreference.create(data);
+        const { error } = await supabase.from('UserPreference').insert(data);
+        if (error) throw error;
       }
     },
     onSuccess: () => {

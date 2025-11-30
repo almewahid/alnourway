@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+// import { base44 } from "@/api/base44Client"; // Base44 integration removed
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Upload, FileText, AlertCircle, CheckCircle } from "lucide-react";
@@ -11,54 +11,9 @@ export default function BulkUploadModal({ open, onClose, entityType }) {
   const [error, setError] = useState(null);
 
   const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-    setError(null);
-    setResults(null);
-
-    try {
-      // رفع الملف
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-
-      // استخراج البيانات
-      const schema = await base44.entities[entityType].schema();
-      const extractResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
-        file_url,
-        json_schema: {
-          type: "object",
-          properties: {
-            items: {
-              type: "array",
-              items: schema
-            }
-          }
-        }
-      });
-
-      if (extractResult.status === "success" && extractResult.output?.items) {
-        // إدراج البيانات
-        const items = extractResult.output.items;
-        await base44.entities[entityType].bulkCreate(items);
-        
-        setResults({
-          success: true,
-          count: items.length
-        });
-
-        // تحديث بعد 2 ثانية وإغلاق
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      } else {
-        setError(extractResult.details || "فشل استخراج البيانات");
-      }
-    } catch (err) {
-      setError(err.message || "حدث خطأ أثناء الرفع");
-    } finally {
-      setUploading(false);
-    }
+    // Feature disabled during migration
+    alert("هذه الميزة غير متاحة حالياً أثناء التحديث");
+    return;
   };
 
   const getEntityName = () => {

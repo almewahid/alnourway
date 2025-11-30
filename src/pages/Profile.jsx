@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
-import { Link } from "react-router-dom";
+import { supabase } from "@/components/api/supabaseClient";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadUser();
@@ -17,16 +18,20 @@ export default function Profile() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        // You can fetch additional profile data here if you have a profiles table
+        setUser({ ...authUser, role: 'user' }); // Default role for now
+      }
     } catch (error) {
       console.error("Error loading user:", error);
     }
     setLoading(false);
   };
 
-  const handleLogout = () => {
-    base44.auth.logout();
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/';
   };
 
   const menuItems = [
@@ -63,7 +68,7 @@ export default function Profile() {
           {user ? (
             <>
               <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-3">
-                {user.full_name || "المستخدم"}
+                {user.email ? user.email.split('@')[0] : "المستخدم"}
               </h1>
               <p className="text-purple-100 text-base md:text-lg mb-2">{user.email}</p>
               <span className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
@@ -179,12 +184,13 @@ export default function Profile() {
               <p className="text-gray-600 mb-8">
                 يرجى تسجيل الدخول للوصول إلى حسابك وميزاته
               </p>
-              <Button
-                onClick={() => base44.auth.redirectToLogin()}
-                className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 py-5 md:py-6 text-base md:text-lg rounded-2xl"
-              >
-                تسجيل الدخول
-              </Button>
+              <Link to="/auth">
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 py-5 md:py-6 text-base md:text-lg rounded-2xl"
+                >
+                  تسجيل الدخول
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

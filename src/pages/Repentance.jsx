@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Video, CheckCircle, Sparkles, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "../components/ContactModal";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 
 export default function Repentance() {
   const [showContactModal, setShowContactModal] = useState(false);
@@ -18,8 +18,8 @@ export default function Repentance() {
 
   const loadOnlineScholars = async () => {
     try {
-      const scholars = await base44.entities.Scholar.filter({ type: 'mufti', is_available: true });
-      setOnlineScholars(scholars.length);
+      const { count } = await supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'mufti').eq('is_available', true);
+      setOnlineScholars(count || 0);
     } catch (error) {
       console.log('Error loading scholars:', error);
     }

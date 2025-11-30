@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/supabaseClient";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,13 +32,8 @@ export default function Fatwa() {
 
   const loadOnlineMuftis = async () => {
     try {
-      const { data, error } = await supabase
-        .from('Scholar')
-        .select('*')
-        .eq('type', 'mufti')
-        .eq('is_available', true);
-      
-      setOnlineMuftis(data?.length || 0);
+      const { count } = await supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'mufti').eq('is_available', true);
+      setOnlineMuftis(count || 0);
     } catch (error) {
       console.log('Error loading muftis:', error);
     }
@@ -47,13 +42,9 @@ export default function Fatwa() {
   const { data: fatwas, isLoading } = useQuery({
     queryKey: ['fatwas'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('Fatwa')
-        .select('*')
-        .order('created_date', { ascending: false });
-      
+      const { data, error } = await supabase.from('Fatwa').select('*').order('created_date', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return data;
     },
     initialData: [],
   });

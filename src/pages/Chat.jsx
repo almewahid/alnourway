@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,8 +39,10 @@ export default function Chat() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        setUser({ ...authUser, role: 'user' });
+      }
     } catch (error) {
       console.log("User not logged in");
     }
@@ -48,10 +50,12 @@ export default function Chat() {
 
   const { data: conversations, isLoading: conversationsLoading } = useQuery({
     queryKey: ['conversations', user?.email],
-    queryFn: () => user ? base44.entities.Conversation.filter({ 
-      user_email: user.email,
-      status: 'active'
-    }, '-last_message_time') : [],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { data, error } = await supabase.from('Conversation').select('*').eq('user_email', user.email).eq('status', 'active').order('last_message_time', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
     enabled: !!user,
     initialData: [],
     refetchInterval: 5000,
@@ -59,9 +63,12 @@ export default function Chat() {
 
   const { data: messages, isLoading: messagesLoading } = useQuery({
     queryKey: ['messages', selectedConversation?.id],
-    queryFn: () => selectedConversation ? base44.entities.ChatMessage.filter({
-      conversation_id: selectedConversation.id
-    }, 'created_date') : [],
+    queryFn: async () => {
+      if (!selectedConversation) return [];
+      const { data, error } = await supabase.from('ChatMessage').select('*').eq('conversation_id', selectedConversation.id).order('created_date', { ascending: true });
+      if (error) throw error;
+      return data;
+    },
     enabled: !!selectedConversation,
     initialData: [],
     refetchInterval: 2000,
@@ -71,19 +78,9 @@ export default function Chat() {
     if (!selectedConversation) return;
     
     try {
-      const unreadMessages = await base44.entities.ChatMessage.filter({
-        conversation_id: selectedConversation.id,
-        receiver_email: user.email,
-        is_read: false
-      });
+      await supabase.from('ChatMessage').update({ is_read: true }).eq('conversation_id', selectedConversation.id).eq('receiver_email', user.email).eq('is_read', false);
 
-      for (const msg of unreadMessages) {
-        await base44.entities.ChatMessage.update(msg.id, { is_read: true });
-      }
-
-      await base44.entities.Conversation.update(selectedConversation.id, {
-        unread_count_user: 0
-      });
+      await supabase.from('Conversation').update({ unread_count_user: 0 }).eq('id', selectedConversation.id);
 
       queryClient.invalidateQueries({ queryKey: ['conversations', user?.email] });
     } catch (error) {
@@ -93,12 +90,12 @@ export default function Chat() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (data) => {
-      await base44.entities.ChatMessage.create(data);
-      await base44.entities.Conversation.update(selectedConversation.id, {
+      await supabase.from('ChatMessage').insert(data);
+      await supabase.from('Conversation').update({
         last_message: data.message_text,
         last_message_time: new Date().toISOString(),
         unread_count_scholar: (selectedConversation.unread_count_scholar || 0) + 1
-      });
+      }).eq('id', selectedConversation.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
@@ -149,7 +146,7 @@ export default function Chat() {
               سجل الدخول لبدء المحادثات مع العلماء والدعاة
             </p>
             <Button
-              onClick={() => base44.auth.redirectToLogin()}
+              onClick={() => window.location.href = '/auth'}
               className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-5 md:py-6 text-base md:text-lg rounded-2xl"
             >
               تسجيل الدخول

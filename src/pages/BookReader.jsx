@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,8 @@ export default function BookReader() {
   const { data: book, isLoading } = useQuery({
     queryKey: ['book', bookId],
     queryFn: async () => {
-      const books = await base44.entities.Book.filter({ id: bookId });
+      const { data: books, error } = await supabase.from('Book').select('*').eq('id', bookId);
+      if (error) throw error;
       return books[0];
     },
     enabled: !!bookId,

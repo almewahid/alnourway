@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -30,11 +30,13 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
   }, [item, fields]);
 
   const saveMutation = useMutation({
-    mutationFn: (data) => {
+    mutationFn: async (data) => {
       if (item) {
-        return base44.entities[entity].update(item.id, data);
+        const { error } = await supabase.from(entity).update(data).eq('id', item.id);
+        if (error) throw error;
       } else {
-        return base44.entities[entity].create(data);
+        const { error } = await supabase.from(entity).insert(data);
+        if (error) throw error;
       }
     },
     onSuccess: () => {
