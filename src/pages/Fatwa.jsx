@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,8 +32,13 @@ export default function Fatwa() {
 
   const loadOnlineMuftis = async () => {
     try {
-      const muftis = await base44.entities.Scholar.filter({ type: 'mufti', is_available: true });
-      setOnlineMuftis(muftis.length);
+      const { data, error } = await supabase
+        .from('Scholar')
+        .select('*')
+        .eq('type', 'mufti')
+        .eq('is_available', true);
+      
+      setOnlineMuftis(data?.length || 0);
     } catch (error) {
       console.log('Error loading muftis:', error);
     }
@@ -41,7 +46,15 @@ export default function Fatwa() {
 
   const { data: fatwas, isLoading } = useQuery({
     queryKey: ['fatwas'],
-    queryFn: () => base44.entities.Fatwa.list('-created_date'),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Fatwa')
+        .select('*')
+        .order('created_date', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    },
     initialData: [],
   });
 

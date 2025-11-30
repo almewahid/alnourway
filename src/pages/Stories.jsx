@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,7 +20,15 @@ export default function Stories() {
 
   const { data: stories, isLoading } = useQuery({
     queryKey: ['stories'],
-    queryFn: () => base44.entities.Story.list("-created_date"),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Story')
+        .select('*')
+        .order('created_date', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    },
     initialData: [],
   });
 

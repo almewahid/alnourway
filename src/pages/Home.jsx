@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Heart, MessageSquare, Users, Globe, Calendar, Library, Video, Search, User, Handshake } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/supabaseClient";
 
 const verses = [
   { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", ref: "سورة الشرح - آية 6" },
@@ -47,16 +47,31 @@ export default function Home() {
 
   const loadOnlineCounts = async () => {
     try {
-      const [scholars, preachers, teachers] = await Promise.all([
-        base44.entities.Scholar.filter({ type: 'mufti', is_available: true }),
-        base44.entities.Scholar.filter({ type: 'preacher', is_available: true }),
-        base44.entities.Scholar.filter({ type: 'teacher', is_available: true })
-      ]);
+      // Get scholars count
+      const { data: scholars, error: scholarsError } = await supabase
+        .from('Scholar')
+        .select('*')
+        .eq('type', 'mufti')
+        .eq('is_available', true);
+
+      // Get preachers count
+      const { data: preachers, error: preachersError } = await supabase
+        .from('Scholar')
+        .select('*')
+        .eq('type', 'preacher')
+        .eq('is_available', true);
+
+      // Get teachers count
+      const { data: teachers, error: teachersError } = await supabase
+        .from('Scholar')
+        .select('*')
+        .eq('type', 'teacher')
+        .eq('is_available', true);
       
       setOnlineCount({
-        scholars: scholars.length,
-        preachers: preachers.length,
-        teachers: teachers.length
+        scholars: scholars?.length || 0,
+        preachers: preachers?.length || 0,
+        teachers: teachers?.length || 0
       });
     } catch (error) {
       console.log('Error loading online counts:', error);
@@ -65,14 +80,19 @@ export default function Home() {
 
   const trackEvent = async (eventType, contentType, contentId) => {
     try {
-      const user = await base44.auth.me().catch(() => null);
-      await base44.entities.AnalyticsEvent.create({
-        event_type: eventType,
-        user_email: user?.email || 'guest',
-        content_type: contentType,
-        content_id: contentId,
-        device_type: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
-      });
+      // Get current user (if authenticated)
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Track analytics event
+      await supabase
+        .from('AnalyticsEvent')
+        .insert({
+          event_type: eventType,
+          user_email: user?.email || 'guest',
+          content_type: contentType,
+          content_id: contentId,
+          device_type: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+        });
     } catch (error) {
       console.log('Analytics error:', error);
     }

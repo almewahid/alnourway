@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,15 @@ export default function Lectures() {
 
   const { data: lectures, isLoading } = useQuery({
     queryKey: ['lectures'],
-    queryFn: () => base44.entities.Lecture.list("-created_date"),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Lecture')
+        .select('*')
+        .order('created_date', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    },
     initialData: [],
   });
 

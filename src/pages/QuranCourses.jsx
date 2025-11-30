@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/supabaseClient";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,7 +21,7 @@ export default function QuranCourses() {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
+      const { data: { user: userData } } = await supabase.auth.getUser();
       setUser(userData);
     } catch (error) {
       console.error("Error loading user:", error);
@@ -31,12 +30,20 @@ export default function QuranCourses() {
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['quran_courses'],
-    queryFn: () => base44.entities.QuranCourse.filter({ is_active: true }),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('QuranCourse')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_date', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    },
     initialData: [],
   });
 
   const filteredCourses = courses.filter(course => {
-    // Modified logic for gender filtering
     const matchesGender = selectedGender === "all" || course.gender === selectedGender;
     const matchesType = selectedType === "all" || course.type === selectedType;
     return matchesGender && matchesType;
