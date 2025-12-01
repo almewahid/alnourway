@@ -1,29 +1,83 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/components/api/supabaseClient';
 
-const AuthContext = createContext();
+const AuthContext = createContext({});
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
-export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+    // Check active sessions and sets the user
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return unsubscribe;
+    // Listen for changes on auth state (login, logout, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
+  const signUp = async (email, password, metadata = {}) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata
+      }
+    });
+    if (error) throw error;
+    return data;
+  };
+
+  const signIn = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
+  };
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  };
+
+  const resetPassword = async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) throw error;
+  };
+
+  const updateProfile = async (updates) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: updates
+    });
+    if (error) throw error;
+    return data;
+  };
+
   const value = {
-    currentUser,
-    loading
+    user,
+    loading,
+    signUp,
+    signIn,
+    signOut,
+    resetPassword,
+    updateProfile,
   };
 
   return (
@@ -31,6 +85,6 @@ export function AuthProvider({ children }) {
       {!loading && children}
     </AuthContext.Provider>
   );
-}
+};
 
 export default AuthContext;
