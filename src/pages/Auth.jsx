@@ -1,79 +1,33 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/components/api/supabaseClient";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { LogIn, UserPlus, AlertCircle, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [formData, setFormData] = useState({ email: "", password: "", confirmPassword: "" });
-
-  // عرض خطأ OAuth إذا موجود بالـ URL
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("error") === "oauth_failed") {
-      setError("فشل تسجيل الدخول بحساب Google. حاول مرة أخرى.");
-    }
-  }, []);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
-    setSuccess("");
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
       if (error) throw error;
-      setSuccess("تم تسجيل الدخول بنجاح!");
-      setTimeout(() => window.location.href = "/", 1000);
+
+      navigate("/"); // تسجيل الدخول ناجح
     } catch (err) {
       setError(err.message || "فشل تسجيل الدخول");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("كلمتا المرور غير متطابقتين");
-      setLoading(false);
-      return;
-    }
-    if (formData.password.length < 6) {
-      setError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
-      if (error) throw error;
-      setSuccess("تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك من البريد الإلكتروني");
-      setFormData({ email: "", password: "", confirmPassword: "" });
-      setTimeout(() => setIsLogin(true), 3000);
-    } catch (err) {
-      setError(err.message || "فشل إنشاء الحساب");
     } finally {
       setLoading(false);
     }
@@ -82,87 +36,82 @@ export default function Auth() {
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError("");
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback/page`,
+          redirectTo: window.location.origin + "/auth", // العودة إلى هذه الصفحة
         },
       });
       if (error) throw error;
     } catch (err) {
-      setError(err.message || "فشل تسجيل الدخول بـ Google");
+      setError("فشل تسجيل الدخول بحساب Google");
     } finally {
       setLoading(false);
     }
   };
 
+  // قراءة OAuth hash عند العودة من Google
+  useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get("access_token");
+    const refreshToken = hashParams.get("refresh_token");
+
+    if (accessToken && refreshToken) {
+      localStorage.setItem(
+        "supabase.auth.token",
+        JSON.stringify({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+          expires_at: Date.now() + 3600 * 1000,
+        })
+      );
+      window.history.replaceState(null, "", "/"); // إزالة hash
+      navigate("/"); // إعادة التوجيه للصفحة الرئيسية
+    }
+  }, [navigate]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 p-4 md:p-6 flex items-center justify-center">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-3 rounded-full mb-6">
-            <Sparkles className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">منصة النور الطريق</span>
-          </div>
-        </div>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <h1 className="text-2xl font-bold mb-4">تسجيل الدخول</h1>
 
-        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-2xl font-bold text-center text-gray-900">
-              {isLogin ? "تسجيل الدخول" : "إنشاء حساب جديد"}
-            </CardTitle>
-          </CardHeader>
+      {error && <p className="text-red-600 mb-4">{error}</p>}
 
-          <CardContent className="p-6 md:p-8">
-            {error && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-800">{error}</p>
-            </motion.div>}
+      <form onSubmit={handleLogin} className="space-y-4 w-full max-w-sm">
+        <input
+          type="email"
+          name="email"
+          placeholder="البريد الإلكتروني"
+          value={formData.email}
+          onChange={handleInputChange}
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="كلمة المرور"
+          value={formData.password}
+          onChange={handleInputChange}
+          className="w-full p-2 border rounded"
+          required
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded"
+        >
+          {loading ? "جاري التحميل..." : "تسجيل الدخول"}
+        </button>
+      </form>
 
-            {success && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 bg-green-50 border border-green-200 rounded-2xl flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-green-800">{success}</p>
-            </motion.div>}
-
-            <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
-              <div>
-                <Label htmlFor="email" className="text-gray-700 font-medium mb-2 block">البريد الإلكتروني</Label>
-                <Input id="email" name="email" type="email" placeholder="example@domain.com" value={formData.email} onChange={handleInputChange} required className="rounded-2xl" />
-              </div>
-
-              <div>
-                <Label htmlFor="password" className="text-gray-700 font-medium mb-2 block">كلمة المرور</Label>
-                <Input id="password" name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleInputChange} required className="rounded-2xl" />
-              </div>
-
-              {!isLogin && <div>
-                <Label htmlFor="confirmPassword" className="text-gray-700 font-medium mb-2 block">تأكيد كلمة المرور</Label>
-                <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleInputChange} required className="rounded-2xl" />
-              </div>}
-
-              <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-6 text-lg rounded-2xl">
-                {loading ? <div className="flex items-center gap-2"><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div><span>جاري التحميل...</span></div> : <div className="flex items-center gap-2">{isLogin ? <LogIn className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}<span>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"}</span></div>}
-              </Button>
-
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300"></div></div>
-                <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-gray-500">أو</span></div>
-              </div>
-
-              <Button type="button" variant="outline" onClick={handleGoogleLogin} className="w-full py-6 text-lg rounded-2xl border-2">
-                <span>الدخول بحساب Google</span>
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <button onClick={() => { setIsLogin(!isLogin); setError(""); setSuccess(""); setFormData({ email: "", password: "", confirmPassword: "" }); }} className="text-blue-600 hover:text-blue-700 font-medium">
-                {isLogin ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب بالفعل؟ تسجيل الدخول"}
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+      <button
+        onClick={handleGoogleLogin}
+        className="mt-4 w-full max-w-sm bg-red-600 text-white py-2 rounded"
+      >
+        الدخول بحساب Google
+      </button>
     </div>
   );
 }
