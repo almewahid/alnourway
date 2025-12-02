@@ -9,17 +9,13 @@ export default function Callback() {
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
-      // Supabase سيحاول استخراج الجلسة
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      // Supabase يلتقط التوكن من الـ URL
+      const { data: { session }, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
 
-      if (session) {
-        // تسجيل دخول ناجح → إلى الصفحة الرئيسية
-        router.replace("/");
-      } else {
-        // فشل → رجوع لصفحة auth
+      if (error) {
         router.replace("/auth?error=oauth_failed");
+      } else if (session) {
+        router.replace("/");
       }
     };
 
@@ -27,15 +23,7 @@ export default function Callback() {
   }, []);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontSize: "20px",
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center text-xl font-semibold text-gray-700">
       جاري تسجيل الدخول...
     </div>
   );
