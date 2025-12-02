@@ -16,7 +16,6 @@ export default function Auth() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    full_name: "",
     confirmPassword: ""
   });
 
@@ -71,15 +70,10 @@ export default function Auth() {
     }
 
     try {
+      // Sign up without any metadata
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            full_name: formData.full_name,
-            role: 'user'
-          }
-        }
       });
 
       if (error) throw error;
@@ -88,7 +82,6 @@ export default function Auth() {
       setFormData({
         email: "",
         password: "",
-        full_name: "",
         confirmPassword: ""
       });
       
@@ -147,24 +140,6 @@ export default function Auth() {
             )}
 
             <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
-              {!isLogin && (
-                <div>
-                  <Label htmlFor="full_name" className="text-gray-700 font-medium mb-2 block">
-                    الاسم الكامل
-                  </Label>
-                  <Input
-                    id="full_name"
-                    name="full_name"
-                    type="text"
-                    placeholder="أدخل اسمك الكامل"
-                    value={formData.full_name}
-                    onChange={handleInputChange}
-                    required={!isLogin}
-                    className="rounded-2xl"
-                  />
-                </div>
-              )}
-
               <div>
                 <Label htmlFor="email" className="text-gray-700 font-medium mb-2 block">
                   البريد الإلكتروني
@@ -243,7 +218,6 @@ export default function Auth() {
                   setFormData({
                     email: "",
                     password: "",
-                    full_name: "",
                     confirmPassword: ""
                   });
                 }}
