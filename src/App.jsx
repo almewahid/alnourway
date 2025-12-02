@@ -10,7 +10,6 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Auth from '@/pages/Auth';
-import OAuthCallback from '@/pages/auth/callback/page.jsx'; // ← إضافة Route لـ OAuth
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useEffect } from 'react';
 
