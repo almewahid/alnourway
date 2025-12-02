@@ -37,17 +37,6 @@ export default function Auth() {
     }
   }, []);
 
-  // Check if already logged in
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate('/');
-      }
-    };
-    checkUser();
-  }, [navigate]);
-
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
