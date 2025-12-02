@@ -32,22 +32,24 @@ const AuthenticatedApp = () => {
       const accessToken = hashParams.get('access_token');
       const refreshToken = hashParams.get('refresh_token');
 
-      if (accessToken) {
+      if (accessToken && refreshToken) {
         try {
-          const { data, error } = await supabase.auth.setSession({
+          // Store tokens in localStorage
+          localStorage.setItem('supabase.auth.token', JSON.stringify({
             access_token: accessToken,
             refresh_token: refreshToken,
-          });
-
-          if (error) throw error;
+            expires_at: Date.now() + 3600000
+          }));
 
           // Clear hash from URL
-          window.history.replaceState(null, '', window.location.pathname);
+          window.history.replaceState(null, '', '/');
           
-          // Redirect to home
-          window.location.href = '/';
+          // Reload to apply session
+          window.location.reload();
         } catch (error) {
           console.error('OAuth callback error:', error);
+          // Clear hash anyway
+          window.history.replaceState(null, '', '/');
         }
       }
     };
