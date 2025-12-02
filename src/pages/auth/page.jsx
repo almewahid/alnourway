@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/components/api/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function Callback() {
   const router = useRouter();
@@ -11,10 +11,9 @@ export default function Callback() {
     const handleOAuthCallback = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-
-        if (error) {
+        if (error || !session) {
           router.replace("/auth?error=oauth_failed");
-        } else if (session) {
+        } else {
           router.replace("/");
         }
       } catch (err) {

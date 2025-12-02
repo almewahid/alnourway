@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,18 +8,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, UserPlus, AlertCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "", confirmPassword: "" });
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // عرض خطأ OAuth إذا موجود بالـ URL
+  useEffect(() => {
+    const oauthError = searchParams.get("error");
+    if (oauthError === "oauth_failed") {
+      setError("فشل تسجيل الدخول بحساب Google. حاول مرة أخرى.");
+    }
+  }, [searchParams]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,18 +38,14 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
       if (error) throw error;
-
       setSuccess("تم تسجيل الدخول بنجاح!");
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+      setTimeout(() => router.replace("/"), 1000);
     } catch (err) {
       setError(err.message || "فشل تسجيل الدخول");
     } finally {
@@ -54,29 +57,24 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     if (formData.password !== formData.confirmPassword) {
       setError("كلمتا المرور غير متطابقتين");
       setLoading(false);
       return;
     }
-
     if (formData.password.length < 6) {
       setError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
       setLoading(false);
       return;
     }
-
     try {
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       });
       if (error) throw error;
-
       setSuccess("تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك من البريد الإلكتروني");
       setFormData({ email: "", password: "", confirmPassword: "" });
-
       setTimeout(() => setIsLogin(true), 3000);
     } catch (err) {
       setError(err.message || "فشل إنشاء الحساب");
@@ -86,16 +84,18 @@ export default function Auth() {
   };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
+        options: { redirectTo: `${window.location.origin}/auth` }, // إعادة التوجيه إلى نفس صفحة Auth
       });
       if (error) throw error;
     } catch (err) {
-      setError(err.message || "فشل تسجيل الدخول بـ Google");
+      setError("فشل تسجيل الدخول بحساب Google. حاول مرة أخرى.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,7 +123,6 @@ export default function Auth() {
                 <p className="text-sm text-red-800">{error}</p>
               </motion.div>
             )}
-
             {success && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 bg-green-50 border border-green-200 rounded-2xl flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
