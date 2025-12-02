@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 
@@ -24,7 +22,7 @@ export default function OAuthCallback() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center text-xl font-semibold text-gray-700">
+    <div className="min-h-screen flex items-center justify-center">
       جاري تسجيل الدخول...
     </div>
   );

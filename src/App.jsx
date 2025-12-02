@@ -1,17 +1,17 @@
-import './App.css'
-import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClientInstance } from '@/lib/query-client'
-import VisualEditAgent from '@/lib/VisualEditAgent'
-import NavigationTracker from '@/lib/NavigationTracker'
-import { pagesConfig } from './pages.config'
+import './App.css';
+import { Toaster } from "@/components/ui/toaster";
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClientInstance } from '@/lib/query-client';
+import VisualEditAgent from '@/lib/VisualEditAgent';
+import NavigationTracker from '@/lib/NavigationTracker';
+import { pagesConfig } from './pages.config';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Auth from '@/pages/Auth';
+import OAuthCallback from '@/pages/auth/callback/page.jsx'; // ← إضافة Route لـ OAuth
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { supabase } from '@/components/api/supabaseClient';
 import { useEffect } from 'react';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -25,7 +25,7 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
 
-  // Handle OAuth callback
+  // Handle OAuth callback hash (if using implicit flow)
   useEffect(() => {
     const handleOAuthCallback = async () => {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -34,21 +34,16 @@ const AuthenticatedApp = () => {
 
       if (accessToken && refreshToken) {
         try {
-          // Store tokens in localStorage
           localStorage.setItem('supabase.auth.token', JSON.stringify({
             access_token: accessToken,
             refresh_token: refreshToken,
             expires_at: Date.now() + 3600000
           }));
 
-          // Clear hash from URL
           window.history.replaceState(null, '', '/');
-          
-          // Reload to apply session
           window.location.reload();
         } catch (error) {
           console.error('OAuth callback error:', error);
-          // Clear hash anyway
           window.history.replaceState(null, '', '/');
         }
       }
@@ -57,7 +52,6 @@ const AuthenticatedApp = () => {
     handleOAuthCallback();
   }, []);
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -66,22 +60,20 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
       {/* Public routes */}
       <Route path="/auth" element={<Auth />} />
+      <Route path="/auth/callback" element={<OAuthCallback />} /> {/* ← إضافة Route هنا */}
       <Route path="/login" element={<Navigate to="/auth" replace />} />
       <Route path="/register" element={<Navigate to="/auth" replace />} />
       
@@ -111,9 +103,7 @@ const AuthenticatedApp = () => {
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
@@ -125,7 +115,7 @@ function App() {
         <VisualEditAgent />
       </QueryClientProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
