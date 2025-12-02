@@ -1,24 +1,22 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/components/api/supabaseClient";
 
-export default function CallbackPage() {
-  const router = useRouter();
-
+export default function OAuthCallback() {
   useEffect(() => {
     const handleOAuthCallback = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+        const { data: { session }, error } =
+          await supabase.auth.getSessionFromUrl({ storeSession: true });
 
         if (error || !session) {
-          router.replace("/auth?error=oauth_failed");
-        } else if (session) {
-          router.replace("/");
+          window.location.href = "/auth?error=oauth_failed";
+        } else {
+          window.location.href = "/";
         }
       } catch (err) {
-        router.replace("/auth?error=oauth_failed");
+        window.location.href = "/auth?error=oauth_failed";
       }
     };
 

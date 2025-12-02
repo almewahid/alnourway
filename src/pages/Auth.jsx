@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, UserPlus, AlertCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,16 +14,13 @@ export default function Auth() {
   const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({ email: "", password: "", confirmPassword: "" });
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
   // عرض خطأ OAuth إذا موجود بالـ URL
   useEffect(() => {
-    const oauthError = searchParams.get("error");
-    if (oauthError === "oauth_failed") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "oauth_failed") {
       setError("فشل تسجيل الدخول بحساب Google. حاول مرة أخرى.");
     }
-  }, [searchParams]);
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,13 +33,13 @@ export default function Auth() {
     setLoading(true);
     setError("");
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
       if (error) throw error;
       setSuccess("تم تسجيل الدخول بنجاح!");
-      setTimeout(() => router.replace("/"), 1000);
+      setTimeout(() => window.location.href = "/", 1000);
     } catch (err) {
       setError(err.message || "فشل تسجيل الدخول");
     } finally {
@@ -57,6 +51,7 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     if (formData.password !== formData.confirmPassword) {
       setError("كلمتا المرور غير متطابقتين");
       setLoading(false);
@@ -67,8 +62,9 @@ export default function Auth() {
       setLoading(false);
       return;
     }
+
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       });
@@ -89,11 +85,13 @@ export default function Auth() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth` }, // إعادة التوجيه إلى نفس صفحة Auth
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback/page`,
+        },
       });
       if (error) throw error;
     } catch (err) {
-      setError("فشل تسجيل الدخول بحساب Google. حاول مرة أخرى.");
+      setError(err.message || "فشل تسجيل الدخول بـ Google");
     } finally {
       setLoading(false);
     }
@@ -117,18 +115,15 @@ export default function Auth() {
           </CardHeader>
 
           <CardContent className="p-6 md:p-8">
-            {error && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-800">{error}</p>
-              </motion.div>
-            )}
-            {success && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 bg-green-50 border border-green-200 rounded-2xl flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-green-800">{success}</p>
-              </motion.div>
-            )}
+            {error && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-800">{error}</p>
+            </motion.div>}
+
+            {success && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 bg-green-50 border border-green-200 rounded-2xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-green-800">{success}</p>
+            </motion.div>}
 
             <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
               <div>
@@ -141,25 +136,13 @@ export default function Auth() {
                 <Input id="password" name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleInputChange} required className="rounded-2xl" />
               </div>
 
-              {!isLogin && (
-                <div>
-                  <Label htmlFor="confirmPassword" className="text-gray-700 font-medium mb-2 block">تأكيد كلمة المرور</Label>
-                  <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleInputChange} required={!isLogin} className="rounded-2xl" />
-                </div>
-              )}
+              {!isLogin && <div>
+                <Label htmlFor="confirmPassword" className="text-gray-700 font-medium mb-2 block">تأكيد كلمة المرور</Label>
+                <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleInputChange} required className="rounded-2xl" />
+              </div>}
 
               <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-6 text-lg rounded-2xl">
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>جاري التحميل...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    {isLogin ? <LogIn className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
-                    <span>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"}</span>
-                  </div>
-                )}
+                {loading ? <div className="flex items-center gap-2"><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div><span>جاري التحميل...</span></div> : <div className="flex items-center gap-2">{isLogin ? <LogIn className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}<span>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"}</span></div>}
               </Button>
 
               <div className="relative my-6">
@@ -168,23 +151,12 @@ export default function Auth() {
               </div>
 
               <Button type="button" variant="outline" onClick={handleGoogleLogin} className="w-full py-6 text-lg rounded-2xl border-2">
-                <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
                 <span>الدخول بحساب Google</span>
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <button onClick={() => {
-                setIsLogin(!isLogin);
-                setError("");
-                setSuccess("");
-                setFormData({ email: "", password: "", confirmPassword: "" });
-              }} className="text-blue-600 hover:text-blue-700 font-medium">
+              <button onClick={() => { setIsLogin(!isLogin); setError(""); setSuccess(""); setFormData({ email: "", password: "", confirmPassword: "" }); }} className="text-blue-600 hover:text-blue-700 font-medium">
                 {isLogin ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب بالفعل؟ تسجيل الدخول"}
               </button>
             </div>
