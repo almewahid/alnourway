@@ -52,54 +52,35 @@ export default function Chat() {
     queryKey: ['conversations', user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
-      const { data, error } = await supabase
-        .from('Conversation')
-        .select('*')
-        .eq('user_email', user.email)
-        .eq('status', 'active')
-        .order('last_message_time', { ascending: false });
-      
+      const { data, error } = await supabase.from('Conversation').select('*').eq('user_email', user.email).eq('status', 'active').order('last_message_time', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return data;
     },
     enabled: !!user,
     initialData: [],
-    // refetchInterval: 5000, // DISABLED FOR NOW
+    refetchInterval: 5000,
   });
 
   const { data: messages, isLoading: messagesLoading } = useQuery({
     queryKey: ['messages', selectedConversation?.id],
     queryFn: async () => {
       if (!selectedConversation) return [];
-      const { data, error } = await supabase
-        .from('ChatMessage')
-        .select('*')
-        .eq('conversation_id', selectedConversation.id)
-        .order('created_date', { ascending: true });
-      
+      const { data, error } = await supabase.from('ChatMessage').select('*').eq('conversation_id', selectedConversation.id).order('created_date', { ascending: true });
       if (error) throw error;
-      return data || [];
+      return data;
     },
     enabled: !!selectedConversation,
     initialData: [],
-    // refetchInterval: 2000, // DISABLED FOR NOW
+    refetchInterval: 2000,
   });
 
   const markMessagesAsRead = async () => {
     if (!selectedConversation) return;
     
     try {
-      await supabase
-        .from('ChatMessage')
-        .update({ is_read: true })
-        .eq('conversation_id', selectedConversation.id)
-        .eq('receiver_email', user.email)
-        .eq('is_read', false);
+      await supabase.from('ChatMessage').update({ is_read: true }).eq('conversation_id', selectedConversation.id).eq('receiver_email', user.email).eq('is_read', false);
 
-      await supabase
-        .from('Conversation')
-        .update({ unread_count_user: 0 })
-        .eq('id', selectedConversation.id);
+      await supabase.from('Conversation').update({ unread_count_user: 0 }).eq('id', selectedConversation.id);
 
       queryClient.invalidateQueries({ queryKey: ['conversations', user?.email] });
     } catch (error) {
@@ -110,15 +91,11 @@ export default function Chat() {
   const sendMessageMutation = useMutation({
     mutationFn: async (data) => {
       await supabase.from('ChatMessage').insert(data);
-      
-      await supabase
-        .from('Conversation')
-        .update({
-          last_message: data.message_text,
-          last_message_time: new Date().toISOString(),
-          unread_count_scholar: (selectedConversation.unread_count_scholar || 0) + 1
-        })
-        .eq('id', selectedConversation.id);
+      await supabase.from('Conversation').update({
+        last_message: data.message_text,
+        last_message_time: new Date().toISOString(),
+        unread_count_scholar: (selectedConversation.unread_count_scholar || 0) + 1
+      }).eq('id', selectedConversation.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
