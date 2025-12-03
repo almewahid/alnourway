@@ -26,7 +26,8 @@ import LiveStreams from './pages/LiveStreams';
 import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import Chat from './pages/Chat';
 import Recommendations from './pages/Recommendations';
-import Layout from './Layout.jsx';
+import Auth from './pages/Auth';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -58,10 +59,11 @@ export const PAGES = {
     "AdvancedAnalytics": AdvancedAnalytics,
     "Chat": Chat,
     "Recommendations": Recommendations,
+    "Auth": Auth,
 }
 
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };
