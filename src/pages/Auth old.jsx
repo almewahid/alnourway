@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, UserPlus, AlertCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     email: "",
@@ -19,39 +21,20 @@ export default function Auth() {
     confirmPassword: ""
   });
 
-  // Handle OAuth callback and session
+  // Handle OAuth callback
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      // Check for OAuth hash
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get('access_token');
-      const refreshToken = hashParams.get('refresh_token');
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = params.get('access_token');
 
-      if (accessToken && refreshToken) {
-        try {
-          // Set session with tokens
-          await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken
-          });
-
-          // Clear hash and redirect
-          window.location.href = '/';
-        } catch (err) {
-          console.error('Session error:', err);
-          window.location.href = '/auth';
-        }
-        return;
-      }
-
-      // Check if already logged in
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+    if (accessToken) {
+      // Clear the hash
+      window.history.replaceState(null, '', window.location.pathname);
+      
+      // Redirect to home
+      setTimeout(() => {
         window.location.href = '/';
-      }
-    };
-
-    handleAuthCallback();
+      }, 100);
+    }
   }, []);
 
   const handleInputChange = (e) => {
@@ -69,20 +52,17 @@ export default function Auth() {
     setError("");
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
 
       if (error) throw error;
 
-      // Wait for session to be set
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Redirect
       window.location.href = '/';
     } catch (err) {
       setError(err.message || "فشل تسجيل الدخول");
+    } finally {
       setLoading(false);
     }
   };
@@ -128,11 +108,7 @@ export default function Auth() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          }
+          redirectTo: `${window.location.origin}/auth`
         }
       });
       if (error) throw error;
