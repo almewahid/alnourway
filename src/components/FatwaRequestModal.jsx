@@ -25,7 +25,7 @@ export default function FatwaRequestModal({ open, onClose }) {
 
   const createRequestMutation = useMutation({
     mutationFn: async (data) => {
-      const { error } = await supabase.from('FatwaRequest').insert(data);
+      const { error } = await supabase.from('FatwaRequest').insert([data]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -43,6 +43,32 @@ export default function FatwaRequestModal({ open, onClose }) {
       }, 2000);
     },
   });
+
+  const [isRefining, setIsRefining] = useState(false);
+  const [refinedQuestion, setRefinedQuestion] = useState("");
+
+  const handleRefine = async () => {
+      if (!formData.question || formData.question.length < 10) return;
+      setIsRefining(true);
+      try {
+          const { data } = await import("@/api/base44Client").then(m => m.base44.functions.invoke('aiAssistant', {
+              action: 'refine_question',
+              text: formData.question
+          }));
+          if (data && data.refined_text) {
+              setRefinedQuestion(data.refined_text);
+          }
+      } catch (e) {
+          console.error(e);
+      } finally {
+          setIsRefining(false);
+      }
+  };
+
+  const useRefined = () => {
+      setFormData({ ...formData, question: refinedQuestion });
+      setRefinedQuestion("");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -107,6 +133,29 @@ export default function FatwaRequestModal({ open, onClose }) {
                   rows={5}
                   required
                 />
+                 {/* AI Refine Button */}
+                 <div className="flex justify-end">
+                     <button 
+                        type="button"
+                        onClick={handleRefine}
+                        disabled={isRefining || !formData.question}
+                        className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 mt-1"
+                     >
+                        <CheckCircle className="w-3 h-3" />
+                        {isRefining ? "جاري التحسين..." : "تحسين الصياغة بالذكاء الاصطناعي"}
+                     </button>
+                 </div>
+                 
+                 {refinedQuestion && (
+                     <div className="bg-purple-50 p-3 rounded-lg mt-2 border border-purple-100">
+                         <p className="text-sm text-purple-900 font-medium mb-2">الاقتراح المحسن:</p>
+                         <p className="text-sm text-gray-700 mb-2">{refinedQuestion}</p>
+                         <div className="flex gap-2">
+                             <Button type="button" size="sm" variant="outline" onClick={() => setRefinedQuestion("")}>تجاهل</Button>
+                             <Button type="button" size="sm" onClick={useRefined} className="bg-purple-600 hover:bg-purple-700 text-white">استخدام</Button>
+                         </div>
+                     </div>
+                 )}
               </div>
 
               <Button

@@ -86,7 +86,6 @@ export default function LearnIslam() {
           className="text-center mb-8 pt-4"
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-6">
-            <Sparkles className="w-5 h-5 text-blue-600" />
             <span className="text-blue-800 font-semibold">اكتشف الإسلام</span>
           </div>
           

@@ -225,6 +225,46 @@ export default function Settings() {
                 </Button>
               </CardContent>
             </Card>
+
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl text-red-600">
+                  <Shield className="w-5 h-5" />
+                  تغيير كلمة المرور
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="new-password">كلمة المرور الجديدة</Label>
+                  <Input
+                    id="new-password"
+                    type="password"
+                    placeholder="أدخل كلمة المرور الجديدة"
+                    className="mt-2"
+                    onChange={(e) => window.newPassword = e.target.value}
+                  />
+                </div>
+                <Button
+                  onClick={async () => {
+                     const newPass = window.newPassword;
+                     if (!newPass || newPass.length < 6) {
+                        alert("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+                        return;
+                     }
+                     try {
+                        const { error } = await supabase.auth.updateUser({ password: newPass });
+                        if (error) throw error;
+                        alert("تم تحديث كلمة المرور بنجاح");
+                     } catch(e) {
+                        alert("خطأ في تحديث كلمة المرور: " + e.message);
+                     }
+                  }}
+                  className="bg-red-500 hover:bg-red-600 text-white w-full"
+                >
+                  تحديث كلمة المرور
+                </Button>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="notifications">

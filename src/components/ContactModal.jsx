@@ -28,7 +28,8 @@ export default function ContactModal({ open, onClose, requestType }) {
 
   const createRequestMutation = useMutation({
     mutationFn: async (data) => {
-      const { error } = await supabase.from('ContactRequest').insert(data);
+      // Ensure table exists or use 'ContactRequest' if defined
+      const { error } = await supabase.from('ContactRequest').insert([data]);
       if (error) throw error;
     },
     onSuccess: () => {

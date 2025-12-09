@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, BookOpen, Heart, MessageSquare, Menu, Bell, User as UserIcon, Sparkles, Users, GraduationCap, Shield, Star, Settings } from "lucide-react";
+import { Home, BookOpen, Heart, MessageSquare, Menu, Bell, User as UserIcon, Sparkles, Users, GraduationCap, Shield, Star, Settings, Radio } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -24,7 +24,10 @@ const navigationItems = [
   { title: "التعرف على الإسلام", url: createPageUrl("LearnIslam"), icon: BookOpen, color: "text-teal-600" },
   { title: "أريد أن أتوب", url: createPageUrl("Repentance"), icon: Heart, color: "text-rose-600" },
   { title: "طلب فتوى", url: createPageUrl("Fatwa"), icon: MessageSquare, color: "text-emerald-600" },
+  { title: "البث المباشر", url: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
   { title: "إصلاح ذات البين", url: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
+  { title: "المرشد الذكي", url: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
+  { title: "الدورات التعليمية", url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
 ];
 
 const quickLinks = [
@@ -101,6 +104,21 @@ export default function Layout({ children, currentPageName }) {
     }
   };
 
+  // Dark mode logic
+  const [isDarkMode, setIsDarkMode] = React.useState(localStorage.getItem("theme") === "dark");
+
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+
   return (
     <SidebarProvider defaultOpen={true} open={sidebarOpen} onOpenChange={setSidebarOpen}>
       <style>{`
@@ -110,6 +128,9 @@ export default function Layout({ children, currentPageName }) {
           --emerald-dark: #047857;
           --gold: #D4AF37;
           --gold-light: #F3E5AB;
+        }
+        .dark {
+           color-scheme: dark;
         }
       `}</style>
 
@@ -123,9 +144,9 @@ export default function Layout({ children, currentPageName }) {
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50">
-        <Sidebar side="right" className="border-r border-emerald-100">
-          <SidebarHeader className="border-b border-emerald-100 p-6 bg-gradient-to-br from-emerald-600 to-emerald-700">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 transition-colors duration-300">
+        <Sidebar side="right" className="border-r border-emerald-100 dark:border-emerald-900 dark:bg-gray-900">
+          <SidebarHeader className="border-b border-emerald-100 dark:border-emerald-900 p-6 bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-900 dark:to-emerald-950">
             <div className="flex items-center justify-center gap-3">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" 
@@ -141,7 +162,7 @@ export default function Layout({ children, currentPageName }) {
                 <SidebarMenu>
                   {navigationItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild className={`hover:bg-emerald-50 transition-all duration-300 rounded-xl mb-2 ${location.pathname === item.url ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md' : ''}`}>
+                      <SidebarMenuButton asChild className={`hover:bg-emerald-50 dark:hover:bg-emerald-900/50 dark:text-gray-200 transition-all duration-300 rounded-xl mb-2 ${location.pathname === item.url ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md' : ''}`}>
                         <Link to={item.url} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-3">
                           <item.icon className={`w-5 h-5 ${location.pathname === item.url ? 'text-white' : item.color}`} />
                           <span className="font-semibold text-base">{item.title}</span>
@@ -200,8 +221,28 @@ export default function Layout({ children, currentPageName }) {
                 </SidebarGroupContent>
               </SidebarGroup>
             )}
-          </SidebarContent>
-        </Sidebar>
+
+            {user && (
+              <div className="p-4 mt-auto border-t border-emerald-100 dark:border-emerald-900">
+                <button
+                   onClick={toggleDarkMode}
+                   className="flex items-center gap-3 px-4 py-2 mb-2 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl w-full transition-all duration-300"
+                >
+                   {isDarkMode ? <span className="flex items-center gap-3"><span className="text-xl">☀️</span> وضع النهار</span> : <span className="flex items-center gap-3"><span className="text-xl">🌙</span> وضع الليل</span>}
+                </button>
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = '/';
+                  }}
+                  className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl w-full transition-all duration-300"
+                >
+                  <span className="font-semibold text-sm">تسجيل الخروج</span>
+                </button>
+              </div>
+            )}
+            </SidebarContent>
+            </Sidebar>
 
         <main className="flex-1 flex flex-col min-h-screen w-full overflow-x-hidden">
           <header className="bg-white border-b border-emerald-100 px-4 md:px-6 py-4 block md:hidden shadow-sm">

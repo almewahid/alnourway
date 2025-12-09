@@ -91,17 +91,22 @@ export default function Lectures() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-teal-700 via-teal-600 to-teal-800 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8 md:mb-12 pt-4"
+          className="text-center mb-8 pt-4"
         >
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-3 md:mb-4">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-6">
+            <Video className="w-5 h-5 text-blue-600" />
+            <span className="text-blue-800 font-semibold">المكتبة المرئية والصوتية</span>
+          </div>
+          
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
             مكتبة المحاضرات
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 px-4">
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
             استمع وشاهد محاضرات إسلامية قيّمة
           </p>
         </motion.div>

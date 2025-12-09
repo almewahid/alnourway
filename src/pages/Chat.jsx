@@ -4,7 +4,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Send, Search, User, Sparkles, Check, CheckCheck } from "lucide-react";
+import { MessageSquare, Send, Search, User, Sparkles, Check, CheckCheck, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import OnlineIndicator from "../components/OnlineIndicator";
 import Breadcrumb from "../components/Breadcrumb";
@@ -18,6 +20,48 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const queryClient = useQueryClient();
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [appointmentData, setAppointmentData] = useState({ date: "", time: "", notes: "" });
+
+  const scheduleAppointmentMutation = useMutation({
+    mutationFn: async (data) => {
+      const { error } = await supabase.from('Appointment').insert(data);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setShowScheduleModal(false);
+      setAppointmentData({ date: "", time: "", notes: "" });
+      // Send a system message about the appointment
+      sendMessageMutation.mutate({
+        conversation_id: selectedConversation.id,
+        sender_email: user.email,
+        sender_name: user.full_name,
+        sender_type: 'user',
+        receiver_email: selectedConversation.scholar_email,
+        receiver_name: selectedConversation.scholar_name,
+        message_text: `تم طلب موعد استشارة بتاريخ ${appointmentData.date} الساعة ${appointmentData.time}`
+      });
+      alert("تم إرسال طلب الموعد بنجاح");
+    },
+  });
+
+  const handleScheduleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedConversation || !user) return;
+    
+    // Combine date and time
+    const scheduledTime = new Date(`${appointmentData.date}T${appointmentData.time}`).toISOString();
+
+    scheduleAppointmentMutation.mutate({
+      scholar_email: selectedConversation.scholar_email,
+      scholar_name: selectedConversation.scholar_name,
+      user_email: user.email,
+      user_name: user.full_name,
+      scheduled_time: scheduledTime,
+      notes: appointmentData.notes,
+      status: 'pending'
+    });
+  };
 
   useEffect(() => {
     loadUser();
@@ -276,6 +320,53 @@ export default function Chat() {
                       <p className="text-sm text-white/80">{selectedConversation.scholar_type === 'mufti' ? 'مفتي' : selectedConversation.scholar_type === 'preacher' ? 'داعية' : 'محفظ'}</p>
                     </div>
                   </div>
+                  
+                  <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" size="sm" className="gap-2 bg-white/20 hover:bg-white/30 text-white border-0">
+                        <CalendarIcon className="w-4 h-4" />
+                        <span className="hidden sm:inline">طلب موعد</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>جدولة موعد استشارة</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleScheduleSubmit} className="space-y-4 py-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>التاريخ</Label>
+                            <Input 
+                              type="date" 
+                              required
+                              value={appointmentData.date}
+                              onChange={(e) => setAppointmentData({...appointmentData, date: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>الوقت</Label>
+                            <Input 
+                              type="time" 
+                              required
+                              value={appointmentData.time}
+                              onChange={(e) => setAppointmentData({...appointmentData, time: e.target.value})}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>ملاحظات</Label>
+                          <Input 
+                            placeholder="سبب الموعد..." 
+                            value={appointmentData.notes}
+                            onChange={(e) => setAppointmentData({...appointmentData, notes: e.target.value})}
+                          />
+                        </div>
+                        <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700">
+                          تأكيد الطلب
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-3">

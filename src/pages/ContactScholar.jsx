@@ -12,15 +12,24 @@ export default function ContactScholar() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedScholar, setSelectedScholar] = useState(null);
 
+  const [onlineFilter, setOnlineFilter] = useState(false);
+
   const { data: scholars, isLoading } = useQuery({
     queryKey: ['scholars_mufti'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('Scholar').select('*').eq('type', 'mufti').eq('is_available', true);
+      // Fetch all scholars first, then we can simulate online status or filter
+      const { data, error } = await supabase.from('Scholar').select('*').eq('type', 'mufti');
       if (error) throw error;
       return data;
     },
     initialData: [],
   });
+
+  const onlineCount = scholars.filter(s => isScholarOnline(s)).length;
+  
+  const displayedScholars = onlineFilter 
+    ? scholars.filter(s => isScholarOnline(s))
+    : scholars;
 
   const handleContact = (scholar) => {
     setSelectedScholar(scholar);
@@ -49,18 +58,38 @@ export default function ContactScholar() {
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
             علماؤنا في خدمتك
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
             تواصل مباشرة مع علماء موثوقين للحصول على الفتاوى والإرشاد الشرعي
           </p>
+
+          <div className="flex justify-center gap-4 mb-8">
+             <div 
+               onClick={() => setOnlineFilter(false)}
+               className={`cursor-pointer px-6 py-3 rounded-2xl shadow-sm border transition-all ${!onlineFilter ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-emerald-50'}`}
+             >
+               <span className="block text-2xl font-bold">{scholars.length}</span>
+               <span className="text-sm">إجمالي المفتين</span>
+             </div>
+             <div 
+               onClick={() => setOnlineFilter(true)}
+               className={`cursor-pointer px-6 py-3 rounded-2xl shadow-sm border transition-all ${onlineFilter ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-emerald-50'}`}
+             >
+               <span className="block text-2xl font-bold flex items-center justify-center gap-2">
+                 {onlineCount}
+                 <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-400/50"></span>
+               </span>
+               <span className="text-sm">متواجدون الآن</span>
+             </div>
+          </div>
         </motion.div>
 
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
           </div>
-        ) : scholars.length > 0 ? (
+        ) : displayedScholars.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {scholars.map((scholar, index) => {
+            {displayedScholars.map((scholar, index) => {
               const isOnline = isScholarOnline(scholar);
               return (
                 <motion.div

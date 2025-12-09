@@ -4,8 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MessageSquare, Users, BookOpen, Sparkles, ArrowRight } from "lucide-react";
+import { Search, MessageSquare, Users, BookOpen, Sparkles, ArrowRight, Heart } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import FatwaCard from "../components/FatwaCard";
 import FatwaRequestModal from "../components/FatwaRequestModal";
 import ContactModal from "../components/ContactModal";
@@ -15,10 +17,62 @@ import ShareButtons from "../components/ShareButtons";
 
 export default function Fatwa() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [muftiQuery, setMuftiQuery] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedFatwa, setSelectedFatwa] = useState(null);
   const [onlineMuftis, setOnlineMuftis] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [user, setUser] = useState(null);
+  const [userFavorites, setUserFavorites] = useState([]);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+       if (data.user) {
+          setUser(data.user);
+          fetchFavorites(data.user.email);
+       }
+    });
+  }, []);
+
+  const fetchFavorites = async (email) => {
+     const { data } = await supabase.from('Favorite').select('item_id').eq('user_email', email).eq('item_type', 'fatwa');
+     if (data) setUserFavorites(data.map(f => f.item_id));
+  };
+
+  const toggleFavorite = async (fatwa) => {
+     if (!user) {
+        alert("يرجى تسجيل الدخول");
+        return;
+     }
+     if (userFavorites.includes(fatwa.id)) {
+        // Remove
+        await supabase.from('Favorite').delete().eq('user_email', user.email).eq('item_id', fatwa.id);
+        setUserFavorites(prev => prev.filter(id => id !== fatwa.id));
+     } else {
+        // Add
+        await supabase.from('Favorite').insert({
+           user_email: user.email,
+           item_type: 'fatwa',
+           item_id: fatwa.id,
+           item_title: fatwa.question,
+           item_data: fatwa
+        });
+        setUserFavorites(prev => [...prev, fatwa.id]);
+     }
+  };
+
+  const categories = [
+    { value: "all", label: "الكل" },
+    { value: "عبادات", label: "عبادات" },
+    { value: "معاملات", label: "معاملات" },
+    { value: "عقيدة", label: "عقيدة" },
+    { value: "أخلاق", label: "أخلاق" },
+    { value: "أسرة", label: "أسرة" },
+  ];
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -49,11 +103,22 @@ export default function Fatwa() {
     initialData: [],
   });
 
-  const filteredFatwas = fatwas.filter(fatwa =>
-    fatwa.question?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    fatwa.answer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    fatwa.category?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredFatwas = fatwas.filter(fatwa => {
+    const lowerQuery = searchQuery.toLowerCase();
+    const matchesSearch = fatwa.question?.toLowerCase().includes(lowerQuery) || fatwa.answer?.toLowerCase().includes(lowerQuery);
+    const matchesMufti = !muftiQuery || fatwa.mufti?.toLowerCase().includes(muftiQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || fatwa.category === selectedCategory;
+    
+    let matchesDate = true;
+    if (dateFrom && fatwa.created_date) {
+       matchesDate = matchesDate && new Date(fatwa.created_date) >= new Date(dateFrom);
+    }
+    if (dateTo && fatwa.created_date) {
+       matchesDate = matchesDate && new Date(fatwa.created_date) <= new Date(dateTo);
+    }
+    
+    return matchesSearch && matchesMufti && matchesCategory && matchesDate;
+  });
 
   const quickActions = [
     {
@@ -108,9 +173,14 @@ export default function Fatwa() {
               </div>
 
               {selectedFatwa.mufti && (
-                <div className="flex items-center gap-2 text-emerald-700">
-                  <Users className="w-5 h-5" />
-                  <span className="font-semibold">{selectedFatwa.mufti}</span>
+                <div className="flex items-center justify-between text-emerald-700">
+                  <div className="flex items-center gap-2">
+                     <Users className="w-5 h-5" />
+                     <span className="font-semibold">{selectedFatwa.mufti}</span>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {new Date(selectedFatwa.created_date).toLocaleDateString('ar-SA')}
+                  </div>
                 </div>
               )}
 
@@ -123,12 +193,32 @@ export default function Fatwa() {
                 </div>
               )}
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between">
                 <ShareButtons
                   title={selectedFatwa.question}
                   url={window.location.href}
                   description={selectedFatwa.answer?.substring(0, 100)}
                 />
+                <Button 
+                   variant="outline" 
+                   className="gap-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                   onClick={async () => {
+                      const { data: { user } } = await supabase.auth.getUser();
+                      if(!user) { alert('يرجى تسجيل الدخول للحفظ'); return; }
+                      const { error } = await supabase.from('Favorite').insert({
+                         user_email: user.email,
+                         item_type: 'fatwa',
+                         item_id: selectedFatwa.id,
+                         item_title: selectedFatwa.question,
+                         item_data: selectedFatwa
+                      });
+                      if(error) alert('خطأ في الحفظ');
+                      else alert('تم الحفظ في المفضلة');
+                   }}
+                >
+                   <Heart className="w-5 h-5" />
+                   حفظ في المفضلة
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -175,14 +265,82 @@ export default function Fatwa() {
           <div className="relative max-w-2xl mx-auto mb-8">
             <Input
               id="search-input"
-              placeholder="ابحث في الفتاوى..."
+              placeholder="ابحث في الفتاوى (السؤال، الجواب، أو المفتي)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-12 py-6 text-lg bg-white/95 backdrop-blur-sm rounded-full border-0 shadow-lg"
+              className="pr-12 py-6 text-lg bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full border-0 shadow-lg dark:text-white dark:placeholder-gray-400"
             />
             <button className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-emerald-600 hover:bg-emerald-700 rounded-full flex items-center justify-center transition-colors">
               <Search className="w-5 h-5 text-white" />
             </button>
+          </div>
+
+          <div className="flex justify-center gap-4 mb-6">
+             <Button 
+                variant="outline" 
+                onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                className="bg-white/10 text-white hover:bg-white/20 border-white/20"
+             >
+                {showAdvancedSearch ? 'إخفاء البحث المتقدم' : 'بحث متقدم'}
+             </Button>
+             <Link to={createPageUrl("Favorites")}>
+                <Button className="bg-rose-500 hover:bg-rose-600 text-white gap-2">
+                   <Heart className="w-4 h-4" />
+                   الفتاوى المفضلة
+                </Button>
+             </Link>
+          </div>
+
+          {showAdvancedSearch && (
+             <motion.div 
+                initial={{ opacity: 0, height: 0 }} 
+                animate={{ opacity: 1, height: 'auto' }}
+                className="max-w-3xl mx-auto mb-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 grid md:grid-cols-3 gap-4"
+             >
+                <div className="space-y-2">
+                   <label className="text-white text-sm">اسم المفتي</label>
+                   <Input 
+                      value={muftiQuery} 
+                      onChange={(e) => setMuftiQuery(e.target.value)} 
+                      placeholder="بحث باسم المفتي" 
+                      className="bg-white/80 border-0"
+                   />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-white text-sm">من تاريخ</label>
+                   <Input 
+                      type="date" 
+                      value={dateFrom} 
+                      onChange={(e) => setDateFrom(e.target.value)} 
+                      className="bg-white/80 border-0"
+                   />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-white text-sm">إلى تاريخ</label>
+                   <Input 
+                      type="date" 
+                      value={dateTo} 
+                      onChange={(e) => setDateTo(e.target.value)} 
+                      className="bg-white/80 border-0"
+                   />
+                </div>
+             </motion.div>
+          )}
+
+          <div className="flex flex-wrap gap-2 justify-center mb-8">
+            {categories.map(cat => (
+              <button
+                key={cat.value}
+                onClick={() => setSelectedCategory(cat.value)}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                  selectedCategory === cat.value
+                    ? "bg-white text-emerald-700 shadow-lg"
+                    : "bg-emerald-800/50 text-white/80 hover:bg-emerald-800"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
         </motion.div>
 
@@ -229,7 +387,12 @@ export default function Fatwa() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <FatwaCard fatwa={fatwa} onClick={() => setSelectedFatwa(fatwa)} />
+                <FatwaCard 
+                   fatwa={fatwa} 
+                   onClick={() => setSelectedFatwa(fatwa)}
+                   isFavorited={userFavorites.includes(fatwa.id)}
+                   onToggleFavorite={() => toggleFavorite(fatwa)}
+                />
               </motion.div>
             ))
           ) : (

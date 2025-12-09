@@ -34,6 +34,19 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
       if (item) {
         const { error } = await supabase.from(entity).update(data).eq('id', item.id);
         if (error) throw error;
+
+        // Auto-Notification trigger when answering a FatwaRequest
+        if (entity === 'FatwaRequest' && data.status === 'answered' && data.answer && item.email) {
+           await supabase.from('Notification').insert({
+              user_email: item.email,
+              title: "تمت الإجابة على سؤالك",
+              message: "أجاب أحد العلماء على سؤالك: " + item.question.substring(0, 30) + "...",
+              type: "fatwa_answer",
+              is_read: false,
+              link: `/Fatwa` // Ideally link to specific fatwa if public, or profile
+           });
+        }
+
       } else {
         const { error } = await supabase.from(entity).insert(data);
         if (error) throw error;

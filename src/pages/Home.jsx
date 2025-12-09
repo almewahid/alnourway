@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Heart, MessageSquare, Users, Globe, Calendar, Library, Video, Search, User, Handshake } from "lucide-react";
 import { supabase } from "@/components/api/supabaseClient";
+import AIRecommendations from "@/components/AIRecommendations"; // Import AI Recommendations
 
 const verses = [
   { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", ref: "سورة الشرح - آية 6" },
@@ -35,8 +36,10 @@ export default function Home() {
     features: { azkar: true, library: true, lectures: true, stories: true, fatwas: true },
     languages: { ar: true, en: true, fr: true, ur: true }
   });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
     const saved = localStorage.getItem('appSettings');
     if (saved) {
       setAppSettings(JSON.parse(saved));
@@ -189,6 +192,9 @@ export default function Home() {
             </Button>
           </Link>
         </div>
+
+        {/* AI Recommendations */}
+        {user && <AIRecommendations userEmail={user.email} />}
 
         {/* الأقسام الرئيسية - 2 في الموبايل، 4 في الديسكتوب */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">

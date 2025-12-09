@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,9 +9,16 @@ import { Video, Calendar, Users, Clock, Play, Radio } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import CreateStreamModal from "@/components/CreateStreamModal";
 
 export default function LiveStreams() {
   const [filter, setFilter] = useState("all");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, []);
 
   const { data: streams, isLoading } = useQuery({
     queryKey: ['live_streams'],
@@ -59,9 +66,17 @@ export default function LiveStreams() {
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
             المحاضرات والدروس المباشرة
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 mb-6">
             شاهد البث المباشر للمحاضرات والدروس الإسلامية
           </p>
+          
+          <Button 
+            onClick={() => setShowCreateModal(true)}
+            className="bg-purple-600 hover:bg-purple-700 text-white gap-2"
+          >
+            <Video className="w-4 h-4" />
+            جدولة بث جديد
+          </Button>
         </motion.div>
 
         {/* إحصائيات سريعة */}
@@ -173,17 +188,15 @@ export default function LiveStreams() {
                     </div>
 
                     {stream.stream_url && (
-                      <a 
-                        href={stream.stream_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                      <Link 
+                        to={createPageUrl("LiveStreamWatch") + `?id=${stream.id}`}
                         className="block"
                       >
                         <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
                           <Play className="w-5 h-5 ml-2" />
-                          {stream.is_live ? "انضم للبث المباشر" : stream.recording_url ? "شاهد التسجيل" : "سيبدأ قريباً"}
+                          {stream.is_live ? "انضم للبث المباشر" : stream.recording_url ? "شاهد التسجيل" : "تفاصيل البث"}
                         </Button>
-                      </a>
+                      </Link>
                     )}
                   </CardContent>
                 </Card>
@@ -207,6 +220,11 @@ export default function LiveStreams() {
           </Card>
         )}
       </div>
+      <CreateStreamModal 
+        open={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+        user={user}
+      />
     </div>
   );
 }
