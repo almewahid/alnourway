@@ -19,14 +19,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Auth state changed:', event, session?.user?.email);
       
       if (session?.user) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email,
-          full_name: session.user.user_metadata?.full_name || session.user.email,
-          role: session.user.user_metadata?.role || 'user',
-          ...session.user.user_metadata
-        });
-        setIsAuthenticated(true);
+        await loadUserData(session.user);
       } else {
         setUser(null);
         setIsAuthenticated(false);
@@ -38,6 +31,47 @@ export const AuthProvider = ({ children }) => {
       authListener?.subscription?.unsubscribe();
     };
   }, []);
+
+  const loadUserData = async (authUser) => {
+    try {
+      // ✅ جلب بيانات المستخدم من جدول Profile
+      const { data: profile, error } = await supabase
+        .from('Profile')
+        .select('*')
+        .eq('user_id', authUser.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('⚠️ Error loading profile:', error);
+      }
+
+      // دمج البيانات
+      const userData = {
+        id: authUser.id,
+        email: authUser.email,
+        full_name: profile?.full_name || authUser.user_metadata?.full_name || authUser.email,
+        role: profile?.role || 'user', // ✅ من جدول Profile
+        avatar_url: profile?.avatar_url,
+        ...authUser.user_metadata,
+        profile_id: profile?.id
+      };
+
+      console.log('✅ User data loaded:', userData.email, 'Role:', userData.role);
+      setUser(userData);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('❌ Error in loadUserData:', error);
+      // حتى لو فشل، استخدم بيانات Auth
+      setUser({
+        id: authUser.id,
+        email: authUser.email,
+        full_name: authUser.user_metadata?.full_name || authUser.email,
+        role: 'user',
+        ...authUser.user_metadata
+      });
+      setIsAuthenticated(true);
+    }
+  };
 
   const checkAppState = async () => {
     try {
@@ -56,15 +90,8 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
         setUser(null);
       } else if (session?.user) {
-        // User is authenticated
-        setUser({
-          id: session.user.id,
-          email: session.user.email,
-          full_name: session.user.user_metadata?.full_name || session.user.email,
-          role: session.user.user_metadata?.role || 'user',
-          ...session.user.user_metadata
-        });
-        setIsAuthenticated(true);
+        // ✅ تحميل بيانات المستخدم من Profile
+        await loadUserData(session.user);
       } else {
         // No active session
         setIsAuthenticated(false);
@@ -92,14 +119,7 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
       
       if (authUser) {
-        setUser({
-          id: authUser.id,
-          email: authUser.email,
-          full_name: authUser.user_metadata?.full_name || authUser.email,
-          role: authUser.user_metadata?.role || 'user',
-          ...authUser.user_metadata
-        });
-        setIsAuthenticated(true);
+        await loadUserData(authUser);
       } else {
         setUser(null);
         setIsAuthenticated(false);
@@ -148,14 +168,7 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
       
       if (data.user) {
-        setUser({
-          id: data.user.id,
-          email: data.user.email,
-          full_name: data.user.user_metadata?.full_name || data.user.email,
-          role: data.user.user_metadata?.role || 'user',
-          ...data.user.user_metadata
-        });
-        setIsAuthenticated(true);
+        await loadUserData(data.user);
       }
       
       return data;
@@ -191,6 +204,10 @@ export const AuthProvider = ({ children }) => {
       isLoadingPublicSettings,
       authError,
       appPublicSettings,
+      role: user?.role,  // ✅ إضافة role
+      isAdmin: user?.role === 'admin',  // ✅ إضافة
+      isModerator: user?.role === 'moderator',  // ✅ إضافة
+      isModeratorOrAdmin: user?.role === 'moderator' || user?.role === 'admin',  // ✅ إضافة
       logout,
       navigateToLogin,
       checkAppState,
