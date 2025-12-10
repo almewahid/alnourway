@@ -37,10 +37,15 @@ export default function BookReader() {
       try {
           // Use description or first chunk of content for summary if content is large
           const textToSummarize = book.description + (book.content ? " " + book.content.substring(0, 1000) : "");
-          const { data } = await import("@/api/base44Client").then(m => m.base44.functions.invoke('aiAssistant', {
-              action: 'summarize',
-              text: textToSummarize
-          }));
+          const { data, error } = await supabase.functions.invoke('aiAssistant', {
+              body: {
+                  action: 'summarize',
+                  text: textToSummarize
+              }
+          });
+          
+          if (error) throw error;
+
           if (data && data.summary) {
               setSummary(data.summary);
           }

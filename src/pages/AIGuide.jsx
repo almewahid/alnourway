@@ -7,7 +7,7 @@ import { Bot, Send, User, Sparkles, Loader2, Video, BookOpen } from "lucide-reac
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { base44 } from "@/api/base44Client";
+// Removed base44 import
 
 export default function AIGuide() {
   const [messages, setMessages] = useState([
@@ -39,17 +39,17 @@ export default function AIGuide() {
 
     try {
       // Fetch relevant lectures to provide as context
-      const lecturesList = await base44.entities.Lecture.list({ limit: 10, sort: { created_date: -1 } });
-      const lecturesContext = lecturesList.map(l => `- ${l.title} by ${l.speaker} (Topic: ${l.topic})`).join("\n");
+      const { data: lecturesList } = await supabase.from('Lecture').select('*').limit(10).order('created_date', { ascending: false });
+      const lecturesContext = lecturesList?.map(l => `- ${l.title} by ${l.speaker} (Topic: ${l.topic})`).join("\n") || "";
 
       // Fetch Books and User Preferences for deeper context
-      const booksList = await base44.entities.Book.list({ limit: 5 });
-      const booksContext = booksList.map(b => `- Book: ${b.title} by ${b.author}`).join("\n");
+      const { data: booksList } = await supabase.from('Book').select('*').limit(5);
+      const booksContext = booksList?.map(b => `- Book: ${b.title} by ${b.author}`).join("\n") || "";
       
-      const user = await base44.auth.me();
+      const { data: { user } } = await supabase.auth.getUser();
       let userContext = "";
       if (user) {
-         const prefs = await base44.entities.UserPreference.list({ filters: { user_email: user.email } });
+         const { data: prefs } = await supabase.from('UserPreference').select('*').eq('user_email', user.email);
          if (prefs && prefs.length > 0) {
              userContext = `User Interests: ${prefs[0].interested_topics?.join(", ")}`;
          }
@@ -93,13 +93,20 @@ export default function AIGuide() {
           User Question: ${input}
       `;
 
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        add_context_from_internet: true 
+      // Call AI Assistant function via Supabase
+      const { data: res, error } = await supabase.functions.invoke('aiAssistant', {
+          body: {
+              action: 'chat',
+              prompt: prompt
+          }
       });
 
+      if (error) throw error;
+
       // Parse response for recommendations
-      let content = res;
+      // Assuming res returns { text: "..." } or similar, adapting based on typical response
+      let content = res?.text || res || ""; // Fallback
+
       let recommendations = [];
       const recRegex = /\[\[RECOMMENDATIONS\]\]([\s\S]*?)\[\[\/RECOMMENDATIONS\]\]/;
       const match = res.match(recRegex);

@@ -51,10 +51,15 @@ export default function FatwaRequestModal({ open, onClose }) {
       if (!formData.question || formData.question.length < 10) return;
       setIsRefining(true);
       try {
-          const { data } = await import("@/api/base44Client").then(m => m.base44.functions.invoke('aiAssistant', {
-              action: 'refine_question',
-              text: formData.question
-          }));
+          const { data, error } = await supabase.functions.invoke('aiAssistant', {
+              body: {
+                  action: 'refine_question',
+                  text: formData.question
+              }
+          });
+          
+          if (error) throw error;
+
           if (data && data.refined_text) {
               setRefinedQuestion(data.refined_text);
           }

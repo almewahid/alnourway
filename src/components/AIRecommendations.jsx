@@ -2,20 +2,28 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/components/api/supabaseClient";
 
 export default function AIRecommendations({ userEmail }) {
   const { data: recommendations, isLoading } = useQuery({
     queryKey: ['ai_recommendations', userEmail],
     queryFn: async () => {
       // Fetch simplistic history (this could be improved by fetching actual ViewHistory)
-      const { data: history } = await base44.entities.UserPreference.list(); 
+      const { data: history } = await supabase.from('UserPreference').select('*').eq('user_email', userEmail);
+      
       // Simplified for demo: passing basic context
-      const response = await base44.functions.invoke('aiAssistant', {
-        action: 'recommend',
-        userHistory: history?.[0]?.interested_topics || ['general']
+      const { data, error } = await supabase.functions.invoke('aiAssistant', {
+        body: {
+          action: 'recommend',
+          userHistory: history?.[0]?.interested_topics || ['general']
+        }
       });
-      return response.data?.recommendations || [];
+      
+      if (error) {
+         console.error("AI Recommendation Error:", error);
+         return [];
+      }
+      return data?.recommendations || [];
     },
     enabled: !!userEmail,
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
