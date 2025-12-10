@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/components/api/supabaseClient";
+// لو لا تستخدم alias @ في Vite فاستعمل بدله:
+// import { supabase } from "../components/api/supabaseClient";
 
 export default function ProtectedRoute({ children }) {
   const [loading, setLoading] = useState(true);
@@ -23,6 +25,7 @@ export default function ProtectedRoute({ children }) {
 
     checkAuth();
 
+    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -30,7 +33,9 @@ export default function ProtectedRoute({ children }) {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   if (loading) {
