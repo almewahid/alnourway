@@ -8,6 +8,7 @@ import { Shield, BookOpen, Video, MessageSquare, Users, Heart, Building2, Gradua
 import AdminTable from "../components/AdminTable";
 import AppSettingsAdmin from "../components/AppSettingsAdmin";
 import BulkUploadModal from "../components/BulkUploadModal";
+import UsersManagement from "../components/UsersManagement";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -43,9 +44,9 @@ export default function Admin() {
         return;
       }
 
-      // 3. التحقق من صلاحية Admin
-      if (profileData?.role !== 'admin') {
-        console.warn('Access denied: User is not admin');
+      // 3. التحقق من صلاحية Admin أو Moderator
+      if (profileData?.role !== 'admin' && profileData?.role !== 'moderator') {
+        console.warn('Access denied: User is not admin or moderator');
         window.location.href = '/unauthorized';
         return;
       }
@@ -252,10 +253,92 @@ export default function Admin() {
           ],
           required: true
         },
+        { key: "language", label: "اللغة", type: "text" },
         { key: "pages", label: "عدد الصفحات", type: "number" },
         { key: "cover_url", label: "رابط صورة الغلاف", type: "text" },
         { key: "pdf_url", label: "رابط PDF", type: "text" },
-        { key: "content", label: "المحتوى للقراءة", type: "textarea" },
+        { key: "content", label: "المحتوى للقراءة (اختياري)", type: "textarea" },
+      ]
+    },
+    {
+      id: "courses_management",
+      title: "إدارة الدورات",
+      icon: GraduationCap,
+      entity: "Course",
+      fields: [
+        { key: "title", label: "عنوان الدورة", type: "text", required: true },
+        { key: "instructor", label: "المدرب", type: "text", required: true },
+        { key: "description", label: "الوصف", type: "textarea" },
+        { 
+          key: "category", 
+          label: "التصنيف", 
+          type: "select",
+          options: [
+            { value: "aqeedah", label: "عقيدة" },
+            { value: "fiqh", label: "فقه" },
+            { value: "hadith", label: "حديث" },
+            { value: "tafsir", label: "تفسير" },
+            { value: "general", label: "عام" }
+          ],
+          required: true 
+        },
+        { 
+          key: "level", 
+          label: "المستوى", 
+          type: "select",
+          options: [
+            { value: "beginner", label: "مبتدئ" },
+            { value: "intermediate", label: "متوسط" },
+            { value: "advanced", label: "متقدم" }
+          ]
+        },
+        { key: "thumbnail_url", label: "صورة الدورة", type: "text" },
+        { 
+          key: "is_published", 
+          label: "نشر", 
+          type: "select",
+          options: [
+            { value: true, label: "نعم" },
+            { value: false, label: "لا" }
+          ]
+        },
+      ]
+    },
+    {
+      id: "course_modules",
+      title: "وحدات الدورات",
+      icon: GraduationCap,
+      entity: "CourseModule",
+      fields: [
+        { key: "course_id", label: "معرف الدورة (UUID)", type: "text", required: true },
+        { key: "title", label: "عنوان الوحدة", type: "text", required: true },
+        { key: "order", label: "ترتيب", type: "number" },
+      ]
+    },
+    {
+      id: "course_lessons",
+      title: "دروس الدورات",
+      icon: GraduationCap,
+      entity: "CourseLesson",
+      fields: [
+        { key: "module_id", label: "معرف الوحدة (UUID)", type: "text", required: true },
+        { key: "title", label: "عنوان الدرس", type: "text", required: true },
+        { 
+          key: "content_type", 
+          label: "نوع المحتوى", 
+          type: "select",
+          options: [
+            { value: "video", label: "فيديو" },
+            { value: "text", label: "نص" },
+            { value: "audio", label: "صوت" }
+          ],
+          required: true
+        },
+        { key: "video_url", label: "رابط الفيديو", type: "text" },
+        { key: "text_content", label: "محتوى نصي", type: "textarea" },
+        { key: "attachment_url", label: "رابط مرفق (PDF/ملف)", type: "text" },
+        { key: "duration", label: "المدة", type: "text" },
+        { key: "order", label: "ترتيب", type: "number" },
       ]
     },
     {
@@ -610,16 +693,27 @@ export default function Admin() {
       title: "إعدادات التطبيق",
       icon: Shield,
       component: AppSettingsAdmin
+    },
+    {
+      id: "users_management",
+      title: "إدارة المستخدمين",
+      icon: Users,
+      component: UsersManagement
     }
   ];
 
-  if (!user || user.role !== 'admin') {
+  if (!user || (user.role !== 'admin' && user.role !== 'moderator')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
       </div>
     );
   }
+
+  // Filter sections for moderator
+  const visibleSections = user.role === 'moderator' 
+    ? sections.filter(s => !['settings', 'users_management'].includes(s.id))
+    : sections;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-6 md:p-12">
@@ -642,7 +736,7 @@ export default function Admin() {
               <TrendingUp className="w-4 h-4" />
               الإحصائيات
             </TabsTrigger>
-            {sections.map((section) => (
+            {visibleSections.map((section) => (
               <TabsTrigger
                 key={section.id}
                 value={section.id}
@@ -790,7 +884,7 @@ export default function Admin() {
             </div>
           </TabsContent>
 
-          {sections.map((section) => (
+          {visibleSections.map((section) => (
             <TabsContent key={section.id} value={section.id}>
               <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
                 <CardHeader>

@@ -168,7 +168,28 @@ export default function Fatwa() {
             </CardHeader>
             <CardContent className="p-6 md:p-8 space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">الجواب:</h3>
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-bold text-gray-900">الجواب:</h3>
+                    <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="text-purple-600 hover:bg-purple-50 gap-1"
+                        onClick={async () => {
+                            try {
+                                const { data, error } = await supabase.functions.invoke('aiAssistant', {
+                                    body: { action: 'summarize', text: selectedFatwa.answer }
+                                });
+                                if (error) throw error;
+                                alert("ملخص الجواب:\n" + (data.summary || "تعذر التلخيص"));
+                            } catch (e) {
+                                alert("حدث خطأ أثناء التلخيص");
+                            }
+                        }}
+                    >
+                        <Sparkles className="w-4 h-4" />
+                        تلخيص بالذكاء الاصطناعي
+                    </Button>
+                </div>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{selectedFatwa.answer}</p>
               </div>
 
@@ -282,6 +303,17 @@ export default function Fatwa() {
                 className="bg-white/10 text-white hover:bg-white/20 border-white/20"
              >
                 {showAdvancedSearch ? 'إخفاء البحث المتقدم' : 'بحث متقدم'}
+             </Button>
+             <Button
+                variant="outline"
+                className="bg-purple-500/20 text-purple-100 hover:bg-purple-500/30 border-purple-400/30 gap-2"
+                onClick={async () => {
+                     // AI Summary for all fatwas context (Demo) - In real app, maybe per fatwa
+                     alert("خاصية التلخيص متاحة عند عرض فتوى محددة.");
+                }}
+             >
+                <Sparkles className="w-4 h-4" />
+                تلخيص الفتاوى
              </Button>
              <Link to={createPageUrl("Favorites")}>
                 <Button className="bg-rose-500 hover:bg-rose-600 text-white gap-2">

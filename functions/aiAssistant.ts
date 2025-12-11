@@ -3,12 +3,17 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        const { action, text, userHistory, context } = await req.json();
+        const reqPayload = await req.json();
+        const { action, text, userHistory, context } = reqPayload;
 
         let prompt = "";
         let jsonSchema = null;
 
-        if (action === "summarize") {
+        if (action === "chat") {
+             // General chat
+             prompt = reqPayload.prompt || `You are an Islamic assistant. Answer the user: ${text}`;
+             // No jsonSchema for chat, returns string
+        } else if (action === "summarize") {
             prompt = `Summarize the following Islamic text into 3-5 concise bullet points in Arabic. Text: ${text}`;
             jsonSchema = {
                 type: "object",

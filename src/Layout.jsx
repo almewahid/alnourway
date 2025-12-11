@@ -18,6 +18,7 @@ import {
 import { supabase } from "@/components/api/supabaseClient";
 import NotificationManager from "@/components/NotificationManager";
 import { Toaster } from "@/components/ui/sonner";
+import ChatWidget from "@/components/ChatWidget";
 
 const navigationItems = [
   { title: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "text-teal-600" },
@@ -61,9 +62,13 @@ export default function Layout({ children, currentPageName }) {
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
-        // Optionally fetch detailed profile from 'profiles' table if you have one
-        // const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single();
-        setUser({ ...authUser, role: 'user' }); // Default role, adjust as needed based on your Supabase setup
+        // Fetch role from Profile table
+        const { data: profile } = await supabase
+          .from('Profile')
+          .select('role')
+          .eq('user_id', authUser.id)
+          .single();
+        setUser({ ...authUser, role: profile?.role || 'user' });
       } else {
         setUser(null);
       }
@@ -136,6 +141,7 @@ export default function Layout({ children, currentPageName }) {
 
       <NotificationManager />
       <Toaster position="top-center" richColors />
+      <ChatWidget />
 
       <link rel="icon" type="image/png" sizes="192x192" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" />
       <link rel="icon" type="image/png" sizes="512x512" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/760ac07b0_android-chrome-512x512.png" />
@@ -194,11 +200,31 @@ export default function Layout({ children, currentPageName }) {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {!loading && user?.role === 'admin' && (
+            {!loading && (user?.role === 'admin' || user?.role === 'moderator') && (
               <SidebarGroup className="mt-6">
                 <SidebarGroupLabel className="px-4 py-2 text-sm font-semibold text-red-500">
                   لوحة التحكم
                 </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Admin") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
+                        <Link to={createPageUrl("Admin")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
+                          <Shield className={`w-4 h-4 ${location.pathname === createPageUrl("Admin") ? 'text-white' : 'text-red-600'}`} />
+                          <span className="text-sm">إدارة المحتوى</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Docs") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
+                        <Link to={createPageUrl("Docs")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
+                          <BookOpen className={`w-4 h-4 ${location.pathname === createPageUrl("Docs") ? 'text-white' : 'text-red-600'}`} />
+                          <span className="text-sm">التوثيق التقني</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     <SidebarMenuItem>
