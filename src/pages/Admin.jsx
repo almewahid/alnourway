@@ -21,13 +21,38 @@ export default function Admin() {
 
   const loadUser = async () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const userData = { ...authUser, role: 'admin' }; // Assuming admin for now or fetch role
-        setUser(userData);
-      } else {
-        window.location.href = '/';
+      // 1. التحقق من تسجيل الدخول
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !authUser) {
+        console.error('User not authenticated:', authError);
+        window.location.href = '/auth';
+        return;
       }
+
+      // 2. جلب الصلاحية من جدول Profile
+      const { data: profileData, error: profileError } = await supabase
+        .from('Profile')
+        .select('role')
+        .eq('user_id', authUser.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        window.location.href = '/';
+        return;
+      }
+
+      // 3. التحقق من صلاحية Admin
+      if (profileData?.role !== 'admin') {
+        console.warn('Access denied: User is not admin');
+        window.location.href = '/unauthorized';
+        return;
+      }
+
+      // 4. حفظ بيانات المستخدم
+      setUser({ ...authUser, role: profileData.role });
+      
     } catch (error) {
       console.error("Error loading user:", error);
       window.location.href = '/';
@@ -97,13 +122,9 @@ export default function Admin() {
   const { data: users } = useQuery({
     queryKey: ['admin_users'],
     queryFn: async () => {
-      // In Supabase, user management is typically via auth.admin, but for this migration we assume a public profiles/users table or mock
-      // Since base44.entities.User.list() was used, we assume a 'User' table exists mirroring auth users or similar.
-      // However, standard Supabase pattern is to use auth.users which is not client-accessible.
-      // We'll try to fetch from a 'User' table if it exists from migration script, otherwise return empty.
       try {
-        const { data, error } = await supabase.from('User').select('*');
-        if (error) return []; // Table might not exist or RLS prevents access
+        const { data, error } = await supabase.from('Profile').select('*');
+        if (error) return [];
         return data;
       } catch (e) {
         return [];
