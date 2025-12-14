@@ -1,13 +1,14 @@
-import { createClient } from '@base44/sdk';
-import { appParams } from '@/lib/app-params';
+// ملف بديل لـ base44Client
+// المشروع يستخدم Supabase الآن، هذا الملف للتوافق فقط
 
-const { appId, serverUrl, token, functionsVersion } = appParams;
+export const base44 = {
+  integrations: {
+    Core: {
+      InvokeLLM: async () => {
+        throw new Error('base44 integration is not available in this project');
+      }
+    }
+  }
+};
 
-//Create a client with authentication required
-export const base44 = createClient({
-  appId,
-  serverUrl,
-  token,
-  functionsVersion,
-  requiresAuth: false
-});
+export default base44;
