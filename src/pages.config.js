@@ -27,6 +27,8 @@ import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import Chat from './pages/Chat';
 import Recommendations from './pages/Recommendations';
 import Auth from './pages/Auth';
+import Docs from './pages/Docs';
+import Blog from './pages/Blog';
 import __Layout from './Layout.jsx';
 
 
@@ -60,6 +62,8 @@ export const PAGES = {
     "Chat": Chat,
     "Recommendations": Recommendations,
     "Auth": Auth,
+    "Docs": Docs,
+    "Blog": Blog,
 }
 
 export const pagesConfig = {

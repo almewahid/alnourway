@@ -5,15 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Sparkles, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
-import ArticleCard from "../components/ArticleCard";
-import AIContentGenerator from "../components/admin/AIContentGenerator";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import ArticleCard from "@/components/ArticleCard";
+// AI Assistant removed from public page
 
 export default function Blog() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,24 +62,7 @@ export default function Blog() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
 
-          {/* Show AI Generator only if needed or requested. 
-              The prompt asked to "Integrate AI feature in Blog page". 
-              I'll add a button that opens the generator modal. 
-          */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white gap-2 h-12 px-6">
-                <Sparkles className="w-5 h-5" />
-                مساعد الكتابة الذكي
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>توليد مقالات ومحتوى باستخدام AI</DialogTitle>
-              </DialogHeader>
-              <AIContentGenerator />
-            </DialogContent>
-          </Dialog>
+          {/* AI Generator moved to Admin Dashboard */}
         </div>
 
         {isLoading ? (
@@ -110,7 +86,7 @@ export default function Blog() {
           <div className="text-center py-20 bg-white/50 rounded-3xl border-2 border-dashed border-gray-200">
             <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-400">لا توجد مقالات منشورة بعد</h3>
-            <p className="text-gray-500 mt-2">استخدم مساعد الكتابة الذكي لإنشاء أول مقال!</p>
+            <p className="text-gray-500 mt-2">تابعنا لقراءة أحدث المقالات قريباً.</p>
           </div>
         )}
       </div>

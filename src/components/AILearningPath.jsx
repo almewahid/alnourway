@@ -27,10 +27,11 @@ export default function AILearningPath({ user }) {
       });
 
       if (error) throw error;
+      if (!data.steps) throw new Error("لم يتم استلام خطوات المسار");
       setLearningPath(data.steps);
     } catch (error) {
       console.error("Error generating path:", error);
-      alert("حدث خطأ أثناء إنشاء المسار");
+      alert("حدث خطأ أثناء إنشاء المسار: " + (error.message || "خطأ غير معروف"));
     } finally {
       setLoading(false);
     }

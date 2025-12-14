@@ -46,6 +46,111 @@ Deno.serve(async (req) => {
                     }
                 }
             };
+        } else if (action === "generate_learning_path") {
+            prompt = `Create a personalized Islamic learning path for a user with the following profile: ${JSON.stringify(context)}. 
+            The path should consist of 3 concise ordered steps (modules). Language: Arabic.`;
+            jsonSchema = {
+                type: "object",
+                properties: {
+                    steps: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                title: { type: "string" },
+                                description: { type: "string" },
+                                duration: { type: "string" },
+                                resources: { type: "array", items: { type: "string" } }
+                            }
+                        }
+                    }
+                }
+            };
+        } else if (action === "fatwa_assist") {
+             prompt = `You are an expert Islamic Fatwa Assistant. The user asks: "${text}". 
+             Provide a preliminary answer based on standard Islamic jurisprudence (Sunni). 
+             Cite sources if possible. State clearly that this is AI-generated and they should consult a real scholar for final rulings. 
+             Language: Arabic.`;
+             // Returns string text
+        } else if (action === "translate_content") {
+             const targetLang = context.targetLang || 'en';
+             prompt = `Translate the following text to ${targetLang}: "${text}". Return only the translated text.`;
+             jsonSchema = {
+                 type: "object",
+                 properties: {
+                     translated_text: { type: "string" }
+                 }
+             };
+        } else if (action === "generate_lecture") {
+            prompt = `Generate a detailed Islamic lecture outline and content about: "${text}". 
+            Include a catchy title, a suggested speaker name (e.g., 'Sheikh Ahmed'), a detailed description, the main topic, and estimated duration. 
+            Language: Arabic.`;
+            jsonSchema = {
+                type: "object",
+                properties: {
+                    title: { type: "string" },
+                    speaker: { type: "string" },
+                    description: { type: "string" },
+                    topic: { type: "string" },
+                    duration: { type: "string" }
+                }
+            };
+        } else if (action === "generate_story") {
+            prompt = `Write a short inspiring Islamic story based on the theme or event: "${text}". 
+            Include a title, author (or 'Unknown'), the full content of the story, a short excerpt, and a category (either 'convert' or 'repentance'). 
+            Language: Arabic.`;
+            jsonSchema = {
+                type: "object",
+                properties: {
+                    title: { type: "string" },
+                    author: { type: "string" },
+                    content: { type: "string" },
+                    excerpt: { type: "string" },
+                    category: { type: "string", enum: ["convert", "repentance"] }
+                }
+            };
+        } else if (action === "generate_fatwa_answer") {
+            prompt = `Draft a comprehensive initial answer for the following Islamic question: "${text}". 
+            Include the answer text, a suggested mufti name, a relevant category (e.g., 'ibadat', 'muamalat'), and a reference (Quran/Hadith or Fiqh book). 
+            Language: Arabic.`;
+            jsonSchema = {
+                type: "object",
+                properties: {
+                    answer: { type: "string" },
+                    mufti: { type: "string" },
+                    category: { type: "string" },
+                    reference: { type: "string" }
+                }
+            };
+        } else if (action === "generate_article") {
+            prompt = `Write a comprehensive Islamic article about: "${text}". 
+            Include a captivating title, the full article content (structured with paragraphs), suggested tags, and a meta description for SEO. 
+            Language: Arabic.`;
+            jsonSchema = {
+                type: "object",
+                properties: {
+                    title: { type: "string" },
+                    content: { type: "string" },
+                    tags: { type: "array", items: { type: "string" } },
+                    meta_description: { type: "string" }
+                }
+            };
+        } else if (action === "suggest_titles") {
+            prompt = `Suggest 5 catchy and SEO-friendly titles for an article about: "${text}". Language: Arabic.`;
+            jsonSchema = {
+                type: "object",
+                properties: {
+                    titles: { type: "array", items: { type: "string" } }
+                }
+            };
+        } else if (action === "generate_meta_description") {
+            prompt = `Generate a concise and engaging SEO meta description (under 160 characters) for an article about: "${text}". Language: Arabic.`;
+            jsonSchema = {
+                type: "object",
+                properties: {
+                    meta_description: { type: "string" }
+                }
+            };
         } else {
             return Response.json({ error: "Invalid action" }, { status: 400 });
         }
