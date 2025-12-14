@@ -29,6 +29,11 @@ import Recommendations from './pages/Recommendations';
 import Auth from './pages/Auth';
 import Docs from './pages/Docs';
 import Blog from './pages/Blog';
+import LiveStreamWatch from './pages/LiveStreamWatch';
+import AIGuide from './pages/AIGuide';
+import Courses from './pages/Courses';
+import CourseView from './pages/CourseView';
+import ArticleView from './pages/ArticleView';
 import __Layout from './Layout.jsx';
 
 
@@ -64,6 +69,11 @@ export const PAGES = {
     "Auth": Auth,
     "Docs": Docs,
     "Blog": Blog,
+    "LiveStreamWatch": LiveStreamWatch,
+    "AIGuide": AIGuide,
+    "Courses": Courses,
+    "CourseView": CourseView,
+    "ArticleView": ArticleView,
 }
 
 export const pagesConfig = {
