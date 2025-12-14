@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Shield, BookOpen, Video, MessageSquare, Users, Heart, Building2, GraduationCap, Calendar, Eye, ThumbsUp, MessageCircleMore, Star, TrendingUp, Activity, Upload } from "lucide-react";
+import { Shield, BookOpen, Video, MessageSquare, Users, Heart, Building2, GraduationCap, Calendar, Eye, ThumbsUp, MessageCircleMore, Star, TrendingUp, Activity, Upload, Sparkles } from "lucide-react";
 import AdminTable from "@/components/AdminTable";
 import AppSettingsAdmin from "@/components/AppSettingsAdmin";
 import BulkUploadModal from "@/components/BulkUploadModal";
