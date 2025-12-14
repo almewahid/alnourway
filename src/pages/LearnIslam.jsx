@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AILearningPath from "@/components/AILearningPath";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -6,47 +7,49 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, MapPin, Video, Heart, Sparkles, MessageCircle, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "../components/ContactModal";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function LearnIslam() {
+  const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
 
   const sections = [
     {
       icon: BookOpen,
-      title: "مبادئ الإسلام الأساسية",
-      description: "تعرف على أركان الإسلام وأركان الإيمان",
+      title: t('principles_title'),
+      description: t('principles_desc'),
       color: "from-blue-100 to-blue-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/6cae5772d_.png",
       action: () => window.scrollTo({ top: document.getElementById('principles').offsetTop - 100, behavior: 'smooth' })
     },
     {
       icon: Users,
-      title: "تواصل مع داعية",
-      description: "احصل على إرشاد شخصي من دعاة متخصصين",
+      title: t('contact_preacher'),
+      description: "احصل على إرشاد شخصي من دعاة متخصصين", // Could translate this too if added
       color: "from-emerald-100 to-emerald-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8f4f91aed_.png",
       link: createPageUrl("ContactPreacher")
     },
     {
       icon: MapPin,
-      title: "ابحث عن مركز دعوة",
-      description: "اعثر على أقرب مركز دعوة في منطقتك",
+      title: t('find_center'),
+      description: t('find_center_desc'),
       color: "from-purple-100 to-purple-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/2d618ad07_.png",
       link: createPageUrl("IslamicCenters")
     },
     {
       icon: Video,
-      title: "مكتبة المحاضرات",
-      description: "استمع وشاهد محاضرات تعليمية متنوعة",
+      title: t('lectures_library'),
+      description: t('lectures_desc'),
       color: "from-rose-100 to-rose-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/bb9bb2ec8_.png",
       link: createPageUrl("Lectures?category=learn_islam")
     },
     {
       icon: Heart,
-      title: "قصص المهتدين",
-      description: "اقرأ قصصاً ملهمة لأشخاص اعتنقوا الإسلام",
+      title: t('convert_stories'),
+      description: t('convert_stories_desc'),
       color: "from-amber-100 to-amber-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8c7f0d887_.png",
       link: createPageUrl("Stories?type=convert")
@@ -55,7 +58,7 @@ export default function LearnIslam() {
 
   const principles = [
     {
-      title: "أركان الإسلام الخمسة",
+      title: t('islam_pillars'),
       items: [
         "الشهادتان: أشهد أن لا إله إلا الله وأن محمداً رسول الله",
         "إقامة الصلاة: خمس صلوات في اليوم والليلة",
@@ -65,7 +68,7 @@ export default function LearnIslam() {
       ]
     },
     {
-      title: "أركان الإيمان الستة",
+      title: t('faith_pillars'),
       items: [
         "الإيمان بالله: الإيمان بوحدانية الله وأسمائه وصفاته",
         "الإيمان بالملائكة: الإيمان بوجود الملائكة المكرمين",
@@ -86,16 +89,20 @@ export default function LearnIslam() {
           className="text-center mb-8 pt-4"
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-6">
-            <span className="text-blue-800 font-semibold">اكتشف الإسلام</span>
+            <span className="text-blue-800 font-semibold">{t('discover_islam')}</span>
           </div>
           
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            التعرف على الإسلام
+            {t('learn_islam_title')}
           </h1>
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-            رحلتك لاكتشاف دين السلام والهداية
+            {t('learn_islam_subtitle')}
           </p>
         </motion.div>
+
+        <div className="mb-12">
+          <AILearningPath />
+        </div>
 
         {/* الأقسام - 2 في الموبايل، 3 في التابلت، 5 في الديسكتوب */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
@@ -179,10 +186,10 @@ export default function LearnIslam() {
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <MessageCircle className="w-16 h-16 mx-auto mb-6 text-amber-300" />
               <h2 className="text-2xl md:text-4xl font-bold mb-4">
-                لديك أسئلة أخرى؟
+                {t('have_questions')}
               </h2>
               <p className="text-lg md:text-xl text-emerald-50 mb-8 max-w-2xl mx-auto">
-                نحن هنا لمساعدتك في رحلتك نحو الهداية
+                {t('here_to_help')}
               </p>
               <Button
                 onClick={() => setShowContactModal(true)}
@@ -190,7 +197,7 @@ export default function LearnIslam() {
                 className="bg-white text-emerald-600 hover:bg-emerald-50 text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
                 <MessageCircle className="w-5 h-5 md:w-6 md:h-6 ml-2" />
-                تواصل معنا الآن
+                {t('contact_us_now')}
               </Button>
             </CardContent>
           </Card>

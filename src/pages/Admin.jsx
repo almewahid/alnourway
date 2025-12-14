@@ -9,6 +9,10 @@ import AdminTable from "../components/AdminTable";
 import AppSettingsAdmin from "../components/AppSettingsAdmin";
 import BulkUploadModal from "../components/BulkUploadModal";
 import UsersManagement from "../components/UsersManagement";
+import CourseManager from "../components/admin/CourseManager";
+import FatwaModeration from "../components/admin/FatwaModeration";
+import CommentsModeration from "../components/admin/CommentsModeration";
+import AIContentGenerator from "../components/admin/AIContentGenerator";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -230,6 +234,12 @@ export default function Admin() {
 
   const sections = [
     {
+      id: "ai_generation",
+      title: "توليد المحتوى (AI)",
+      icon: Sparkles,
+      component: AIContentGenerator
+    },
+    {
       id: "books",
       title: "الكتب",
       icon: BookOpen,
@@ -262,84 +272,9 @@ export default function Admin() {
     },
     {
       id: "courses_management",
-      title: "إدارة الدورات",
+      title: "إدارة الدورات (مطور)",
       icon: GraduationCap,
-      entity: "Course",
-      fields: [
-        { key: "title", label: "عنوان الدورة", type: "text", required: true },
-        { key: "instructor", label: "المدرب", type: "text", required: true },
-        { key: "description", label: "الوصف", type: "textarea" },
-        { 
-          key: "category", 
-          label: "التصنيف", 
-          type: "select",
-          options: [
-            { value: "aqeedah", label: "عقيدة" },
-            { value: "fiqh", label: "فقه" },
-            { value: "hadith", label: "حديث" },
-            { value: "tafsir", label: "تفسير" },
-            { value: "general", label: "عام" }
-          ],
-          required: true 
-        },
-        { 
-          key: "level", 
-          label: "المستوى", 
-          type: "select",
-          options: [
-            { value: "beginner", label: "مبتدئ" },
-            { value: "intermediate", label: "متوسط" },
-            { value: "advanced", label: "متقدم" }
-          ]
-        },
-        { key: "thumbnail_url", label: "صورة الدورة", type: "text" },
-        { 
-          key: "is_published", 
-          label: "نشر", 
-          type: "select",
-          options: [
-            { value: true, label: "نعم" },
-            { value: false, label: "لا" }
-          ]
-        },
-      ]
-    },
-    {
-      id: "course_modules",
-      title: "وحدات الدورات",
-      icon: GraduationCap,
-      entity: "CourseModule",
-      fields: [
-        { key: "course_id", label: "معرف الدورة (UUID)", type: "text", required: true },
-        { key: "title", label: "عنوان الوحدة", type: "text", required: true },
-        { key: "order", label: "ترتيب", type: "number" },
-      ]
-    },
-    {
-      id: "course_lessons",
-      title: "دروس الدورات",
-      icon: GraduationCap,
-      entity: "CourseLesson",
-      fields: [
-        { key: "module_id", label: "معرف الوحدة (UUID)", type: "text", required: true },
-        { key: "title", label: "عنوان الدرس", type: "text", required: true },
-        { 
-          key: "content_type", 
-          label: "نوع المحتوى", 
-          type: "select",
-          options: [
-            { value: "video", label: "فيديو" },
-            { value: "text", label: "نص" },
-            { value: "audio", label: "صوت" }
-          ],
-          required: true
-        },
-        { key: "video_url", label: "رابط الفيديو", type: "text" },
-        { key: "text_content", label: "محتوى نصي", type: "textarea" },
-        { key: "attachment_url", label: "رابط مرفق (PDF/ملف)", type: "text" },
-        { key: "duration", label: "المدة", type: "text" },
-        { key: "order", label: "ترتيب", type: "number" },
-      ]
+      component: CourseManager
     },
     {
       id: "lectures",
@@ -415,9 +350,15 @@ export default function Admin() {
       ]
     },
     {
-      id: "fatwas",
-      title: "الفتاوى",
+      id: "fatwa_moderation",
+      title: "طلبات الفتاوى",
       icon: MessageSquare,
+      component: FatwaModeration
+    },
+    {
+      id: "fatwas",
+      title: "أرشيف الفتاوى",
+      icon: BookOpen,
       entity: "Fatwa",
       fields: [
         { key: "question", label: "السؤال", type: "textarea", required: true },
@@ -636,45 +577,10 @@ export default function Admin() {
       ]
     },
     {
-      id: "comments",
-      title: "إدارة التعليقات",
-      icon: MessageCircleMore,
-      entity: "Comment",
-      fields: [
-        { key: "user_name", label: "المستخدم", type: "text" },
-        { key: "content_type", label: "نوع المحتوى", type: "text" },
-        { key: "comment_text", label: "التعليق", type: "textarea" },
-        { 
-          key: "is_approved", 
-          label: "موافق عليه", 
-          type: "select",
-          options: [
-            { value: true, label: "نعم" },
-            { value: false, label: "لا" }
-          ]
-        },
-      ]
-    },
-    {
       id: "moderation",
-      title: "قائمة الانتظار",
+      title: "الإشراف والتعليقات",
       icon: MessageCircleMore,
-      entity: "Comment",
-      showPendingOnly: true,
-      fields: [
-        { key: "user_name", label: "المستخدم", type: "text" },
-        { key: "content_type", label: "نوع المحتوى", type: "text" },
-        { key: "comment_text", label: "التعليق", type: "textarea" },
-        { 
-          key: "is_approved", 
-          label: "الموافقة", 
-          type: "select",
-          options: [
-            { value: true, label: "موافق" },
-            { value: false, label: "معلق" }
-          ]
-        },
-      ]
+      component: CommentsModeration
     },
     {
       id: "ratings",

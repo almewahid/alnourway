@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,8 +11,10 @@ import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import AIRecommendations from "@/components/AIRecommendations";
 import { ArrowRight } from "lucide-react";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Courses() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [user, setUser] = useState(null);
@@ -34,12 +36,12 @@ export default function Courses() {
   });
 
   const categories = [
-    { value: "all", label: "الكل" },
-    { value: "aqeedah", label: "العقيدة" },
-    { value: "fiqh", label: "الفقه" },
-    { value: "hadith", label: "الحديث" },
-    { value: "tafsir", label: "التفسير" },
-    { value: "general", label: "عام" },
+    { value: "all", label: t("all") },
+    { value: "aqeedah", label: t("aqeedah") },
+    { value: "fiqh", label: t("fiqh") },
+    { value: "hadith", label: t("hadith") },
+    { value: "tafsir", label: t("tafsir") },
+    { value: "general", label: t("general") },
   ];
 
   const filteredCourses = courses.filter(course => {
@@ -56,14 +58,14 @@ export default function Courses() {
           <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">الدورات التعليمية</h1>
-          <p className="text-xl text-gray-600">تعلم العلم الشرعي بشكل منهجي ومنظم</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">{t('educational_courses')}</h1>
+          <p className="text-xl text-gray-600">{t('courses_subtitle')}</p>
         </motion.div>
 
         <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mb-8">
           <CardContent className="p-6">
             <div className="relative">
-              <Input placeholder="ابحث عن دورة..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-lg py-6 pr-12" />
+              <Input placeholder={t('search_course')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-lg py-6 pr-12" />
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </CardContent>
@@ -115,11 +117,11 @@ export default function Courses() {
                     <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-100">
                       <div className="flex items-center text-gray-500 text-xs">
                         <Clock className="w-3 h-3 ml-1" />
-                        <span>متاح الآن</span>
+                        <span>{t('available_now')}</span>
                       </div>
                       <Link to={createPageUrl(`CourseView?id=${course.id}`)}>
                         <Button className="bg-teal-600 hover:bg-teal-700 text-white gap-2">
-                           عرض الدورة
+                           {t('view_course')}
                            <ArrowRight className="w-4 h-4" />
                         </Button>
                       </Link>
@@ -132,8 +134,8 @@ export default function Courses() {
         ) : (
           <div className="text-center py-12">
             <GraduationCap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">لا توجد دورات</h3>
-            <p className="text-gray-600">لا توجد دورات متاحة حالياً في هذا القسم</p>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('no_courses')}</h3>
+            <p className="text-gray-600">{t('no_courses_desc')}</p>
           </div>
         )}
       </div>

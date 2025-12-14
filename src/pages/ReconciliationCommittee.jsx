@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Users, Award, Briefcase, GraduationCap, Heart, Sparkles, Shield, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ReconciliationRequestModal from "../components/ReconciliationRequestModal";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function ReconciliationCommittee() {
+  const { t } = useLanguage();
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -41,26 +43,26 @@ export default function ReconciliationCommittee() {
   const features = [
     {
       icon: Heart,
-      title: "السرية التامة",
-      description: "نحافظ على خصوصية جميع الأطراف",
+      title: t('confidentiality'),
+      description: t('confidentiality_desc'),
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/2d618ad07_.png"
     },
     {
       icon: Shield,
-      title: "الحيادية",
-      description: "لجنة محايدة تسعى للعدل والإنصاف",
+      title: t('neutrality'),
+      description: t('neutrality_desc'),
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/2d618ad07_.png"
     },
     {
       icon: Users,
-      title: "خبرة واسعة",
-      description: "مشايخ ذوو خبرة طويلة في الإصلاح",
+      title: t('experience'),
+      description: t('experience_desc'),
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8f4f91aed_.png"
     },
     {
       icon: CheckCircle,
-      title: "نسبة نجاح عالية",
-      description: "بفضل الله نجحنا في حل أكثر من 90% من القضايا",
+      title: t('high_success'),
+      description: t('high_success_desc'),
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/66aa568de_.png"
     }
   ];
@@ -75,11 +77,11 @@ export default function ReconciliationCommittee() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-cyan-100 px-6 py-3 rounded-full mb-6">
             <Heart className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">إصلاح ذات البين</span>
+            <span className="text-blue-800 font-semibold">{t('reconciliation')}</span>
           </div>
           
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
-            لجنة إصلاح ذات البين
+            {t('reconciliation_title')}
           </h1>
 
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-amber-50 to-amber-100 rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-amber-200 mb-8">
@@ -90,7 +92,7 @@ export default function ReconciliationCommittee() {
           </div>
 
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-            نسعى لإصلاح ذات البين وحل النزاعات الأسرية والاجتماعية والمالية بروح إسلامية وحكمة شرعية
+            {t('reconciliation_subtitle')}
           </p>
         </motion.div>
 
@@ -120,10 +122,10 @@ export default function ReconciliationCommittee() {
         <div className="mb-8">
           <div className="text-center mb-6">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              أعضاء لجنة الإصلاح
+              {t('committee_members')}
             </h2>
             <p className="text-lg text-white/80">
-              نخبة من العلماء والمشايخ ذوي الخبرة والحكمة
+              {t('members_desc')}
             </p>
           </div>
 
@@ -224,12 +226,12 @@ export default function ReconciliationCommittee() {
         <div className="mb-8">
           <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm rounded-3xl">
             <CardHeader>
-              <CardTitle className="text-xl text-center">أنواع القضايا التي نتعامل معها</CardTitle>
+              <CardTitle className="text-xl text-center">{t('case_types')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {[
-                  { title: "النزاعات الأسرية", desc: "خلافات بين الأزواج، الأبناء، الأقارب" },
+                  { title: "النزاعات الأسرية", desc: "خلافات بين الأزواج، الأبناء، الأقارب" }, // Translations can be added for these later if needed
                   { title: "النزاعات الزوجية", desc: "مشاكل زوجية، حالات طلاق، نفقة" },
                   { title: "قضايا الميراث", desc: "خلافات حول توزيع الميراث والتركات" },
                   { title: "النزاعات المالية", desc: "ديون، شراكات تجارية، عقود" },
@@ -259,10 +261,10 @@ export default function ReconciliationCommittee() {
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <Sparkles className="w-16 h-16 mx-auto mb-6 text-amber-300" />
               <h2 className="text-2xl md:text-4xl font-bold mb-4">
-                هل تحتاج للمساعدة؟
+                {t('need_help')}
               </h2>
               <p className="text-lg md:text-xl text-cyan-50 mb-8 max-w-2xl mx-auto">
-                نحن هنا لمساعدتك في حل نزاعك بطريقة شرعية وعادلة. قدم طلبك الآن وسنتواصل معك في أقرب وقت
+                {t('submit_request_desc')}
               </p>
               <Button
                 onClick={() => setShowRequestModal(true)}
@@ -270,7 +272,7 @@ export default function ReconciliationCommittee() {
                 className="bg-white text-cyan-600 hover:bg-cyan-50 text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
                 <Heart className="w-5 h-5 md:w-6 md:h-6 ml-2" />
-                تقديم طلب إصلاح
+                {t('submit_request')}
               </Button>
             </CardContent>
           </Card>

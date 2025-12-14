@@ -28,6 +28,7 @@ const navigationItems = [
   { title: "البث المباشر", url: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
   { title: "إصلاح ذات البين", url: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
   { title: "المرشد الذكي", url: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
+  { title: "المدونة", url: createPageUrl("Blog"), icon: BookOpen, color: "text-blue-600" },
   { title: "الدورات التعليمية", url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
 ];
 
@@ -62,7 +63,6 @@ export default function Layout({ children, currentPageName }) {
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
-        // Fetch role from Profile table
         const { data: profile } = await supabase
           .from('Profile')
           .select('role')
@@ -109,7 +109,6 @@ export default function Layout({ children, currentPageName }) {
     }
   };
 
-  // Dark mode logic
   const [isDarkMode, setIsDarkMode] = React.useState(localStorage.getItem("theme") === "dark");
 
   React.useEffect(() => {
@@ -153,13 +152,16 @@ export default function Layout({ children, currentPageName }) {
       <div className="min-h-screen flex w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 transition-colors duration-300">
         <Sidebar side="right" className="border-r border-emerald-100 dark:border-emerald-900 dark:bg-gray-900">
           <SidebarHeader className="border-b border-emerald-100 dark:border-emerald-900 p-6 bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-900 dark:to-emerald-950">
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center gap-3">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" 
                 alt="طريق النور" 
-                className="w-10 h-10"
+                className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
               />
-              <h2 className="text-2xl font-bold text-white">طريق النور</h2>
+              <div>
+                <h1 className="text-xl font-bold text-white drop-shadow-lg">طريق النور</h1>
+                <p className="text-xs text-emerald-100">منصة إسلامية شاملة</p>
+              </div>
             </div>
           </SidebarHeader>
           <SidebarContent className="p-3">
@@ -220,18 +222,6 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl("Docs")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
                           <BookOpen className={`w-4 h-4 ${location.pathname === createPageUrl("Docs") ? 'text-white' : 'text-red-600'}`} />
                           <span className="text-sm">التوثيق التقني</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </SidebarGroupContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Admin") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
-                        <Link to={createPageUrl("Admin")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
-                          <Shield className={`w-4 h-4 ${location.pathname === createPageUrl("Admin") ? 'text-white' : 'text-red-600'}`} />
-                          <span className="text-sm">إدارة المحتوى</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

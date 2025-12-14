@@ -6,7 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Heart, MessageSquare, Users, Globe, Calendar, Library, Video, Search, User, Handshake } from "lucide-react";
 import { supabase } from "@/components/api/supabaseClient";
-import AIRecommendations from "@/components/AIRecommendations"; // Import AI Recommendations
+import AIRecommendations from "@/components/AIRecommendations";
+import { useLanguage } from "../components/LanguageContext";
 
 const verses = [
   { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", ref: "سورة الشرح - آية 6" },
@@ -28,7 +29,7 @@ const hadiths = [
 const allQuotes = [...verses, ...hadiths];
 
 export default function Home() {
-  const [language, setLanguage] = useState(localStorage.getItem('language') || 'ar');
+  const { t, language } = useLanguage();
   const [randomQuote] = useState(() => allQuotes[Math.floor(Math.random() * allQuotes.length)]);
   const [searchQuery, setSearchQuery] = useState("");
   const [onlineCount, setOnlineCount] = useState({ scholars: 0, preachers: 0, teachers: 0 });
@@ -90,32 +91,32 @@ export default function Home() {
 
   const features = [
     {
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/6cae5772d_.png",
-      title: "التعرف على الإسلام",
-      description: "اكتشف مبادئ الإسلام وتعاليمه السمحة",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%81_%D8%B9%D9%84%D9%89_%D8%A7%D9%84%D8%A7%D8%B3%D9%84%D8%A7%D9%85_z4rxqo.png",
+      title: t('learn_islam'),
+      description: t('learn_islam_desc'),
       color: "from-teal-100 to-teal-200",
       link: createPageUrl("LearnIslam")
     },
     {
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8c7f0d887_.png",
-      title: "أريد أن أتوب",
-      description: "ابدأ رحلة التوبة والعودة إلى الله",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562068/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D8%AA%D9%88%D8%A8%D8%A9_o8ukrq.png",
+      title: t('repentance'),
+      description: t('repentance_desc'),
       color: "from-rose-100 to-rose-200",
       link: createPageUrl("Repentance")
     },
     {
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/66aa568de_.png",
-      title: "طلب فتوى",
-      description: "احصل على إجابات شرعية موثوقة",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D9%81%D8%AA%D9%88%D9%89_d9nvcw.png",
+      title: t('fatwa'),
+      description: t('fatwa_desc'),
       color: "from-emerald-100 to-emerald-200",
       link: createPageUrl("Fatwa"),
       onlineCount: onlineCount.scholars,
-      countLabel: "مفتي متاح"
+      countLabel: t('contact_scholar')
     },
     {
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/2d618ad07_.png",
-      title: "إصلاح ذات البين",
-      description: "حل النزاعات بطريقة شرعية",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A5%D8%B5%D9%84%D8%A7%D8%AD_%D8%B0%D8%A7%D8%AA_%D8%A7%D9%84%D8%A8%D9%8A%D9%86_tjvu5j.png",
+      title: t('reconciliation'),
+      description: t('reconciliation_desc'),
       color: "from-cyan-100 to-cyan-200",
       link: createPageUrl("ReconciliationCommittee")
     }
@@ -124,42 +125,42 @@ export default function Home() {
   const additionalFeatures = [
     {
       icon: BookOpen,
-      title: "دورات القرآن الكريم",
-      description: "سجل في دورات تحفيظ القرآن",
+      title: t('quran_courses'),
+      description: t('quran_courses_desc'),
       color: "from-teal-100 to-teal-200",
       iconColor: "text-teal-700",
       link: createPageUrl("QuranCourses"),
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/631c6f8fc_.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%81%D8%B1%D8%B9%D9%8A_%D8%AF%D9%88%D8%B1%D8%A7%D8%AA_%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86_it1oto.png",
       show: true,
       onlineCount: onlineCount.teachers,
-      countLabel: "محفظ متاح"
+      countLabel: t('contact_teacher')
     },
     {
       icon: Calendar,
-      title: "الأذكار اليومية",
-      description: "أذكار الصباح والمساء",
+      title: t('daily_azkar'),
+      description: t('daily_azkar_desc'),
       color: "from-amber-100 to-amber-200",
       iconColor: "text-amber-700",
       link: createPageUrl("Azkar"),
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/580d0a37b_.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%81%D8%B1%D8%B9%D9%8A_%D8%A3%D8%B0%D9%83%D8%A7%D8%B1_a1bjup.png",
       show: appSettings.features.azkar
     },
     {
       icon: Library,
-      title: "المكتبة الإسلامية",
-      description: "مجموعة من الكتب والمراجع",
+      title: t('islamic_library'),
+      description: t('islamic_library_desc'),
       color: "from-indigo-100 to-indigo-200",
       iconColor: "text-indigo-700",
       link: createPageUrl("Library"),
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/a0a1f4137_.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562068/%D9%81%D8%B1%D8%B9%D9%8A_%D8%A7%D9%84%D9%85%D9%83%D8%AA%D8%A8%D8%A9_kmf8ph.png",
       show: appSettings.features.library
     }
   ];
 
   const stats = [
-    { icon: Users, value: "10,000+", label: "مستخدم سعيد" },
-    { icon: BookOpen, value: "500+", label: "محاضرة" },
-    { icon: Globe, value: "50+", label: "دولة" }
+    { icon: Users, value: "10,000+", label: t('happy_user') },
+    { icon: BookOpen, value: "500+", label: t('lecture') },
+    { icon: Globe, value: "50+", label: t('country') }
   ];
 
   return (
@@ -188,7 +189,7 @@ export default function Home() {
               className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg rounded-full px-8 py-6 text-lg whitespace-nowrap"
             >
               <Users className="w-5 h-5 ml-2" />
-              انضم إلى فريقنا
+              {t('join_team')}
             </Button>
           </Link>
         </div>
@@ -200,19 +201,24 @@ export default function Home() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
           {features.map((feature, index) => (
             <Link key={index} to={feature.link} onClick={() => trackEvent('view', 'section', feature.title)}>
-              <Card className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative`}>
+              <Card className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative flex flex-col`}>
                 {feature.onlineCount > 0 && (
                   <div className="absolute top-2 left-2 z-10 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                     {feature.onlineCount} {feature.countLabel}
                   </div>
                 )}
-                <CardContent className="p-6 md:p-8 text-center">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg overflow-hidden">
-                    <img src={feature.image} alt={feature.title} className="w-12 h-12 md:w-14 md:h-14 object-contain" />
-                  </div>
-                  <h3 className="text-sm md:text-base font-bold text-gray-800 mb-2">{feature.title}</h3>
-                  <p className="text-xs text-gray-700 leading-relaxed">{feature.description}</p>
+                {/* To change image size, modify aspect ratio below (e.g. aspect-[16/9] for smaller height) */}
+                <div className="w-full aspect-[7/8] overflow-hidden">
+                  <img 
+                    src={feature.image} 
+                    alt={feature.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
+                </div>
+                <CardContent className="p-4 md:p-6 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="text-base md:text-lg font-bold text-gray-800 mb-2">{feature.title}</h3>
+                  <p className="text-[10px] md:text-xs text-gray-700 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
             </Link>
@@ -223,22 +229,25 @@ export default function Home() {
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
           {additionalFeatures.filter(f => f.show).map((feature, index) => (
             <Link key={index} to={feature.link} onClick={() => trackEvent('view', 'section', feature.title)}>
-              <Card className={`group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative`}>
+              <Card className={`group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative flex flex-col`}>
                 {feature.onlineCount > 0 && (
                   <div className="absolute top-2 left-2 z-10 bg-teal-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                     {feature.onlineCount} {feature.countLabel}
                   </div>
                 )}
-                <CardContent className="p-6 md:p-8 text-center">
-                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg overflow-hidden`}>
+                {/* To change image size, modify aspect ratio below */}
+                <div className="w-full aspect-[8/8] overflow-hidden">
                     {feature.image ? (
-                      <img src={feature.image} alt={feature.title} className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+                      <img src={feature.image} alt={feature.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
-                      <feature.icon className={`w-7 h-7 md:w-8 md:h-8 ${feature.iconColor}`} />
+                      <div className="w-full h-full flex items-center justify-center bg-white/30">
+                        <feature.icon className={`w-16 h-16 ${feature.iconColor}`} />
+                      </div>
                     )}
-                  </div>
-                  <h3 className="text-xs md:text-sm font-bold text-gray-800 mb-1">{feature.title}</h3>
+                </div>
+                <CardContent className="p-4 md:p-6 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">{feature.title}</h3>
                   <p className="text-xs text-gray-700 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>

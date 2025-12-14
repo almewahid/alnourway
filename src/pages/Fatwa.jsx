@@ -11,11 +11,14 @@ import { createPageUrl } from "@/utils";
 import FatwaCard from "../components/FatwaCard";
 import FatwaRequestModal from "../components/FatwaRequestModal";
 import ContactModal from "../components/ContactModal";
+import AIFatwaAssistant from "../components/AIFatwaAssistant";
 import RatingWidget from "../components/RatingWidget";
 import CommentsSection from "../components/CommentsSection";
 import ShareButtons from "../components/ShareButtons";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Fatwa() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [muftiQuery, setMuftiQuery] = useState("");
   const [dateFrom, setDateFrom] = useState("");
@@ -123,29 +126,29 @@ export default function Fatwa() {
   const quickActions = [
     {
       icon: Search,
-      title: "ابحث عن فتوى",
-      description: "ابحث في مكتبة الفتاوى",
+      title: t('search_fatwa'),
+      description: t('search_fatwa_desc'),
       color: "from-blue-100 to-blue-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/66aa568de_.png",
       action: () => document.getElementById('search-input')?.focus()
     },
     {
       icon: MessageSquare,
-      title: "اطرح سؤالك",
-      description: "أرسل سؤالك الشرعي",
+      title: t('ask_question'),
+      description: t('ask_question_desc'),
       color: "from-emerald-100 to-emerald-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/66aa568de_.png",
       action: () => setShowRequestModal(true)
     },
     {
       icon: Users,
-      title: "تواصل مع مفتي",
+      title: t('contact_scholar'),
       description: "تحدث مباشرة مع عالم",
       color: "from-purple-100 to-purple-200",
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8f4f91aed_.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765636071/%D8%AA%D9%88%D8%A7%D8%B5%D9%84_%D9%85%D8%B9_%D9%85%D9%81%D8%AA%D9%8A_o9rwrq.png",
       action: () => setShowContactModal(true),
       onlineCount: onlineMuftis,
-      countLabel: "مفتي متاح"
+      countLabel: t('contact_scholar')
     }
   ];
 
@@ -159,7 +162,7 @@ export default function Fatwa() {
             className="text-white hover:bg-white/20 mb-6"
           >
             <ArrowRight className="w-5 h-5 ml-2" />
-            العودة للفتاوى
+            {t('back_to_fatwas')}
           </Button>
 
           <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl mb-6">
@@ -169,7 +172,7 @@ export default function Fatwa() {
             <CardContent className="p-6 md:p-8 space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-bold text-gray-900">الجواب:</h3>
+                    <h3 className="text-lg font-bold text-gray-900">{t('answer')}:</h3>
                     <Button 
                         size="sm" 
                         variant="ghost" 
@@ -187,7 +190,7 @@ export default function Fatwa() {
                         }}
                     >
                         <Sparkles className="w-4 h-4" />
-                        تلخيص بالذكاء الاصطناعي
+                        {t('ai_summarize')}
                     </Button>
                 </div>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{selectedFatwa.answer}</p>
@@ -209,7 +212,7 @@ export default function Fatwa() {
                 <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                   <p className="text-sm text-amber-800">
                     <BookOpen className="w-4 h-4 inline ml-1" />
-                    <strong>المرجع:</strong> {selectedFatwa.reference}
+                    <strong>{t('reference')}:</strong> {selectedFatwa.reference}
                   </p>
                 </div>
               )}
@@ -265,11 +268,11 @@ export default function Fatwa() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-teal-100 px-6 py-3 rounded-full mb-6">
             <Sparkles className="w-5 h-5 text-emerald-600" />
-            <span className="text-emerald-800 font-semibold">طلب فتوى</span>
+            <span className="text-emerald-800 font-semibold">{t('fatwa')}</span>
           </div>
 
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            الفتاوى الشرعية
+            {t('fatwa_title')}
           </h1>
 
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-amber-50 to-amber-100 rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-amber-200 mb-8">
@@ -280,13 +283,13 @@ export default function Fatwa() {
           </div>
 
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8">
-            احصل على إجابات شرعية موثوقة من علماء متخصصين
+            {t('fatwa_subtitle')}
           </p>
 
           <div className="relative max-w-2xl mx-auto mb-8">
             <Input
               id="search-input"
-              placeholder="ابحث في الفتاوى (السؤال، الجواب، أو المفتي)..."
+              placeholder={t('fatwa_search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pr-12 py-6 text-lg bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full border-0 shadow-lg dark:text-white dark:placeholder-gray-400"
@@ -296,13 +299,17 @@ export default function Fatwa() {
             </button>
           </div>
 
+          <div className="mb-8">
+            <AIFatwaAssistant />
+          </div>
+
           <div className="flex justify-center gap-4 mb-6">
              <Button 
-                variant="outline" 
+                variant="outline"
                 onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
                 className="bg-white/10 text-white hover:bg-white/20 border-white/20"
              >
-                {showAdvancedSearch ? 'إخفاء البحث المتقدم' : 'بحث متقدم'}
+                {showAdvancedSearch ? t('advanced_search') : t('advanced_search')}
              </Button>
              <Button
                 variant="outline"
@@ -313,12 +320,12 @@ export default function Fatwa() {
                 }}
              >
                 <Sparkles className="w-4 h-4" />
-                تلخيص الفتاوى
+                {t('summarize_fatwas')}
              </Button>
              <Link to={createPageUrl("Favorites")}>
                 <Button className="bg-rose-500 hover:bg-rose-600 text-white gap-2">
                    <Heart className="w-4 h-4" />
-                   الفتاوى المفضلة
+                   {t('favorite_fatwas')}
                 </Button>
              </Link>
           </div>
@@ -330,16 +337,16 @@ export default function Fatwa() {
                 className="max-w-3xl mx-auto mb-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 grid md:grid-cols-3 gap-4"
              >
                 <div className="space-y-2">
-                   <label className="text-white text-sm">اسم المفتي</label>
+                   <label className="text-white text-sm">{t('mufti_name')}</label>
                    <Input 
                       value={muftiQuery} 
                       onChange={(e) => setMuftiQuery(e.target.value)} 
-                      placeholder="بحث باسم المفتي" 
+                      placeholder={t('mufti_name')} 
                       className="bg-white/80 border-0"
                    />
                 </div>
                 <div className="space-y-2">
-                   <label className="text-white text-sm">من تاريخ</label>
+                   <label className="text-white text-sm">{t('date_from')}</label>
                    <Input 
                       type="date" 
                       value={dateFrom} 
@@ -348,7 +355,7 @@ export default function Fatwa() {
                    />
                 </div>
                 <div className="space-y-2">
-                   <label className="text-white text-sm">إلى تاريخ</label>
+                   <label className="text-white text-sm">{t('date_to')}</label>
                    <Input 
                       type="date" 
                       value={dateTo} 

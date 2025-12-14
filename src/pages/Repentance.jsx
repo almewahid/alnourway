@@ -7,8 +7,10 @@ import { Heart, Users, Video, CheckCircle, Sparkles, MessageCircle } from "lucid
 import { motion } from "framer-motion";
 import ContactModal from "../components/ContactModal";
 import { supabase } from "@/components/api/supabaseClient";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Repentance() {
+  const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
   const [onlineScholars, setOnlineScholars] = useState(0);
 
@@ -28,17 +30,17 @@ export default function Repentance() {
   const sections = [
     {
       icon: Users,
-      title: "تواصل مع شيخ",
+      title: t('contact_scholar'),
       description: "احصل على إرشاد شخصي من علماء متخصصين",
       color: "from-emerald-100 to-emerald-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8f4f91aed_.png",
       link: createPageUrl("ContactScholar"),
       onlineCount: onlineScholars,
-      countLabel: "شيخ متاح"
+      countLabel: t('contact_scholar')
     },
     {
       icon: Video,
-      title: "مكتبة المحاضرات",
+      title: t('lectures_library'),
       description: "استمع لمحاضرات عن التوبة والرجوع إلى الله",
       color: "from-rose-100 to-rose-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/bb9bb2ec8_.png",
@@ -46,8 +48,8 @@ export default function Repentance() {
     },
     {
       icon: Heart,
-      title: "قصص التائبين",
-      description: "اقرأ قصصاً ملهمة عن التوبة والعودة إلى الله",
+      title: t('repentance_stories'),
+      description: t('repentance_stories_desc'),
       color: "from-amber-100 to-amber-200",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8c7f0d887_.png",
       link: createPageUrl("Stories?type=repentance")
@@ -56,19 +58,19 @@ export default function Repentance() {
 
   const steps = [
     {
-      title: "الندم على الذنب",
+      title: t('regret'),
       description: "أن تشعر بالندم الحقيقي على ما فعلت"
     },
     {
-      title: "الإقلاع عن الذنب فوراً",
+      title: t('stop_sin'),
       description: "التوقف عن فعل المعصية على الفور"
     },
     {
-      title: "العزم على عدم العودة",
+      title: t('resolve_not_return'),
       description: "النية الصادقة بعدم الرجوع إلى الذنب"
     },
     {
-      title: "رد المظالم",
+      title: t('return_rights'),
       description: "إرجاع الحقوق لأصحابها إن كان الذنب يتعلق بحقوق الآخرين"
     }
   ];
@@ -83,11 +85,11 @@ export default function Repentance() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-rose-100 to-pink-100 px-6 py-3 rounded-full mb-6">
             <Heart className="w-5 h-5 text-rose-600" />
-            <span className="text-rose-800 font-semibold">أريد أن أتوب</span>
+            <span className="text-rose-800 font-semibold">{t('repentance')}</span>
           </div>
           
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
-            باب التوبة مفتوح
+            {t('repentance_title')}
           </h1>
 
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-amber-50 to-amber-100 rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-amber-200 mb-8">
@@ -98,7 +100,7 @@ export default function Repentance() {
           </div>
 
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-            مهما كان ذنبك، رحمة الله أوسع. ابدأ رحلة التوبة معنا اليوم
+            {t('repentance_subtitle')}
           </p>
         </motion.div>
 
@@ -138,7 +140,7 @@ export default function Repentance() {
         >
           <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl overflow-hidden mb-8">
             <CardHeader className="bg-gradient-to-r from-rose-500 to-rose-600 text-white p-6 md:p-8">
-              <CardTitle className="text-2xl md:text-3xl text-center">شروط التوبة الصادقة</CardTitle>
+              <CardTitle className="text-2xl md:text-3xl text-center">{t('repentance_conditions')}</CardTitle>
             </CardHeader>
             <CardContent className="p-6 md:p-10">
               <div className="grid md:grid-cols-2 gap-6">
@@ -165,7 +167,7 @@ export default function Repentance() {
                 <div className="flex items-start gap-3">
                   <Sparkles className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h4 className="text-lg font-bold text-emerald-900 mb-2">تذكر دائماً</h4>
+                    <h4 className="text-lg font-bold text-emerald-900 mb-2">{t('remember_always')}</h4>
                     <p className="text-emerald-800 leading-relaxed">
                       "إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ وَيُحِبُّ الْمُتَطَهِّرِينَ" - سورة البقرة آية 222
                     </p>
@@ -191,10 +193,10 @@ export default function Repentance() {
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <MessageCircle className="w-16 h-16 mx-auto mb-6 text-amber-300" />
               <h2 className="text-2xl md:text-4xl font-bold mb-4">
-                هل تحتاج للمساعدة؟
+                {t('need_help')}
               </h2>
               <p className="text-lg md:text-xl text-rose-50 mb-8 max-w-2xl mx-auto">
-                نحن هنا لمساعدتك في رحلة التوبة. تواصل معنا الآن واحصل على الدعم والإرشاد
+                {t('help_desc')}
               </p>
               <Button
                 onClick={() => setShowContactModal(true)}
@@ -202,7 +204,7 @@ export default function Repentance() {
                 className="bg-white text-rose-600 hover:bg-rose-50 text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
                 <Heart className="w-5 h-5 md:w-6 md:h-6 ml-2" />
-                تواصل معنا الآن
+                {t('contact_us_now')}
               </Button>
             </CardContent>
           </Card>
