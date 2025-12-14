@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Sparkles, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
-import ArticleCard from "../components/ArticleCard";
-import AIContentGenerator from "../components/admin/AIContentGenerator";
+import ArticleCard from "@/components/ArticleCard";
+import AIContentGenerator from "@/components/admin/AIContentGenerator";
 import {
   Dialog,
   DialogContent,

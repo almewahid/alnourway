@@ -3,20 +3,20 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Star, Layout, Database, PieChart, GitMerge, FileText, Server, Lock, Link2, FileJson, Table as TableIcon, LayoutDashboard, Code, BarChart3 } from "lucide-react";
 
 // Components
-import DocsFeatures from "../components/docs/DocsFeatures";
-import DocsFrontend from "../components/docs/DocsFrontend";
-import DocsBackend from "../components/docs/DocsBackend";
-import SitemapView from "../components/docs/SitemapView";
-import MarkdownView from "../components/docs/MarkdownView";
-import DBStats from "../components/docs/DBStats";
-import GenericDocView from "../components/docs/GenericDocView";
+import DocsFeatures from "@/components/docs/DocsFeatures";
+import DocsFrontend from "@/components/docs/DocsFrontend";
+import DocsBackend from "@/components/docs/DocsBackend";
+import SitemapView from "@/components/docs/SitemapView";
+import MarkdownView from "@/components/docs/MarkdownView";
+import DBStats from "@/components/docs/DBStats";
+import GenericDocView from "@/components/docs/GenericDocView";
 
 // Data
-import entitiesSchema from "../components/docs/entitiesSchema";
-import relations from "../components/docs/relations";
-import authSchema from "../components/docs/authSchema";
-import apiEndpoints from "../components/docs/apiEndpoints";
-import sampleData from "../components/docs/sampleData";
+import entitiesSchema from "@/components/docs/entitiesSchema";
+import relations from "@/components/docs/relations";
+import authSchema from "@/components/docs/authSchema";
+import apiEndpoints from "@/components/docs/apiEndpoints";
+import sampleData from "@/components/docs/sampleData";
 
 export default function Docs() {
   const [mainTab, setMainTab] = useState("features");

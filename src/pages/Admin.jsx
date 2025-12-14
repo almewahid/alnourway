@@ -5,14 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Shield, BookOpen, Video, MessageSquare, Users, Heart, Building2, GraduationCap, Calendar, Eye, ThumbsUp, MessageCircleMore, Star, TrendingUp, Activity, Upload } from "lucide-react";
-import AdminTable from "../components/AdminTable";
-import AppSettingsAdmin from "../components/AppSettingsAdmin";
-import BulkUploadModal from "../components/BulkUploadModal";
-import UsersManagement from "../components/UsersManagement";
-import CourseManager from "../components/admin/CourseManager";
-import FatwaModeration from "../components/admin/FatwaModeration";
-import CommentsModeration from "../components/admin/CommentsModeration";
-import AIContentGenerator from "../components/admin/AIContentGenerator";
+import AdminTable from "@/components/AdminTable";
+import AppSettingsAdmin from "@/components/AppSettingsAdmin";
+import BulkUploadModal from "@/components/BulkUploadModal";
+import UsersManagement from "@/components/UsersManagement";
+import CourseManager from "@/components/admin/CourseManager";
+import FatwaModeration from "@/components/admin/FatwaModeration";
+import CommentsModeration from "@/components/admin/CommentsModeration";
+import AIContentGenerator from "@/components/admin/AIContentGenerator";
 
 export default function Admin() {
   const [user, setUser] = useState(null);

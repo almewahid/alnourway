@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BookOpen, Users, Clock, Calendar, Video, Sparkles, CheckCircle, Clock3 } from "lucide-react";
 import { motion } from "framer-motion";
-import CourseEnrollmentModal from "../components/CourseEnrollmentModal";
+import CourseEnrollmentModal from "@/components/CourseEnrollmentModal";
 import { Badge } from "@/components/ui/badge";
 
 export default function QuranCourses() {

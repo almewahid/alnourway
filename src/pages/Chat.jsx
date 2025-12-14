@@ -8,8 +8,8 @@ import { MessageSquare, Send, Search, User, Sparkles, Check, CheckCheck, Calenda
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import OnlineIndicator from "../components/OnlineIndicator";
-import Breadcrumb from "../components/Breadcrumb";
+import OnlineIndicator from "@/components/OnlineIndicator";
+import Breadcrumb from "@/components/Breadcrumb";
 import { createPageUrl } from "@/utils";
 
 export default function Chat() {

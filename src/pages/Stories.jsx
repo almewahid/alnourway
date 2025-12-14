@@ -6,10 +6,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import StoryCard from "../components/StoryCard";
-import CommentsSection from "../components/CommentsSection";
-import RatingWidget from "../components/RatingWidget";
-import ShareButtons from "../components/ShareButtons";
+import StoryCard from "@/components/StoryCard";
+import CommentsSection from "@/components/CommentsSection";
+import RatingWidget from "@/components/RatingWidget";
+import ShareButtons from "@/components/ShareButtons";
 
 export default function Stories() {
   const urlParams = new URLSearchParams(window.location.search);

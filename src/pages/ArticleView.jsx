@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, User, Share2, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import ShareButtons from "../components/ShareButtons";
-import CommentsSection from "../components/CommentsSection";
+import ShareButtons from "@/components/ShareButtons";
+import CommentsSection from "@/components/CommentsSection";
 
 export default function ArticleView() {
   const urlParams = new URLSearchParams(window.location.search);

@@ -8,13 +8,13 @@ import { Search, MessageSquare, Users, BookOpen, Sparkles, ArrowRight, Heart } f
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import FatwaCard from "../components/FatwaCard";
-import FatwaRequestModal from "../components/FatwaRequestModal";
-import ContactModal from "../components/ContactModal";
-import AIFatwaAssistant from "../components/AIFatwaAssistant";
-import RatingWidget from "../components/RatingWidget";
-import CommentsSection from "../components/CommentsSection";
-import ShareButtons from "../components/ShareButtons";
+import FatwaCard from "@/components/FatwaCard";
+import FatwaRequestModal from "@/components/FatwaRequestModal";
+import ContactModal from "@/components/ContactModal";
+import AIFatwaAssistant from "@/components/AIFatwaAssistant";
+import RatingWidget from "@/components/RatingWidget";
+import CommentsSection from "@/components/CommentsSection";
+import ShareButtons from "@/components/ShareButtons";
 import { useLanguage } from "@/components/LanguageContext";
 
 export default function Fatwa() {

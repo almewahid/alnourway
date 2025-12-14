@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MapPin, Search, Phone, Mail, Navigation } from "lucide-react";
 import { motion } from "framer-motion";
-import Breadcrumb from "../components/Breadcrumb";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export default function IslamicCenters() {
   const [searchQuery, setSearchQuery] = useState("");

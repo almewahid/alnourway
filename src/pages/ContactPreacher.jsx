@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Phone, MessageCircle, Globe, Mail } from "lucide-react";
 import { motion } from "framer-motion";
-import ContactModal from "../components/ContactModal";
-import OnlineIndicator from "../components/OnlineIndicator";
+import ContactModal from "@/components/ContactModal";
+import OnlineIndicator from "@/components/OnlineIndicator";
 
 export default function ContactPreacher() {
   const [showContactModal, setShowContactModal] = useState(false);

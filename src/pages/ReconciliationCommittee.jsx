@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Award, Briefcase, GraduationCap, Heart, Sparkles, Shield, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import ReconciliationRequestModal from "../components/ReconciliationRequestModal";
+import ReconciliationRequestModal from "@/components/ReconciliationRequestModal";
 import { useLanguage } from "@/components/LanguageContext";
 
 export default function ReconciliationCommittee() {

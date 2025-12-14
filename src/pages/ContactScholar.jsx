@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Mail, Phone, MessageSquare, BookOpen, Globe, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import ContactModal from "../components/ContactModal";
-import OnlineIndicator from "../components/OnlineIndicator";
+import ContactModal from "@/components/ContactModal";
+import OnlineIndicator from "@/components/OnlineIndicator";
 
 export default function ContactScholar() {
   const [showContactModal, setShowContactModal] = useState(false);

@@ -10,8 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Settings as SettingsIcon, User, Bell, Moon, Type, Globe, Save, Heart, Sun } from "lucide-react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import InterestsSelector from "../components/InterestsSelector";
-import Breadcrumb from "../components/Breadcrumb";
+import InterestsSelector from "@/components/InterestsSelector";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export default function Settings() {
   const [user, setUser] = useState(null);

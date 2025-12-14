@@ -6,8 +6,8 @@ import { Sparkles, TrendingUp, BookOpen, Video, Heart, Star } from "lucide-react
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import Breadcrumb from "../components/Breadcrumb";
-import LectureCard from "../components/LectureCard";
+import Breadcrumb from "@/components/Breadcrumb";
+import LectureCard from "@/components/LectureCard";
 
 export default function Recommendations() {
   const [user, setUser] = useState(null);

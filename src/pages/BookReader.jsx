@@ -9,9 +9,9 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 // New imports
-import CommentsSection from "../components/CommentsSection";
-import RatingWidget from "../components/RatingWidget";
-import ShareButtons from "../components/ShareButtons";
+import CommentsSection from "@/components/CommentsSection";
+import RatingWidget from "@/components/RatingWidget";
+import ShareButtons from "@/components/ShareButtons";
 
 export default function BookReader() {
   const urlParams = new URLSearchParams(window.location.search);

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/components/api/supabaseClient";
 // لو لا تستخدم alias @ في Vite فاستعمل بدله:
-// import { supabase } from "../components/api/supabaseClient";
+// import { supabase } from "@/components/api/supabaseClient";
 
 export default function ProtectedRoute({ children }) {
   const [loading, setLoading] = useState(true);

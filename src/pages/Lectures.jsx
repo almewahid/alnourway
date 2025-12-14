@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Video, Music, Search, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import LectureCard from "../components/LectureCard";
-import CommentsSection from "../components/CommentsSection";
-import RatingWidget from "../components/RatingWidget";
+import LectureCard from "@/components/LectureCard";
+import CommentsSection from "@/components/CommentsSection";
+import RatingWidget from "@/components/RatingWidget";
 import { Button } from "@/components/ui/button";
-import Breadcrumb from "../components/Breadcrumb";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export default function Lectures() {
   const urlParams = new URLSearchParams(window.location.search);

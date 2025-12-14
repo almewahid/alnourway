@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Video, CheckCircle, Sparkles, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import ContactModal from "../components/ContactModal";
+import ContactModal from "@/components/ContactModal";
 import { supabase } from "@/components/api/supabaseClient";
 import { useLanguage } from "@/components/LanguageContext";
 
