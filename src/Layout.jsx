@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, BookOpen, Heart, MessageSquare, Menu, Bell, User as UserIcon, Sparkles, Users, GraduationCap, Shield, Star, Settings, Radio } from "lucide-react";
+import { LanguageProvider } from "@/components/LanguageContext";
 import {
   Sidebar,
   SidebarContent,
@@ -49,6 +50,14 @@ const bottomNavItems = [
 ];
 
 export default function Layout({ children, currentPageName }) {
+  return (
+    <LanguageProvider>
+      <LayoutContent children={children} currentPageName={currentPageName} />
+    </LanguageProvider>
+  );
+}
+
+function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
