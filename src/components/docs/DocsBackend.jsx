@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/components/api/supabaseClient";
-import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -133,31 +132,11 @@ export default function DocsBackend() {
 
     const optimizeMeta = async (page) => {
         setOptimizingPage(page.name);
-        try {
-            const result = await base44.integrations.Core.InvokeLLM({
-                prompt: `Generate an SEO-optimized meta description for the following page on an Islamic platform:
-                Page Name: ${page.name}
-                Path: ${page.path}
-                Current Description: ${page.description}
-                Key Sections: ${page.sections.join(', ')}
-                
-                Requirements:
-                - Language: Arabic
-                - Length: 150-160 characters
-                - Tone: Inviting and professional
-                - Include relevant keywords
-                
-                Output only the meta description text.`,
-            });
-            
-            alert(`Meta Description for ${page.name}:\n\n${result}`);
-            // In a real app, you would save this to the database/page config
-        } catch (error) {
-            console.error("Meta optimization failed:", error);
-            alert("Failed to generate meta description.");
-        } finally {
-            setOptimizingPage(null);
-        }
+        
+        // Temporarily disabled - base44 integration not available
+        alert(`Meta optimization for ${page.name} is currently unavailable.\n\nPlease configure the AI integration.`);
+        
+        setOptimizingPage(null);
     };
 
     return (
