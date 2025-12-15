@@ -226,14 +226,16 @@ function LayoutContent({ children, currentPageName }) {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Docs") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
-                        <Link to={createPageUrl("Docs")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
-                          <BookOpen className={`w-4 h-4 ${location.pathname === createPageUrl("Docs") ? 'text-white' : 'text-red-600'}`} />
-                          <span className="text-sm">التوثيق التقني</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    {user?.role === 'admin' && (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Docs") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
+                          <Link to={createPageUrl("Docs")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
+                            <BookOpen className={`w-4 h-4 ${location.pathname === createPageUrl("Docs") ? 'text-white' : 'text-red-600'}`} />
+                            <span className="text-sm">التوثيق التقني</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
                         <Link to={createPageUrl("AdvancedAnalytics")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">

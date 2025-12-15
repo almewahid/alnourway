@@ -48,7 +48,9 @@ Deno.serve(async (req) => {
             };
         } else if (action === "generate_learning_path") {
             prompt = `Create a personalized Islamic learning path for a user with the following profile: ${JSON.stringify(context)}. 
-            The path should consist of 3 concise ordered steps (modules). Language: Arabic.`;
+            The path should consist of 3 concise ordered steps (modules). 
+            For each step, include a simple quiz question with 3 options and the correct answer to test understanding.
+            Language: Arabic.`;
             jsonSchema = {
                 type: "object",
                 properties: {
@@ -60,7 +62,15 @@ Deno.serve(async (req) => {
                                 title: { type: "string" },
                                 description: { type: "string" },
                                 duration: { type: "string" },
-                                resources: { type: "array", items: { type: "string" } }
+                                resources: { type: "array", items: { type: "string" } },
+                                quiz: {
+                                    type: "object",
+                                    properties: {
+                                        question: { type: "string" },
+                                        options: { type: "array", items: { type: "string" } },
+                                        correct_answer: { type: "string" }
+                                    }
+                                }
                             }
                         }
                     }
