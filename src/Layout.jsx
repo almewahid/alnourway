@@ -272,8 +272,13 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 
   <button
   onClick={async () => {
-  await supabase.auth.signOut();
-  window.location.href = '/';
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.error("Logout error", e);
+    } finally {
+      window.location.href = '/';
+    }
   }}
   className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl w-full transition-all duration-300"
   >

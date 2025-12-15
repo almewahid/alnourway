@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Map, BookOpen, Clock, ArrowRight, CheckCircle, PenTool, BrainCircuit, Share2, Save, Trash2 } from "lucide-react";
-import { generateLearningPath } from "@/functions/aiAssistant";
+import { aiAssistant } from "@/functions/aiAssistant";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/components/api/supabaseClient";
