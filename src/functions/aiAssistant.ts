@@ -1,178 +1,301 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+// ملف aiAssistant - دالة مساعدة للذكاء الاصطناعي
+// متوافق مع Supabase Edge Functions
 
-Deno.serve(async (req) => {
-    try {
-        const base44 = createClientFromRequest(req);
-        const reqPayload = await req.json();
-        const { action, text, userHistory, context } = reqPayload;
+import { supabase } from '@/components/api/supabaseClient';
 
-        let prompt = "";
-        let jsonSchema = null;
+/**
+ * دالة عامة لاستدعاء AI Assistant
+ * @param {Object} params - معاملات الطلب
+ * @param {string} params.action - نوع الإجراء
+ * @param {string} params.text - النص المطلوب معالجته
+ * @param {Array} params.userHistory - تاريخ المستخدم
+ * @param {Object} params.context - معلومات إضافية
+ * @returns {Promise<Object>} - النتيجة
+ */
+export async function invokeAIAssistant({ action, text, userHistory, context, prompt }) {
+  try {
+    // TODO: استبدل هذا باستدعاء Supabase Edge Function عندما يكون جاهزاً
+    // const { data, error } = await supabase.functions.invoke('aiAssistant', {
+    //   body: { action, text, userHistory, context, prompt }
+    // });
+    // if (error) throw error;
+    // return data;
 
-        if (action === "chat") {
-             // General chat
-             prompt = reqPayload.prompt || `You are an Islamic assistant. Answer the user: ${text}`;
-             // No jsonSchema for chat, returns string
-        } else if (action === "summarize") {
-            prompt = `Summarize the following Islamic text into 3-5 concise bullet points in Arabic. Text: ${text}`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    summary: { type: "string" }
-                }
-            };
-        } else if (action === "refine_question") {
-            prompt = `Rewrite the following question to be more clear, precise, and polite in Arabic, suitable for asking an Islamic scholar. Original Question: ${text}`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    refined_text: { type: "string" }
-                }
-            };
-        } else if (action === "recommend") {
-            prompt = `Based on the user's history: ${JSON.stringify(userHistory)}, suggest 3 specific topics or books in Arabic that they might be interested in. Focus on Islamic education.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    recommendations: { 
-                        type: "array", 
-                        items: { 
-                            type: "object", 
-                            properties: {
-                                title: { type: "string" },
-                                reason: { type: "string" }
-                            }
-                        } 
-                    }
-                }
-            };
-        } else if (action === "generate_learning_path") {
-            prompt = `Create a personalized Islamic learning path for a user with the following profile: ${JSON.stringify(context)}. 
-            The path should consist of 3 concise ordered steps (modules). 
-            For each step, include a simple quiz question with 3 options and the correct answer to test understanding.
-            Language: Arabic.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    steps: {
-                        type: "array",
-                        items: {
-                            type: "object",
-                            properties: {
-                                title: { type: "string" },
-                                description: { type: "string" },
-                                duration: { type: "string" },
-                                resources: { type: "array", items: { type: "string" } },
-                                quiz: {
-                                    type: "object",
-                                    properties: {
-                                        question: { type: "string" },
-                                        options: { type: "array", items: { type: "string" } },
-                                        correct_answer: { type: "string" }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-        } else if (action === "fatwa_assist") {
-             prompt = `You are an expert Islamic Fatwa Assistant. The user asks: "${text}". 
-             Provide a preliminary answer based on standard Islamic jurisprudence (Sunni). 
-             Cite sources if possible. State clearly that this is AI-generated and they should consult a real scholar for final rulings. 
-             Language: Arabic.`;
-             // Returns string text
-        } else if (action === "translate_content") {
-             const targetLang = context.targetLang || 'en';
-             prompt = `Translate the following text to ${targetLang}: "${text}". Return only the translated text.`;
-             jsonSchema = {
-                 type: "object",
-                 properties: {
-                     translated_text: { type: "string" }
-                 }
-             };
-        } else if (action === "generate_lecture") {
-            prompt = `Generate a detailed Islamic lecture outline and content about: "${text}". 
-            Include a catchy title, a suggested speaker name (e.g., 'Sheikh Ahmed'), a detailed description, the main topic, and estimated duration. 
-            Language: Arabic.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    title: { type: "string" },
-                    speaker: { type: "string" },
-                    description: { type: "string" },
-                    topic: { type: "string" },
-                    duration: { type: "string" }
-                }
-            };
-        } else if (action === "generate_story") {
-            prompt = `Write a short inspiring Islamic story based on the theme or event: "${text}". 
-            Include a title, author (or 'Unknown'), the full content of the story, a short excerpt, and a category (either 'convert' or 'repentance'). 
-            Language: Arabic.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    title: { type: "string" },
-                    author: { type: "string" },
-                    content: { type: "string" },
-                    excerpt: { type: "string" },
-                    category: { type: "string", enum: ["convert", "repentance"] }
-                }
-            };
-        } else if (action === "generate_fatwa_answer") {
-            prompt = `Draft a comprehensive initial answer for the following Islamic question: "${text}". 
-            Include the answer text, a suggested mufti name, a relevant category (e.g., 'ibadat', 'muamalat'), and a reference (Quran/Hadith or Fiqh book). 
-            Language: Arabic.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    answer: { type: "string" },
-                    mufti: { type: "string" },
-                    category: { type: "string" },
-                    reference: { type: "string" }
-                }
-            };
-        } else if (action === "generate_article") {
-            prompt = `Write a comprehensive Islamic article about: "${text}". 
-            Include a captivating title, the full article content (structured with paragraphs), suggested tags, and a meta description for SEO. 
-            Language: Arabic.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    title: { type: "string" },
-                    content: { type: "string" },
-                    tags: { type: "array", items: { type: "string" } },
-                    meta_description: { type: "string" }
-                }
-            };
-        } else if (action === "suggest_titles") {
-            prompt = `Suggest 5 catchy and SEO-friendly titles for an article about: "${text}". Language: Arabic.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    titles: { type: "array", items: { type: "string" } }
-                }
-            };
-        } else if (action === "generate_meta_description") {
-            prompt = `Generate a concise and engaging SEO meta description (under 160 characters) for an article about: "${text}". Language: Arabic.`;
-            jsonSchema = {
-                type: "object",
-                properties: {
-                    meta_description: { type: "string" }
-                }
-            };
-        } else {
-            return Response.json({ error: "Invalid action" }, { status: 400 });
+    // حالياً: إرجاع بيانات تجريبية حسب نوع الإجراء
+    return getMockResponse(action, text, context);
+  } catch (error) {
+    console.error('AI Assistant Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * دالة لإنشاء مسار تعليمي مخصص
+ */
+export async function generateLearningPath({ topic, level = 'beginner', userEmail, context }) {
+  return invokeAIAssistant({
+    action: 'generate_learning_path',
+    text: topic,
+    context: { topic, level, userEmail, ...context }
+  });
+}
+
+/**
+ * دالة للدردشة العامة
+ */
+export async function chat({ text, userHistory }) {
+  return invokeAIAssistant({
+    action: 'chat',
+    text,
+    userHistory
+  });
+}
+
+/**
+ * دالة لتلخيص النصوص
+ */
+export async function summarize({ text }) {
+  return invokeAIAssistant({
+    action: 'summarize',
+    text
+  });
+}
+
+/**
+ * دالة لتحسين الأسئلة
+ */
+export async function refineQuestion({ text }) {
+  return invokeAIAssistant({
+    action: 'refine_question',
+    text
+  });
+}
+
+/**
+ * دالة للتوصيات
+ */
+export async function getRecommendations({ userHistory }) {
+  return invokeAIAssistant({
+    action: 'recommend',
+    userHistory
+  });
+}
+
+/**
+ * دالة مساعد الفتاوى
+ */
+export async function fatwaAssist({ text }) {
+  return invokeAIAssistant({
+    action: 'fatwa_assist',
+    text
+  });
+}
+
+/**
+ * دالة لترجمة المحتوى
+ */
+export async function translateContent({ text, targetLang }) {
+  return invokeAIAssistant({
+    action: 'translate_content',
+    text,
+    context: { targetLang }
+  });
+}
+
+/**
+ * دالة لإنشاء محاضرة
+ */
+export async function generateLecture({ text }) {
+  return invokeAIAssistant({
+    action: 'generate_lecture',
+    text
+  });
+}
+
+/**
+ * دالة لإنشاء قصة
+ */
+export async function generateStory({ text }) {
+  return invokeAIAssistant({
+    action: 'generate_story',
+    text
+  });
+}
+
+/**
+ * دالة لإنشاء إجابة فتوى
+ */
+export async function generateFatwaAnswer({ text }) {
+  return invokeAIAssistant({
+    action: 'generate_fatwa_answer',
+    text
+  });
+}
+
+/**
+ * دالة لإنشاء مقال
+ */
+export async function generateArticle({ text }) {
+  return invokeAIAssistant({
+    action: 'generate_article',
+    text
+  });
+}
+
+/**
+ * دالة لاقتراح عناوين
+ */
+export async function suggestTitles({ text }) {
+  return invokeAIAssistant({
+    action: 'suggest_titles',
+    text
+  });
+}
+
+/**
+ * دالة لإنشاء meta description
+ */
+export async function generateMetaDescription({ text }) {
+  return invokeAIAssistant({
+    action: 'generate_meta_description',
+    text
+  });
+}
+
+// ============================================
+// دوال مساعدة لإرجاع بيانات تجريبية
+// ============================================
+
+function getMockResponse(action, text, context) {
+  const responses = {
+    chat: {
+      response: `هذه إجابة تجريبية عن: ${text}. يرجى ربط المشروع بـ AI API للحصول على إجابات حقيقية.`
+    },
+    
+    summarize: {
+      summary: `ملخص تجريبي للنص: ${text?.substring(0, 50)}...`
+    },
+    
+    refine_question: {
+      refined_text: `سؤال محسّن: ${text}`
+    },
+    
+    recommend: {
+      recommendations: [
+        { title: "كتاب التوحيد", reason: "أساسي لفهم العقيدة" },
+        { title: "فقه السنة", reason: "شامل للأحكام الفقهية" },
+        { title: "رياض الصالحين", reason: "مجموعة أحاديث نبوية مختارة" }
+      ]
+    },
+    
+    generate_learning_path: {
+      steps: [
+        {
+          title: `مقدمة في ${context?.topic || 'الموضوع'}`,
+          description: `تعرف على الأساسيات والمفاهيم الرئيسية`,
+          duration: "30 دقيقة",
+          resources: ["قراءة توجيهية", "فيديو تعريفي", "مقالات مرجعية"],
+          quiz: {
+            question: `ما هو ${context?.topic || 'الموضوع'}؟`,
+            options: ["الخيار الأول", "الخيار الثاني", "الخيار الثالث"],
+            correct_answer: "الخيار الأول"
+          }
+        },
+        {
+          title: `المستوى المتوسط`,
+          description: `تعمق في الموضوع وفهم التطبيقات العملية`,
+          duration: "45 دقيقة",
+          resources: ["أمثلة عملية", "تمارين تطبيقية", "حالات دراسية"],
+          quiz: {
+            question: `كيف تطبق ما تعلمته في الحياة العملية؟`,
+            options: ["بالممارسة المستمرة", "بالقراءة فقط", "بالحفظ فقط"],
+            correct_answer: "بالممارسة المستمرة"
+          }
+        },
+        {
+          title: `الإتقان والتطبيق`,
+          description: `أصبح خبيراً من خلال الممارسة المتقدمة`,
+          duration: "60 دقيقة",
+          resources: ["مشاريع عملية", "تقييمات نهائية", "شهادة إتمام"],
+          quiz: {
+            question: `ما هي أفضل الممارسات؟`,
+            options: ["التطبيق العملي", "النظري فقط", "لا شيء"],
+            correct_answer: "التطبيق العملي"
+          }
         }
-
-        const result = await base44.integrations.Core.InvokeLLM({
-            prompt: prompt,
-            response_json_schema: jsonSchema
-        });
-
-        return Response.json(result);
-
-    } catch (error) {
-        return Response.json({ error: error.message }, { status: 500 });
+      ]
+    },
+    
+    fatwa_assist: {
+      response: `هذه إجابة تجريبية عن سؤالك: "${text}". ننصح بالتواصل مع عالم متخصص للحصول على فتوى دقيقة. هذه الإجابة مولّدة بواسطة AI ولا تغني عن استشارة العلماء.`
+    },
+    
+    translate_content: {
+      translated_text: `[Translated]: ${text}`
+    },
+    
+    generate_lecture: {
+      title: `محاضرة عن ${text}`,
+      speaker: "الشيخ أحمد محمد",
+      description: `محاضرة شاملة عن ${text} تتناول الجوانب الشرعية والعملية`,
+      topic: text,
+      duration: "60 دقيقة"
+    },
+    
+    generate_story: {
+      title: `قصة ملهمة عن ${text}`,
+      author: "مجهول",
+      content: `هذه قصة تجريبية عن ${text}. يتم إنشاء القصص الحقيقية عند ربط AI API.`,
+      excerpt: `قصة ملهمة عن ${text}`,
+      category: "repentance"
+    },
+    
+    generate_fatwa_answer: {
+      answer: `إجابة تجريبية عن: ${text}`,
+      mufti: "الشيخ عبدالله",
+      category: "ibadat",
+      reference: "القرآن الكريم والسنة النبوية"
+    },
+    
+    generate_article: {
+      title: `مقال عن ${text}`,
+      content: `هذا مقال تجريبي شامل عن ${text}. يتم إنشاء المقالات الحقيقية عند ربط AI API.`,
+      tags: ["إسلام", "تعليم", text],
+      meta_description: `مقال شامل عن ${text} في الإسلام`
+    },
+    
+    suggest_titles: {
+      titles: [
+        `${text}: دليل شامل`,
+        `كل ما تريد معرفته عن ${text}`,
+        `${text} في الإسلام`,
+        `فهم ${text} بطريقة سهلة`,
+        `${text}: الأساسيات والتطبيق`
+      ]
+    },
+    
+    generate_meta_description: {
+      meta_description: `تعرف على ${text} في الإسلام بطريقة شاملة ومبسطة مع أمثلة عملية ومراجع موثوقة`
     }
-});
+  };
+
+  return responses[action] || { error: "Invalid action" };
+}
+
+// التصدير الافتراضي
+export default {
+  invokeAIAssistant,
+  generateLearningPath,
+  chat,
+  summarize,
+  refineQuestion,
+  getRecommendations,
+  fatwaAssist,
+  translateContent,
+  generateLecture,
+  generateStory,
+  generateFatwaAnswer,
+  generateArticle,
+  suggestTitles,
+  generateMetaDescription
+};
