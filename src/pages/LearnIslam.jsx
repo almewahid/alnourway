@@ -100,9 +100,9 @@ export default function LearnIslam() {
           </p>
         </motion.div>
 
-        <div className="mb-12">
+        {/* <div className="mb-12">
           <AILearningPath />
-        </div>
+        </div> */}
 
         {/* الأقسام - 2 في الموبايل، 3 في التابلت، 5 في الديسكتوب */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">

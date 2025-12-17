@@ -54,8 +54,13 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [entity] });
+      // toast.success("تم الحفظ بنجاح"); // Optional: Add toast import if not present, assumed Layout provides Toaster
       onClose();
     },
+    onError: (error) => {
+      console.error("Save error:", error);
+      alert("حدث خطأ أثناء الحفظ: " + (error.message || "خطأ غير معروف"));
+    }
   });
 
   const handleSubmit = (e) => {

@@ -42,6 +42,14 @@ export default function FatwaRequestModal({ open, onClose }) {
         });
       }, 2000);
     },
+    onError: (error) => {
+      console.error("Fatwa request error:", error);
+      // alert("حدث خطأ أثناء إرسال السؤال: " + error.message);
+      // Using a fallback alert since toast might not be imported here or handled in mutation
+      // But better to let the UI show state.
+      // We will rely on isError state if needed, but alert is safest for immediate feedback.
+      alert("عذراً، حدث خطأ أثناء إرسال السؤال. يرجى المحاولة مرة أخرى.");
+    }
   });
 
   const [isRefining, setIsRefining] = useState(false);
@@ -89,7 +97,7 @@ export default function FatwaRequestModal({ open, onClose }) {
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">تم إرسال السؤال بنجاح</h3>
-            <p className="text-gray-600">ستصلك الإجابة على بريدك الإلكتروني قريباً</p>
+            <p className="text-gray-600">تم استقبال رسالتكم وسيتم الرد عليها في أقرب وقت</p>
           </div>
         ) : (
           <>

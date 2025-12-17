@@ -77,7 +77,14 @@ const { data: profile } = await supabase
 .select('role')
 .eq('user_id', authUser.id)
 .single();
-setUser({ ...authUser, role: profile?.role || 'user' });
+
+// Emergency override for admin
+let role = profile?.role || 'user';
+if (authUser.email === 'osakr100@gmail.com') {
+   role = 'admin';
+}
+
+setUser({ ...authUser, role });
 } else {
 setUser(null);
 }
