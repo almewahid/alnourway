@@ -6,7 +6,7 @@
 import os
 import re
 
-INPUT_FILE = "translations_GENERATED.jsx"
+INPUT_FILE = "translations_PERFECT.jsx"
 OUTPUT_DIR = "src/locales"
 
 def extract_language_data(content, lang_code):

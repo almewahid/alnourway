@@ -237,10 +237,10 @@ if __name__ == "__main__":
     # توليد ملف translations.jsx
     jsx_content = generate_translations_jsx(translated_data)
     
-    with open("translations_GENERATED.jsx", 'w', encoding='utf-8') as f:
+    with open("translations_PERFECT.jsx", 'w', encoding='utf-8') as f:
         f.write(jsx_content)
     
-    print(f"✅ تم توليد: translations_GENERATED.jsx")
+    print(f"✅ تم توليد: translations_PERFECT.jsx")
     
     # صوت تنبيه عند الانتهاء
     print('\a')  # Bell sound
@@ -248,6 +248,6 @@ if __name__ == "__main__":
     print('\a')
     
     print(f"\n📝 الخطوة التالية:")
-    print(f"   1. راجع ملف translations_GENERATED.jsx")
+    print(f"   1. راجع ملف translations_PERFECT.jsx")
     print(f"   2. انسخه إلى src/components/translations.jsx")
     print(f"   3. شغّل السكريبت مرة أخرى إذا بقيت ترجمات")
