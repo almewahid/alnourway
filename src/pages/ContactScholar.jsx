@@ -11,13 +11,17 @@ import OnlineIndicator from "@/components/OnlineIndicator";
 export default function ContactScholar() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedScholar, setSelectedScholar] = useState(null);
-
   const [onlineFilter, setOnlineFilter] = useState(false);
+
+  // ✅ محاكاة حالة Online - تم نقلها هنا قبل استخدامها
+  const isScholarOnline = (scholar) => {
+    // يمكن إضافة منطق حقيقي هنا - مثلاً التحقق من آخر نشاط
+    return Math.random() > 0.5;
+  };
 
   const { data: scholars, isLoading } = useQuery({
     queryKey: ['scholars_mufti'],
     queryFn: async () => {
-      // Fetch all scholars first, then we can simulate online status or filter
       const { data, error } = await supabase.from('Scholar').select('*').eq('type', 'mufti');
       if (error) throw error;
       return data;
@@ -34,12 +38,6 @@ export default function ContactScholar() {
   const handleContact = (scholar) => {
     setSelectedScholar(scholar);
     setShowContactModal(true);
-  };
-
-  // محاكاة حالة Online (في التطبيق الحقيقي، ستأتي من قاعدة البيانات)
-  const isScholarOnline = (scholar) => {
-    // يمكن إضافة منطق حقيقي هنا - مثلاً التحقق من آخر نشاط
-    return Math.random() > 0.5;
   };
 
   return (
