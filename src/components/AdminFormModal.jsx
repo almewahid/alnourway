@@ -100,8 +100,29 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('📝 إرسال النموذج:', formData);
-    saveMutation.mutate(formData);
+    
+    // تنظيف البيانات: تحويل strings فارغة إلى null
+    const cleanedData = {};
+    Object.keys(formData).forEach(key => {
+      const value = formData[key];
+      const field = fields.find(f => f.key === key);
+      
+      // إذا كان الحقل number وقيمته فارغة، نضع null
+      if (field?.type === 'number' && value === '') {
+        cleanedData[key] = null;
+      }
+      // إذا كان الحقل text/textarea وقيمته فارغة وليس required
+      else if (value === '' && !field?.required) {
+        cleanedData[key] = null;
+      }
+      // باقي الحالات نبقي القيمة كما هي
+      else {
+        cleanedData[key] = value;
+      }
+    });
+    
+    console.log('📝 إرسال النموذج:', cleanedData);
+    saveMutation.mutate(cleanedData);
   };
 
   const handleChange = (key, value) => {
