@@ -48,7 +48,7 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
         }
 
       } else {
-        const { error } = await supabase.from(entity).insert(data);
+        const { data: result, error } = await supabase.from(entity).insert(data).select();
         if (error) throw error;
       }
     },
