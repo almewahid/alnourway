@@ -8,8 +8,11 @@ export const LanguageProvider = ({ children }) => {
   const [isRTL, setIsRTL] = useState(true);
 
   useEffect(() => {
+    // ✅ فرض اللغة العربية وRTL
     document.documentElement.dir = 'rtl';
     document.documentElement.lang = 'ar';
+    document.body.style.direction = 'rtl';
+    document.body.style.textAlign = 'right';
   }, []);
 
   // ✅ تعطيل الترجمة - إرجاع المفتاح كما هو
