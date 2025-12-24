@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { translations } from "./translations";
+import { translations } from "../translations_PERFECT";
 import { supabase } from "@/components/api/supabaseClient";
 
 const LanguageContext = createContext();
