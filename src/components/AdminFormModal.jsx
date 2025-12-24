@@ -31,40 +31,76 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
+      console.log('💾 محاولة حفظ البيانات:', { entity, isEdit: !!item, data });
+      
       if (item) {
-        const { error } = await supabase.from(entity).update(data).eq('id', item.id);
-        if (error) throw error;
+        // تحديث سجل موجود
+        const { data: result, error } = await supabase
+          .from(entity)
+          .update(data)
+          .eq('id', item.id)
+          .select();
+        
+        if (error) {
+          console.error('❌ خطأ في التحديث:', error);
+          throw error;
+        }
+        console.log('✅ تم التحديث بنجاح:', result);
 
-        // Auto-Notification trigger when answering a FatwaRequest
+        // إرسال إشعار تلقائي عند الإجابة على فتوى
         if (entity === 'FatwaRequest' && data.status === 'answered' && data.answer && item.email) {
-           await supabase.from('Notification').insert({
-              user_email: item.email,
-              title: "تمت الإجابة على سؤالك",
-              message: "أجاب أحد العلماء على سؤالك: " + item.question.substring(0, 30) + "...",
-              type: "fatwa_answer",
-              is_read: false,
-              link: `/Fatwa` // Ideally link to specific fatwa if public, or profile
-           });
+           const { error: notifError } = await supabase
+             .from('Notification')
+             .insert({
+                user_email: item.email,
+                title: "تمت الإجابة على سؤالك",
+                message: "أجاب أحد العلماء على سؤالك: " + item.question.substring(0, 30) + "...",
+                type: "fatwa_answer",
+                is_read: false,
+                link: `/Fatwa`
+             })
+             .select();
+           
+           if (notifError) {
+             console.error('❌ خطأ في إرسال الإشعار:', notifError);
+           } else {
+             console.log('✅ تم إرسال الإشعار');
+           }
         }
 
       } else {
-        const { data: result, error } = await supabase.from(entity).insert(data).select();
-        if (error) throw error;
+        // إضافة سجل جديد
+        const { data: result, error } = await supabase
+          .from(entity)
+          .insert(data)
+          .select();
+        
+        if (error) {
+          console.error('❌ خطأ في الإدراج:', error);
+          throw error;
+        }
+        console.log('✅ تم الإدراج بنجاح:', result);
       }
     },
     onSuccess: () => {
+      console.log('✅ العملية اكتملت بنجاح!');
       queryClient.invalidateQueries({ queryKey: [entity] });
-      // toast.success("تم الحفظ بنجاح"); // Optional: Add toast import if not present, assumed Layout provides Toaster
+      alert('✅ تم الحفظ بنجاح!');
       onClose();
     },
     onError: (error) => {
-      console.error("Save error:", error);
-      alert("حدث خطأ أثناء الحفظ: " + (error.message || "خطأ غير معروف"));
+      console.error("❌ خطأ في الحفظ:", error);
+      alert(
+        "حدث خطأ أثناء الحفظ:\n\n" + 
+        (error.message || "خطأ غير معروف") + 
+        "\n\nتحقق من Console للمزيد من التفاصيل (اضغط F12)"
+      );
     }
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('📝 إرسال النموذج:', formData);
     saveMutation.mutate(formData);
   };
 
@@ -139,7 +175,7 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
               className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
               disabled={saveMutation.isPending}
             >
-              {saveMutation.isPending ? 'جاري الحفظ...' : 'حفظ'}
+              {saveMutation.isPending ? 'جارٍ الحفظ...' : 'حفظ'}
             </Button>
           </div>
         </form>
