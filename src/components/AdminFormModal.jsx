@@ -33,54 +33,64 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
     mutationFn: async (data) => {
       console.log('💾 محاولة حفظ البيانات:', { entity, isEdit: !!item, data });
       
-      if (item) {
-        // تحديث سجل موجود
-        const { data: result, error } = await supabase
-          .from(entity)
-          .update(data)
-          .eq('id', item.id)
-          .select();
-        
-        if (error) {
-          console.error('❌ خطأ في التحديث:', error);
-          throw error;
-        }
-        console.log('✅ تم التحديث بنجاح:', result);
+      // إضافة timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('انتهت مهلة الطلب (timeout) - يرجى المحاولة مرة أخرى')), 10000);
+      });
+      
+      const savePromise = (async () => {
+        if (item) {
+          // تحديث سجل موجود
+          const { data: result, error } = await supabase
+            .from(entity)
+            .update(data)
+            .eq('id', item.id)
+            .select();
+          
+          if (error) {
+            console.error('❌ خطأ في التحديث:', error);
+            throw error;
+          }
+          console.log('✅ تم التحديث بنجاح:', result);
 
-        // إرسال إشعار تلقائي عند الإجابة على فتوى
-        if (entity === 'FatwaRequest' && data.status === 'answered' && data.answer && item.email) {
-           const { error: notifError } = await supabase
-             .from('Notification')
-             .insert({
-                user_email: item.email,
-                title: "تمت الإجابة على سؤالك",
-                message: "أجاب أحد العلماء على سؤالك: " + item.question.substring(0, 30) + "...",
-                type: "fatwa_answer",
-                is_read: false,
-                link: `/Fatwa`
-             })
-             .select();
-           
-           if (notifError) {
-             console.error('❌ خطأ في إرسال الإشعار:', notifError);
-           } else {
-             console.log('✅ تم إرسال الإشعار');
-           }
-        }
+          // إرسال إشعار تلقائي عند الإجابة على فتوى
+          if (entity === 'FatwaRequest' && data.status === 'answered' && data.answer && item.email) {
+             const { error: notifError } = await supabase
+               .from('Notification')
+               .insert({
+                  user_email: item.email,
+                  title: "تمت الإجابة على سؤالك",
+                  message: "أجاب أحد العلماء على سؤالك: " + item.question.substring(0, 30) + "...",
+                  type: "fatwa_answer",
+                  is_read: false,
+                  link: `/Fatwa`
+               })
+               .select();
+             
+             if (notifError) {
+               console.error('❌ خطأ في إرسال الإشعار:', notifError);
+             } else {
+               console.log('✅ تم إرسال الإشعار');
+             }
+          }
 
-      } else {
-        // إضافة سجل جديد
-        const { data: result, error } = await supabase
-          .from(entity)
-          .insert(data)
-          .select();
-        
-        if (error) {
-          console.error('❌ خطأ في الإدراج:', error);
-          throw error;
+        } else {
+          // إضافة سجل جديد
+          const { data: result, error } = await supabase
+            .from(entity)
+            .insert(data)
+            .select();
+          
+          if (error) {
+            console.error('❌ خطأ في الإدراج:', error);
+            throw error;
+          }
+          console.log('✅ تم الإدراج بنجاح:', result);
         }
-        console.log('✅ تم الإدراج بنجاح:', result);
-      }
+      })();
+      
+      // استخدام Promise.race للتعامل مع timeout
+      return Promise.race([savePromise, timeoutPromise]);
     },
     onSuccess: () => {
       console.log('✅ العملية اكتملت بنجاح!');
