@@ -13,9 +13,20 @@ export const LanguageProvider = ({ children }) => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data } = await supabase.from('UserPreference').select('language').eq('user_email', user.email).single();
-          if (data?.language && data.language !== language) {
-            setLanguage(data.language);
+          // ✅ تصحيح: استخدام default_language بدلاً من language
+          const { data, error } = await supabase
+            .from('UserPreference')
+            .select('default_language')
+            .eq('user_email', user.email)
+            .maybeSingle(); // ✅ استخدام maybeSingle بدلاً من single لتجنب الأخطاء
+          
+          if (error) {
+            console.log("Error fetching language preference", error);
+            return;
+          }
+          
+          if (data?.default_language && data.default_language !== language) {
+            setLanguage(data.default_language);
           }
         }
       } catch (e) {
@@ -37,8 +48,26 @@ export const LanguageProvider = ({ children }) => {
     return translations[language]?.[key] || translations['ar'][key] || key;
   };
 
-  const changeLanguage = (lang) => {
+  const changeLanguage = async (lang) => {
     setLanguage(lang);
+    
+    // ✅ حفظ اللغة في قاعدة البيانات
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('UserPreference')
+          .upsert({
+            user_email: user.email,
+            default_language: lang,
+            updated_date: new Date().toISOString()
+          }, {
+            onConflict: 'user_email'
+          });
+      }
+    } catch (e) {
+      console.log("Error saving language preference", e);
+    }
   };
 
   return (
