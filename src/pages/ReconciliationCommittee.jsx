@@ -85,10 +85,8 @@ export default function ReconciliationCommittee() {
           </h1>
 
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-amber-50 to-amber-100 rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-amber-200 mb-8">
-            <p className="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed mb-3">
-              "وَإِن طَائِفَتَانِ مِنَ الْمُؤْمِنِينَ اقْتَتَلُوا فَأَصْلِحُوا بَيْنَهُمَا"
-            </p>
-            <p className="text-lg text-cyan-700 font-semibold">سورة الحجرات - آية 9</p>
+            <p className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white leading-relaxed mb-3 transition-colors duration-300">{t('"وَإِن طَائِفَتَانِ مِنَ الْمُؤْمِنِينَ اقْتَتَلُوا فَأَصْلِحُوا بَيْنَهُمَا"')}</p>
+            <p className="text-lg text-cyan-700 font-semibold">{t('سورة الحجرات - آية 9')}</p>
           </div>
 
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
@@ -105,13 +103,13 @@ export default function ReconciliationCommittee() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full text-center rounded-3xl">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/90 backdrop-blur-sm h-full text-center rounded-3xl transition-colors duration-300">
                 <CardContent className="p-4 md:p-6">
                   <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-200 flex items-center justify-center mb-3 mx-auto shadow-lg overflow-hidden">
                     <img src={feature.image} alt={feature.title} className="w-8 h-8 md:w-10 md:h-10 object-contain" />
                   </div>
-                  <h3 className="text-sm md:text-base font-bold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-xs text-gray-600">{feature.description}</p>
+                  <h3 className="text-sm md:text-base font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{feature.title}</h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 transition-colors duration-300">{feature.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -142,7 +140,7 @@ export default function ReconciliationCommittee() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/95 backdrop-blur-sm h-full rounded-3xl">
+                  <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full rounded-3xl transition-colors duration-300">
                     <CardHeader className="text-center pb-4">
                       <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center mx-auto mb-4 shadow-xl">
                         {member.photo_url ? (
@@ -159,8 +157,8 @@ export default function ReconciliationCommittee() {
                         <div className="flex items-start gap-2">
                           <Briefcase className="w-4 h-4 text-cyan-600 mt-1 flex-shrink-0" />
                           <div>
-                            <p className="font-semibold text-gray-900 text-sm">المنصب:</p>
-                            <p className="text-gray-600 text-sm">{member.position}</p>
+                            <p className="font-semibold text-gray-900 dark:text-white text-sm transition-colors duration-300">{t('المنصب:')}</p>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300">{member.position}</p>
                           </div>
                         </div>
                       )}
@@ -169,8 +167,8 @@ export default function ReconciliationCommittee() {
                         <div className="flex items-start gap-2">
                           <GraduationCap className="w-4 h-4 text-cyan-600 mt-1 flex-shrink-0" />
                           <div>
-                            <p className="font-semibold text-gray-900 text-sm">المؤهلات:</p>
-                            <ul className="list-disc list-inside text-gray-600 space-y-1">
+                            <p className="font-semibold text-gray-900 dark:text-white text-sm transition-colors duration-300">{t('المؤهلات:')}</p>
+                            <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-1 transition-colors duration-300">
                               {member.qualifications.map((qual, idx) => (
                                 <li key={idx} className="text-xs">{qual}</li>
                               ))}
@@ -183,7 +181,7 @@ export default function ReconciliationCommittee() {
                         <div className="flex items-start gap-2">
                           <Award className="w-4 h-4 text-cyan-600 mt-1 flex-shrink-0" />
                           <div>
-                            <p className="font-semibold text-gray-900 text-sm">التخصص:</p>
+                            <p className="font-semibold text-gray-900 dark:text-white text-sm transition-colors duration-300">{t('التخصص:')}</p>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {member.specialization.map((spec, idx) => (
                                 <span key={idx} className="px-2 py-1 bg-cyan-50 text-cyan-700 rounded-full text-xs">
@@ -197,14 +195,14 @@ export default function ReconciliationCommittee() {
 
                       {member.experience_years && (
                         <div className="text-center py-2 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg">
-                          <p className="text-xs text-gray-600">سنوات الخبرة</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('سنوات الخبرة')}</p>
                           <p className="text-xl font-bold text-cyan-600">{member.experience_years}+</p>
                         </div>
                       )}
 
                       {member.bio && (
                         <div className="pt-3 border-t">
-                          <p className="text-gray-600 leading-relaxed text-xs">{member.bio}</p>
+                          <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-xs transition-colors duration-300">{member.bio}</p>
                         </div>
                       )}
                     </CardContent>
@@ -213,10 +211,10 @@ export default function ReconciliationCommittee() {
               ))}
             </div>
           ) : (
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm rounded-3xl">
+            <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm rounded-3xl transition-colors duration-300">
               <CardContent className="p-12 text-center">
                 <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600">جاري تشكيل اللجنة...</p>
+                <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('جاري تشكيل اللجنة...')}</p>
               </CardContent>
             </Card>
           )}
@@ -224,23 +222,23 @@ export default function ReconciliationCommittee() {
 
         {/* أنواع القضايا */}
         <div className="mb-8">
-          <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm rounded-3xl">
+          <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm rounded-3xl transition-colors duration-300">
             <CardHeader>
               <CardTitle className="text-xl text-center">{t('case_types')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {[
-                  { title: "النزاعات الأسرية", desc: "خلافات بين الأزواج، الأبناء، الأقارب" }, // Translations can be added for these later if needed
-                  { title: "النزاعات الزوجية", desc: "مشاكل زوجية، حالات طلاق، نفقة" },
-                  { title: "قضايا الميراث", desc: "خلافات حول توزيع الميراث والتركات" },
-                  { title: "النزاعات المالية", desc: "ديون، شراكات تجارية، عقود" },
-                  { title: "نزاعات الجيرة", desc: "خلافات بين الجيران حول الحقوق" },
-                  { title: "قضايا أخرى", desc: "أي نزاعات أخرى تحتاج للإصلاح" }
+                  { title: t("النزاعات الأسرية"), desc: t("خلافات بين الأزواج، الأبناء، الأقارب") }, // Translations can be added for these later if needed
+                  { title: t("النزاعات الزوجية"), desc: t("مشاكل زوجية، حالات طلاق، نفقة") },
+                  { title: t("قضايا الميراث"), desc: t("خلافات حول توزيع الميراث والتركات") },
+                  { title: t("النزاعات المالية"), desc: t("ديون، شراكات تجارية، عقود") },
+                  { title: t("نزاعات الجيرة"), desc: t("خلافات بين الجيران حول الحقوق") },
+                  { title: t("قضايا أخرى"), desc: t("أي نزاعات أخرى تحتاج للإصلاح") }
                 ].map((item, idx) => (
                   <div key={idx} className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-4 shadow-md">
-                    <h4 className="font-bold text-base text-gray-900 mb-2">{item.title}</h4>
-                    <p className="text-gray-600 text-sm">{item.desc}</p>
+                    <h4 className="font-bold text-base text-gray-900 dark:text-white mb-2 transition-colors duration-300">{item.title}</h4>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300">{item.desc}</p>
                   </div>
                 ))}
               </div>
@@ -255,8 +253,8 @@ export default function ReconciliationCommittee() {
           transition={{ delay: 0.5 }}
         >
           <Card className="border-0 shadow-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white overflow-hidden relative rounded-3xl">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-32 -translate-y-32"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-32 translate-y-32"></div>
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white dark:bg-slate-800/10 rounded-full -translate-x-32 -translate-y-32 transition-colors duration-300"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-white dark:bg-slate-800/10 rounded-full translate-x-32 translate-y-32 transition-colors duration-300"></div>
             
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <Sparkles className="w-16 h-16 mx-auto mb-6 text-amber-300" />
@@ -269,7 +267,7 @@ export default function ReconciliationCommittee() {
               <Button
                 onClick={() => setShowRequestModal(true)}
                 size="lg"
-                className="bg-white text-cyan-600 hover:bg-cyan-50 text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                className="bg-white dark:bg-slate-800 text-cyan-600 hover:bg-cyan-50 text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transition-colors duration-300"
               >
                 <Heart className="w-5 h-5 md:w-6 md:h-6 ml-2" />
                 {t('submit_request')}

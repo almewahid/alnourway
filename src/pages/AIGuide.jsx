@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,10 +11,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 // Removed base44 import
 
 export default function AIGuide() {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "السلام عليكم ورحمة الله وبركاته! 🌟\n\nمرحباً بك في المرشد الإسلامي الذكي. أنا هنا لمساعدتك في:\n📖 التعرف على أركان الإسلام والإيمان\n🕌 فهم المبادئ والقيم الإسلامية\n📚 معرفة قصص الأنبياء\n💚 الإرشاد نحو المصادر التعليمية\n\nكيف يمكنني مساعدتك اليوم؟"
+      content: t("السلام عليكم ورحمة الله وبركاته! 🌟\n\nمرحباً بك في المرشد الإسلامي الذكي. أنا هنا لمساعدتك في:\n📖 التعرف على أركان الإسلام والإيمان\n🕌 فهم المبادئ والقيم الإسلامية\n📚 معرفة قصص الأنبياء\n💚 الإرشاد نحو المصادر التعليمية\n\nكيف يمكنني مساعدتك اليوم؟")
     }
   ]);
   const [input, setInput] = useState("");
@@ -124,7 +126,7 @@ export default function AIGuide() {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error("AI Error:", error);
-      const errorMessage = { role: "assistant", content: "عذراً، حدث خطأ أثناء الاتصال بالمرشد الذكي. يرجى المحاولة مرة أخرى." };
+      const errorMessage = { role: "assistant", content: t("عذراً، حدث خطأ أثناء الاتصال بالمرشد الذكي. يرجى المحاولة مرة أخرى.") };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -141,14 +143,12 @@ export default function AIGuide() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-4 shadow-sm">
             <Bot className="w-6 h-6 text-emerald-600" />
-            <span className="text-blue-800 font-bold text-lg">المرشد الإسلامي الذكي</span>
+            <span className="text-blue-800 font-bold text-lg">{t('المرشد الإسلامي الذكي')}</span>
           </div>
-          <p className="text-white/90 text-lg">
-            اسأل عن الإسلام، العقيدة، الأخلاق، والتاريخ الإسلامي
-          </p>
+          <p className="text-white/90 text-lg">{t('اسأل عن الإسلام، العقيدة، الأخلاق، والتاريخ الإسلامي')}</p>
         </motion.div>
 
-        <Card className="flex-1 border-0 shadow-xl bg-white/95 backdrop-blur-sm overflow-hidden flex flex-col min-h-[600px] rounded-3xl">
+        <Card className="flex-1 border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm overflow-hidden flex flex-col min-h-[600px] rounded-3xl transition-colors duration-300">
           <CardContent className="flex-1 p-0 flex flex-col">
             <ScrollArea className="flex-1 p-4 md:p-6">
               <div className="space-y-6">
@@ -177,15 +177,15 @@ export default function AIGuide() {
                       </div>
                       {msg.recommendations && msg.recommendations.length > 0 && (
                         <div className="mt-4 pt-3 border-t border-gray-100">
-                          <p className="text-xs font-bold text-gray-500 mb-2">مصادر مقترحة لك:</p>
+                          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 transition-colors duration-300">{t('مصادر مقترحة لك:')}</p>
                           <div className="space-y-2">
                             {msg.recommendations.map((rec, i) => (
-                              <div key={i} className="bg-gray-50 p-2 rounded-lg text-sm border border-gray-100 hover:bg-emerald-50 transition-colors cursor-pointer">
+                              <div key={i} className="bg-gray-50 dark:bg-slate-900 p-2 rounded-lg text-sm border border-gray-100 hover:bg-emerald-50 transition-colors cursor-pointer transition-colors duration-300">
                                 <div className="flex items-center gap-2 font-semibold text-emerald-700">
                                   {rec.type === 'lecture' ? <Video className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
                                   {rec.title}
                                 </div>
-                                <div className="text-gray-500 text-xs mt-0.5">{rec.reason}</div>
+                                <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 transition-colors duration-300">{rec.reason}</div>
                               </div>
                             ))}
                           </div>
@@ -199,7 +199,7 @@ export default function AIGuide() {
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-md">
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
                     </div>
-                    <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-none p-4 shadow-sm">
+                    <div className="bg-white dark:bg-slate-800 border border-gray-100 rounded-2xl rounded-tl-none p-4 shadow-sm transition-colors duration-300">
                       <div className="flex gap-1">
                         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -212,7 +212,7 @@ export default function AIGuide() {
               </div>
             </ScrollArea>
 
-            <div className="p-4 bg-white border-t border-gray-100">
+            <div className="p-4 bg-white dark:bg-slate-800 border-t border-gray-100 transition-colors duration-300">
               <div className="flex gap-2 overflow-x-auto pb-3 mb-2 scrollbar-hide">
                 {["ما هي أركان الإسلام؟", "كيف أتوب إلى الله؟", "قصة النبي يوسف", "فضل الصلاة", "أذكار الصباح"].map((suggestion, i) => (
                   <button
@@ -228,8 +228,8 @@ export default function AIGuide() {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="اكتب سؤالك هنا..."
-                  className="flex-1 pr-4 pl-12 py-6 text-lg rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
+                  placeholder={t("اكتب سؤالك هنا...")}
+                  className="flex-1 pr-4 pl-12 py-6 text-lg rounded-xl border-gray-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500 transition-colors duration-300"
                   disabled={isLoading}
                 />
                 <Button 
@@ -240,9 +240,7 @@ export default function AIGuide() {
                   <Send className="w-5 h-5" />
                 </Button>
               </form>
-              <p className="text-xs text-gray-400 text-center mt-3">
-                ملاحظة: هذا نظام ذكاء اصطناعي للمساعدة العامة، يرجى استشارة العلماء في المسائل الفقهية المعقدة.
-              </p>
+              <p className="text-xs text-gray-400 text-center mt-3">{t('ملاحظة: هذا نظام ذكاء اصطناعي للمساعدة العامة، يرجى استشارة العلماء في المسائل الفقهية المعقدة.')}</p>
             </div>
           </CardContent>
         </Card>

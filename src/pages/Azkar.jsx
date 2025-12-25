@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,34 +7,35 @@ import { Sun, Moon, Sparkles, Check, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 
 const morningAzkar = [
-  { id: 1, text: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", count: 1 },
-  { id: 2, text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ", count: 1 },
-  { id: 3, text: "أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ", count: 1 },
-  { id: 4, text: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", count: 100 },
-  { id: 5, text: "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", count: 10 },
-  { id: 6, text: "أَعُوذُ بِاللَّهِ السَّمِيعِ الْعَلِيمِ مِنَ الشَّيْطَانِ الرَّجِيمِ", count: 3 },
-  { id: 7, text: "اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ", count: 1 },
-  { id: 8, text: "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", count: 3 },
-  { id: 9, text: "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا", count: 3 },
-  { id: 10, text: "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ، وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ", count: 1 },
-  { id: 11, text: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذَا الْيَوْمِ", count: 1 }
+  { id: 1, text: t("أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ"), count: 1 },
+  { id: 2, text: t("اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ"), count: 1 },
+  { id: 3, text: t("أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ"), count: 1 },
+  { id: 4, text: t("سُبْحَانَ اللَّهِ وَبِحَمْدِهِ"), count: 100 },
+  { id: 5, text: t("لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ"), count: 10 },
+  { id: 6, text: t("أَعُوذُ بِاللَّهِ السَّمِيعِ الْعَلِيمِ مِنَ الشَّيْطَانِ الرَّجِيمِ"), count: 3 },
+  { id: 7, text: t("اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ"), count: 1 },
+  { id: 8, text: t("بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ"), count: 3 },
+  { id: 9, text: t("رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا"), count: 3 },
+  { id: 10, text: t("يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ، وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ"), count: 1 },
+  { id: 11, text: t("أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذَا الْيَوْمِ"), count: 1 }
 ];
 
 const eveningAzkar = [
-  { id: 12, text: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ", count: 1 },
-  { id: 13, text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ", count: 1 },
-  { id: 14, text: "أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ", count: 1 },
-  { id: 15, text: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", count: 100 },
-  { id: 16, text: "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", count: 10 },
-  { id: 17, text: "أَعُوذُ بِاللَّهِ السَّمِيعِ الْعَلِيمِ مِنَ الشَّيْطَانِ الرَّجِيمِ", count: 3 },
-  { id: 18, text: "اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ", count: 1 },
-  { id: 19, text: "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", count: 3 },
-  { id: 20, text: "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا", count: 3 },
-  { id: 21, text: "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ", count: 1 },
-  { id: 22, text: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ", count: 1 }
+  { id: 12, text: t("أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ"), count: 1 },
+  { id: 13, text: t("اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ"), count: 1 },
+  { id: 14, text: t("أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ"), count: 1 },
+  { id: 15, text: t("سُبْحَانَ اللَّهِ وَبِحَمْدِهِ"), count: 100 },
+  { id: 16, text: t("لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ"), count: 10 },
+  { id: 17, text: t("أَعُوذُ بِاللَّهِ السَّمِيعِ الْعَلِيمِ مِنَ الشَّيْطَانِ الرَّجِيمِ"), count: 3 },
+  { id: 18, text: t("اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ"), count: 1 },
+  { id: 19, text: t("بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ"), count: 3 },
+  { id: 20, text: t("رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا"), count: 3 },
+  { id: 21, text: t("يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ"), count: 1 },
+  { id: 22, text: t("أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ"), count: 1 }
 ];
 
 export default function Azkar() {
+  const { t } = useLanguage();
   const [currentMorningIndex, setCurrentMorningIndex] = useState(0);
   const [currentEveningIndex, setCurrentEveningIndex] = useState(0);
   const [morningCounts, setMorningCounts] = useState({});
@@ -82,13 +84,9 @@ export default function Azkar() {
       <Tabs defaultValue="morning" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-8 max-w-md mx-auto">
           <TabsTrigger value="morning" className="flex items-center gap-2">
-            <Sun className="w-5 h-5" />
-            أذكار الصباح
-          </TabsTrigger>
+            <Sun className="w-5 h-5" />{t('أذكار الصباح')}</TabsTrigger>
           <TabsTrigger value="evening" className="flex items-center gap-2">
-            <Moon className="w-5 h-5" />
-            أذكار المساء
-          </TabsTrigger>
+            <Moon className="w-5 h-5" />{t('أذكار المساء')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="morning" className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-[600px] rounded-3xl p-8">
@@ -97,18 +95,18 @@ export default function Azkar() {
               <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Sun className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">أذكار الصباح</h1>
-              <p className="text-gray-600">الذكر {currentMorningIndex + 1} من {morningAzkar.length}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('أذكار الصباح')}</h1>
+              <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">الذكر {currentMorningIndex + 1} من {morningAzkar.length}</p>
             </div>
 
             {currentMorningIndex < morningAzkar.length ? (
               <Card 
                 onClick={handleMorningClick}
-                className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm cursor-pointer hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]"
+                className="border-0 shadow-2xl bg-white dark:bg-slate-800/90 backdrop-blur-sm cursor-pointer hover:shadow-3xl transition-all duration-300 hover:scale-[1.02] transition-colors duration-300"
               >
                 <CardContent className="p-8 md:p-12">
                   <div className="text-center space-y-6">
-                    <p className="text-2xl md:text-3xl leading-relaxed text-gray-800 font-semibold">
+                    <p className="text-2xl md:text-3xl leading-relaxed text-gray-800 dark:text-white font-semibold transition-colors duration-300">
                       {morningAzkar[currentMorningIndex].text}
                     </p>
                     
@@ -117,32 +115,26 @@ export default function Azkar() {
                         {(morningCounts[morningAzkar[currentMorningIndex].id] || 0) + 1}
                       </div>
                       <div className="text-4xl text-gray-400">/</div>
-                      <div className="text-4xl text-gray-600">
+                      <div className="text-4xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
                         {morningAzkar[currentMorningIndex].count}
                       </div>
                     </div>
 
-                    <p className="text-gray-500 text-lg">اضغط للتكرار</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg transition-colors duration-300">{t('اضغط للتكرار')}</p>
                   </div>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm">
+              <Card className="border-0 shadow-2xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
                 <CardContent className="p-12 text-center">
                   <Check className="w-20 h-20 text-green-500 mx-auto mb-6" />
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                    بارك الله فيك!
-                  </h2>
-                  <p className="text-xl text-gray-600 mb-8">
-                    أتممت أذكار الصباح
-                  </p>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('بارك الله فيك!')}</h2>
+                  <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 transition-colors duration-300">{t('أتممت أذكار الصباح')}</p>
                   <Button
                     onClick={resetMorning}
                     className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-8 py-6 text-lg"
                   >
-                    <RotateCcw className="w-5 h-5 ml-2" />
-                    ابدأ من جديد
-                  </Button>
+                    <RotateCcw className="w-5 h-5 ml-2" />{t('ابدأ من جديد')}</Button>
                 </CardContent>
               </Card>
             )}
@@ -155,18 +147,18 @@ export default function Azkar() {
               <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Moon className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">أذكار المساء</h1>
-              <p className="text-gray-600">الذكر {currentEveningIndex + 1} من {eveningAzkar.length}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('أذكار المساء')}</h1>
+              <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">الذكر {currentEveningIndex + 1} من {eveningAzkar.length}</p>
             </div>
 
             {currentEveningIndex < eveningAzkar.length ? (
               <Card 
                 onClick={handleEveningClick}
-                className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm cursor-pointer hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]"
+                className="border-0 shadow-2xl bg-white dark:bg-slate-800/90 backdrop-blur-sm cursor-pointer hover:shadow-3xl transition-all duration-300 hover:scale-[1.02] transition-colors duration-300"
               >
                 <CardContent className="p-8 md:p-12">
                   <div className="text-center space-y-6">
-                    <p className="text-2xl md:text-3xl leading-relaxed text-gray-800 font-semibold">
+                    <p className="text-2xl md:text-3xl leading-relaxed text-gray-800 dark:text-white font-semibold transition-colors duration-300">
                       {eveningAzkar[currentEveningIndex].text}
                     </p>
                     
@@ -175,32 +167,26 @@ export default function Azkar() {
                         {(eveningCounts[eveningAzkar[currentEveningIndex].id] || 0) + 1}
                       </div>
                       <div className="text-4xl text-gray-400">/</div>
-                      <div className="text-4xl text-gray-600">
+                      <div className="text-4xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
                         {eveningAzkar[currentEveningIndex].count}
                       </div>
                     </div>
 
-                    <p className="text-gray-500 text-lg">اضغط للتكرار</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg transition-colors duration-300">{t('اضغط للتكرار')}</p>
                   </div>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm">
+              <Card className="border-0 shadow-2xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
                 <CardContent className="p-12 text-center">
                   <Check className="w-20 h-20 text-green-500 mx-auto mb-6" />
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                    بارك الله فيك!
-                  </h2>
-                  <p className="text-xl text-gray-600 mb-8">
-                    أتممت أذكار المساء
-                  </p>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('بارك الله فيك!')}</h2>
+                  <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 transition-colors duration-300">{t('أتممت أذكار المساء')}</p>
                   <Button
                     onClick={resetEvening}
                     className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 py-6 text-lg"
                   >
-                    <RotateCcw className="w-5 h-5 ml-2" />
-                    ابدأ من جديد
-                  </Button>
+                    <RotateCcw className="w-5 h-5 ml-2" />{t('ابدأ من جديد')}</Button>
                 </CardContent>
               </Card>
             )}

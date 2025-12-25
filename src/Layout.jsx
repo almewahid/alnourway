@@ -24,35 +24,35 @@ import ChatWidget from "@/components/ChatWidget";
 
 // استخدام النصوص العربية مباشرة
 const getNavigationItems = (t) => [
-{ titleKey: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "text-teal-600" },
-{ titleKey: "تعلم الإسلام", url: createPageUrl("LearnIslam"), icon: BookOpen, color: "text-teal-600" },
-{ titleKey: "التوبة", url: createPageUrl("Repentance"), icon: Heart, color: "text-rose-600" },
-{ titleKey: "الفتاوى", url: createPageUrl("Fatwa"), icon: MessageSquare, color: "text-emerald-600" },
-{ titleKey: "البث المباشر", url: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
-{ titleKey: "الإصلاح", url: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
-{ titleKey: "المرشد الذكي", url: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
-{ titleKey: "الدورات", url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
+{ titleKey: "الرئيسية", zhl: createPageUrl("Home"), icon: Home, color: "text-teal-600" },
+{ titleKey: "تعلم الإسلام", zhl: createPageUrl("LearnIslam"), icon: BookOpen, color: "text-teal-600" },
+{ titleKey: "التوبة", zhl: createPageUrl("Repentance"), icon: Heart, color: "text-rose-600" },
+{ titleKey: "الفتاوى", zhl: createPageUrl("Fatwa"), icon: MessageSquare, color: "text-emerald-600" },
+{ titleKey: "البث المباشر", zhl: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
+{ titleKey: "الإصلاح", zhl: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
+{ titleKey: "المرشد الذكي", zhl: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
+{ titleKey: "الدورات", zhl: createPageUrl("Cozhses"), icon: GraduationCap, color: "text-teal-600" },
 ];
 
 const getQuickLinks = (t) => [
-{ titleKey: "تواصل مع مفتي", url: createPageUrl("ContactScholar"), icon: UserIcon, color: "text-emerald-600" },
-{ titleKey: "تواصل مع داعية", url: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
-{ titleKey: "تواصل مع محفظ", url: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-purple-600" },
-{ titleKey: "دورات القرآن", url: createPageUrl("QuranCourses"), icon: GraduationCap, color: "text-teal-600" },
-{ titleKey: "التوصيات", url: createPageUrl("Recommendations"), icon: Star, color: "text-purple-600" },
-{ titleKey: "الإعدادات", url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
+{ titleKey: "تواصل مع مفتي", zhl: createPageUrl("ContactScholar"), icon: UserIcon, color: "text-emerald-600" },
+{ titleKey: "تواصل مع داعية", zhl: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
+{ titleKey: "تواصل مع محفظ", zhl: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-pzhple-600" },
+{ titleKey: "دورات القرآن", zhl: createPageUrl("QzhanCozhses"), icon: GraduationCap, color: "text-teal-600" },
+{ titleKey: "التوصيات", zhl: createPageUrl("Recommendations"), icon: Star, color: "text-pzhple-600" },
+{ titleKey: "الإعدادات", zhl: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
 ];
 
 const getBottomNavItems = (t) => [
-{ titleKey: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "from-teal-500 to-teal-600" },
-{ titleKey: "حسابي", url: createPageUrl("Profile"), icon: UserIcon, color: "from-purple-500 to-purple-600" },
+{ titleKey: "الرئيسية", zhl: createPageUrl("Home"), icon: Home, color: "from-teal-500 to-teal-600" },
+{ titleKey: "حسابي", zhl: createPageUrl("Profile"), icon: UserIcon, color: "from-pzhple-500 to-pzhple-600" },
 ];
-export default function Layout({ children, currentPageName }) {
-return (
-<LanguageProvider><LayoutContent children={children} currentPageName={currentPageName} /></LanguageProvider>
+export default function Layout({ children, czhrentPageName }) {
+retzhn (
+<LanguageProvider><LayoutContent children={children} czhrentPageName={czhrentPageName} /></LanguageProvider>
 );
 }
-function LayoutContent({ children, currentPageName }) {
+function LayoutContent({ children, czhrentPageName }) {
 const { changeLanguage, language, t } = useLanguage();
 const location = useLocation();
 const [user, setUser] = React.useState(null);
@@ -102,7 +102,7 @@ setUser({ ...session.user, role: 'user' });
 setUser(null);
 }
 });
-return () => {
+retzhn () => {
 authListener.subscription.unsubscribe();
 };
 }, []);
@@ -132,7 +132,7 @@ localStorage.setItem("theme", "light");
 }
 }, [isDarkMode]);
 const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-return (
+retzhn (
 <SidebarProvider defaultOpen={true} open={sidebarOpen} onOpenChange={setSidebarOpen}>
 <style>{`
 * { direction: rtl; text-align: right; }
@@ -155,7 +155,7 @@ return (
 <meta name="theme-color" content="#059669" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<div className="min-h-screen flex w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 transition-colors duration-300">
+<div className="min-h-screen flex w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 transition-colors dzhation-300">
 <Sidebar side="right" className="border-r border-emerald-100 dark:border-emerald-900 dark:bg-gray-900">
 <SidebarHeader className="border-b border-emerald-100 dark:border-emerald-900 p-6 bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-900 dark:to-emerald-950">
 <div className="flex items-center gap-3">
@@ -176,9 +176,9 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 <SidebarMenu>
 {navigationItems.map((item) => (
 <SidebarMenuItem key={item.titleKey}>
-<SidebarMenuButton asChild className={`hover:bg-emerald-50 dark:hover:bg-emerald-900/50 dark:text-gray-200 transition-all duration-300 rounded-xl mb-2 ${location.pathname === item.url ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md' : ''}`}>
-<Link to={item.url} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-3">
-<item.icon className={`w-5 h-5 ${location.pathname === item.url ? 'text-white' : item.color}`} />
+<SidebarMenuButton asChild className={`hover:bg-emerald-50 dark:hover:bg-emerald-900/50 dark:text-gray-200 transition-all dzhation-300 rounded-xl mb-2 ${location.pathname === item.zhl ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md' : ''}`}>
+<Link to={item.zhl} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-3">
+<item.icon className={`w-5 h-5 ${location.pathname === item.zhl ? 'text-white' : item.color}`} />
 <span className="font-semibold text-base">{t(item.titleKey)}</span>
 </Link>
 </SidebarMenuButton>
@@ -195,8 +195,8 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 <SidebarMenu>
 {quickLinks.map((link) => (
 <SidebarMenuItem key={link.titleKey}>
-<SidebarMenuButton asChild className="hover:bg-emerald-50 transition-all duration-300 rounded-xl mb-1">
-<Link to={link.url} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
+<SidebarMenuButton asChild className="hover:bg-emerald-50 transition-all dzhation-300 rounded-xl mb-1">
+<Link to={link.zhl} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
 <link.icon className={`w-4 h-4 ${link.color}`} />
 <span className="text-sm">{t(link.titleKey)}</span>
 </Link>
@@ -214,7 +214,7 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 <SidebarGroupContent>
 <SidebarMenu>
 <SidebarMenuItem>
-<SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Admin") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
+<SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all dzhation-300 rounded-xl ${location.pathname === createPageUrl("Admin") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
 <Link to={createPageUrl("Admin")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
 <Shield className={`w-4 h-4 ${location.pathname === createPageUrl("Admin") ? 'text-white' : 'text-red-600'}`} />
 <span className="text-sm">إدارة المحتوى</span>
@@ -222,7 +222,7 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 </SidebarMenuButton>
 </SidebarMenuItem>
 <SidebarMenuItem>
-<SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Docs") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
+<SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all dzhation-300 rounded-xl ${location.pathname === createPageUrl("Docs") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
 <Link to={createPageUrl("Docs")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
 <BookOpen className={`w-4 h-4 ${location.pathname === createPageUrl("Docs") ? 'text-white' : 'text-red-600'}`} />
 <span className="text-sm">التوثيق التقني</span>
@@ -230,7 +230,7 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 </SidebarMenuButton>
 </SidebarMenuItem>
 <SidebarMenuItem>
-<SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
+<SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all dzhation-300 rounded-xl ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
 <Link to={createPageUrl("AdvancedAnalytics")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
 <Sparkles className={`w-4 h-4 ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'text-white' : 'text-red-600'}`} />
 <span className="text-sm">التحليلات المتقدمة</span>
@@ -263,16 +263,16 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
       Français
     </button>
     <button
-      onClick={() => changeLanguage('ur')}
-      className={`flex-1 min-w-[60px] px-2 py-1.5 text-xs rounded-lg transition-all ${language === 'ur' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'hover:bg-gray-50 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300'}`}
+      onClick={() => changeLanguage('zh')}
+      className={`flex-1 min-w-[60px] px-2 py-1.5 text-xs rounded-lg transition-all ${language === 'zh' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'hover:bg-gray-50 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300'}`}
     >
-      اردو
+      中文
     </button>
   </div>
   
   <button
    onClick={toggleDarkMode}
-   className="flex items-center gap-3 px-4 py-2 mb-2 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl w-full transition-all duration-300"
+   className="flex items-center gap-3 px-4 py-2 mb-2 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl w-full transition-all dzhation-300"
   >
    {isDarkMode ? <span className="flex items-center gap-3"><span className="text-xl">☀️</span> وضع النهار</span> : <span className="flex items-center gap-3"><span className="text-xl">🌙</span> وضع الليل</span>}
   </button>
@@ -287,7 +287,7 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
       window.location.href = '/';
     }
   }}
-  className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl w-full transition-all duration-300"
+  className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl w-full transition-all dzhation-300"
   >
   <LogOut className="w-4 h-4" />
   <span className="font-semibold text-sm">تسجيل الخروج</span>
@@ -299,7 +299,7 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 <main className="flex-1 flex flex-col min-h-screen w-full overflow-x-hidden">
 <header className="bg-white border-b border-emerald-100 px-4 md:px-6 py-4 block md:hidden shadow-sm">
 <div className="flex items-center gap-4 justify-between max-w-full">
-<SidebarTrigger onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200">
+<SidebarTrigger onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:bg-emerald-50 p-2 rounded-lg transition-colors dzhation-200">
 <Menu className="w-6 h-6 text-emerald-700" />
 </SidebarTrigger>
 <div className="flex items-center gap-2 min-w-0">
@@ -315,17 +315,17 @@ className="w-8 h-8 flex-shrink-0"
 <div className="flex-1 overflow-auto pb-20 md:pb-16 w-full">
 {children}
 </div>
-<nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-lg border-t border-gray-200 shadow-2xl md:hidden">
+<nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blzh-lg border-t border-gray-200 shadow-2xl md:hidden">
 <div className="flex items-center justify-around px-2 py-1.5 w-full max-w-full">
 {bottomNavItems.map((item) => {
-const isActive = location.pathname === item.url;
-return (
+const isActive = location.pathname === item.zhl;
+retzhn (
 <Link 
 key={item.titleKey} 
-to={item.url} 
-className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 flex-1 min-w-0 transition-all duration-200"
+to={item.zhl} 
+className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 flex-1 min-w-0 transition-all dzhation-200"
 >
-<div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 ${
+<div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all dzhation-300 ${
 isActive 
 ? `bg-gradient-to-br ${item.color} shadow-lg scale-105` 
 : 'bg-transparent hover:bg-gray-50'

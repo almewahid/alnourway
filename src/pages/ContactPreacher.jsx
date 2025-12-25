@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import ContactModal from "@/components/ContactModal";
 import OnlineIndicator from "@/components/OnlineIndicator";
 
 export default function ContactPreacher() {
+  const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("all");
 
@@ -41,15 +43,11 @@ export default function ContactPreacher() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-blue-100 px-6 py-3 rounded-full mb-6">
             <Users className="w-5 h-5 text-emerald-600" />
-            <span className="text-emerald-800 font-semibold">تواصل مع داعية</span>
+            <span className="text-emerald-800 font-semibold">{t('تواصل مع داعية')}</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            الدعاة المتاحون
-          </h1>
-          <p className="text-xl text-gray-600">
-            تواصل مع دعاة متخصصين حول العالم
-          </p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('الدعاة المتاحون')}</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('تواصل مع دعاة متخصصين حول العالم')}</p>
         </motion.div>
 
         <div className="flex flex-wrap gap-3 justify-center mb-8">
@@ -71,7 +69,7 @@ export default function ContactPreacher() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-4 transition-colors duration-300">{t('جاري التحميل...')}</p>
           </div>
         ) : filteredPreachers.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -84,7 +82,7 @@ export default function ContactPreacher() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full">
+                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/90 backdrop-blur-sm h-full transition-colors duration-300">
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg relative">
@@ -96,7 +94,7 @@ export default function ContactPreacher() {
                         <div>
                           <CardTitle className="text-xl mb-2">{preacher.name}</CardTitle>
                           {preacher.country && (
-                            <p className="text-sm text-gray-600">{preacher.country}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{preacher.country}</p>
                           )}
                           <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full mt-1 ${
                             isOnline 
@@ -111,7 +109,7 @@ export default function ContactPreacher() {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {preacher.bio && (
-                        <p className="text-gray-600 text-sm leading-relaxed">{preacher.bio}</p>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed transition-colors duration-300">{preacher.bio}</p>
                       )}
 
                       {preacher.languages && preacher.languages.length > 0 && (
@@ -133,9 +131,7 @@ export default function ContactPreacher() {
                             href={`tel:${preacher.phone}`}
                             className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
                           >
-                            <Phone className="w-4 h-4" />
-                            اتصال تليفوني
-                          </a>
+                            <Phone className="w-4 h-4" />{t('اتصال تليفوني')}</a>
                         )}
                         {preacher.whatsapp && (
                           <a
@@ -144,18 +140,14 @@ export default function ContactPreacher() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
                           >
-                            <MessageCircle className="w-4 h-4" />
-                            واتساب
-                          </a>
+                            <MessageCircle className="w-4 h-4" />{t('واتساب')}</a>
                         )}
                         {preacher.email && (
                           <a
                             href={`mailto:${preacher.email}`}
                             className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
                           >
-                            <Mail className="w-4 h-4" />
-                            بريد إلكتروني
-                          </a>
+                            <Mail className="w-4 h-4" />{t('بريد إلكتروني')}</a>
                         )}
                       </div>
                     </CardContent>
@@ -165,15 +157,11 @@ export default function ContactPreacher() {
             })}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm mb-12">
+          <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm mb-12 transition-colors duration-300">
             <CardContent className="p-12 text-center">
               <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                لا يوجد دعاة متاحون حالياً
-              </h3>
-              <p className="text-gray-600">
-                يمكنك إرسال طلب وسنتواصل معك قريباً
-              </p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا يوجد دعاة متاحون حالياً')}</h3>
+              <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('يمكنك إرسال طلب وسنتواصل معك قريباً')}</p>
             </CardContent>
           </Card>
         )}
@@ -182,7 +170,7 @@ export default function ContactPreacher() {
       <ContactModal
         open={showContactModal}
         onClose={() => setShowContactModal(false)}
-        requestType="التعرف على الإسلام"
+        requestType={t("التعرف على الإسلام")}
       />
     </div>
   );

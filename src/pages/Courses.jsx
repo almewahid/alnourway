@@ -58,11 +58,11 @@ export default function Courses() {
           <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">{t('educational_courses')}</h1>
-          <p className="text-xl text-gray-600">{t('courses_subtitle')}</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('educational_courses')}</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('courses_subtitle')}</p>
         </motion.div>
 
-        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mb-8">
+        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm mb-8 transition-colors duration-300">
           <CardContent className="p-6">
             <div className="relative">
               <Input placeholder={t('search_course')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-lg py-6 pr-12" />
@@ -97,7 +97,7 @@ export default function Courses() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses.map((course, index) => (
               <motion.div key={course.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full overflow-hidden flex flex-col">
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/90 backdrop-blur-sm h-full overflow-hidden flex flex-col transition-colors duration-300">
                   <div className="h-48 bg-gradient-to-br from-teal-400 to-blue-500 relative">
                     {course.thumbnail_url ? (
                       <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
@@ -106,16 +106,16 @@ export default function Courses() {
                         <GraduationCap className="w-16 h-16 text-white/50" />
                       </div>
                     )}
-                    <Badge className="absolute top-4 right-4 bg-white/90 text-teal-800 hover:bg-white">
+                    <Badge className="absolute top-4 right-4 bg-white/90 text-teal-800 hover:bg-white dark:bg-slate-800 transition-colors duration-300">
                       {categories.find(c => c.value === course.category)?.label || course.category}
                     </Badge>
                   </div>
                   <CardContent className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{course.title}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{course.title}</h3>
                     <p className="text-teal-600 font-medium text-sm mb-3">{course.instructor}</p>
-                    <p className="text-gray-500 text-sm mb-4 leading-relaxed line-clamp-2">{course.description}</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 leading-relaxed line-clamp-2 transition-colors duration-300">{course.description}</p>
                     <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-100">
-                      <div className="flex items-center text-gray-500 text-xs">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-xs transition-colors duration-300">
                         <Clock className="w-3 h-3 ml-1" />
                         <span>{t('available_now')}</span>
                       </div>
@@ -134,8 +134,8 @@ export default function Courses() {
         ) : (
           <div className="text-center py-12">
             <GraduationCap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('no_courses')}</h3>
-            <p className="text-gray-600">{t('no_courses_desc')}</p>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('no_courses')}</h3>
+            <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('no_courses_desc')}</p>
           </div>
         )}
       </div>

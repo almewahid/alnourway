@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import RatingWidget from "@/components/RatingWidget";
 import ShareButtons from "@/components/ShareButtons";
 
 export default function Stories() {
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const typeParam = urlParams.get('type');
   
@@ -41,12 +43,10 @@ export default function Stories() {
             variant="outline" 
             onClick={() => setSelectedStory(null)}
             className="mb-6"
-          >
-            ← العودة إلى القصص
-          </Button>
+          >{t('← العودة إلى القصص')}</Button>
 
           <div className="space-y-6">
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
               {selectedStory.image_url && (
                 <div className="h-64 overflow-hidden rounded-t-xl">
                   <img 
@@ -58,7 +58,7 @@ export default function Stories() {
               )}
               <CardContent className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h1 className="text-3xl font-bold text-gray-900">{selectedStory.title}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{selectedStory.title}</h1>
                   <ShareButtons 
                     title={selectedStory.title}
                     description={selectedStory.excerpt || 'قصة ملهمة'}
@@ -66,9 +66,9 @@ export default function Stories() {
                 </div>
 
                 {selectedStory.author && (
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors duration-300">
                     <Heart className="w-5 h-5" />
-                    <span className="font-semibold">صاحب القصة:</span>
+                    <span className="font-semibold">{t('صاحب القصة:')}</span>
                     <span>{selectedStory.author}</span>
                   </div>
                 )}
@@ -80,7 +80,7 @@ export default function Stories() {
                 )}
 
                 <div className="prose prose-lg max-w-none">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap text-lg">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-lg transition-colors duration-300">
                     {selectedStory.content}
                   </p>
                 </div>
@@ -111,29 +111,19 @@ export default function Stories() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            قصص ملهمة
-          </h1>
-          <p className="text-xl text-gray-600">
-            رحلات إيمانية حقيقية تلامس القلوب
-          </p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('قصص ملهمة')}</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('رحلات إيمانية حقيقية تلامس القلوب')}</p>
         </motion.div>
 
         <div className="flex justify-center mb-8">
           <Tabs value={selectedType} onValueChange={setSelectedType}>
-            <TabsList className="bg-white shadow-lg">
+            <TabsList className="bg-white dark:bg-slate-800 shadow-lg transition-colors duration-300">
               <TabsTrigger value="all" className="gap-2">
-                <BookOpen className="w-4 h-4" />
-                جميع القصص
-              </TabsTrigger>
+                <BookOpen className="w-4 h-4" />{t('جميع القصص')}</TabsTrigger>
               <TabsTrigger value="convert" className="gap-2">
-                <Heart className="w-4 h-4" />
-                قصص المهتدين
-              </TabsTrigger>
+                <Heart className="w-4 h-4" />{t('قصص المهتدين')}</TabsTrigger>
               <TabsTrigger value="repentance" className="gap-2">
-                <Heart className="w-4 h-4" />
-                قصص التائبين
-              </TabsTrigger>
+                <Heart className="w-4 h-4" />{t('قصص التائبين')}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -141,7 +131,7 @@ export default function Stories() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-4 transition-colors duration-300">{t('جاري التحميل...')}</p>
           </div>
         ) : filteredStories.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -159,15 +149,11 @@ export default function Stories() {
             ))}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
             <CardContent className="p-12 text-center">
               <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                لا توجد قصص حالياً
-              </h3>
-              <p className="text-gray-600">
-                سنضيف المزيد من القصص الملهمة قريباً
-              </p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا توجد قصص حالياً')}</h3>
+              <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('سنضيف المزيد من القصص الملهمة قريباً')}</p>
             </CardContent>
           </Card>
         )}
