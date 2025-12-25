@@ -4,10 +4,23 @@ import { supabase } from '@/components/api/supabaseClient';
 
 const LanguageContext = createContext();
 
+// رقم إصدار localStorage - غيّره عند التحديثات المهمة
+const STORAGE_VERSION = '1.0';
+const VERSION_KEY = 'app_storage_version';
+
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {
-    // استخدام function في useState لتجنب مشاكل SSR
     if (typeof window !== 'undefined') {
+      // تحقق من إصدار localStorage
+      const currentVersion = localStorage.getItem(VERSION_KEY);
+      
+      // إذا الإصدار مختلف، امسح localStorage القديم
+      if (currentVersion !== STORAGE_VERSION) {
+        localStorage.clear();
+        localStorage.setItem(VERSION_KEY, STORAGE_VERSION);
+        return 'ar';
+      }
+      
       return localStorage.getItem('language') || 'ar';
     }
     return 'ar';
