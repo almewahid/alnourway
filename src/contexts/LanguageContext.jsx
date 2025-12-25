@@ -5,7 +5,13 @@ import { supabase } from '@/components/api/supabaseClient';
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(localStorage.getItem('language') || 'ar');
+  const [language, setLanguage] = useState(() => {
+    // استخدام function في useState لتجنب مشاكل SSR
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('language') || 'ar';
+    }
+    return 'ar';
+  });
   const [isRTL, setIsRTL] = useState(language === 'ar' || language === 'ur');
 
   useEffect(() => {
@@ -31,14 +37,15 @@ export const LanguageProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('language', language);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', language);
+    }
     const rtl = language === 'ar' || language === 'ur';
     setIsRTL(rtl);
     document.documentElement.dir = rtl ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
   }, [language]);
 
-  // دالة الترجمة مع دعم النقطة (dot notation)
   const t = (key, defaultText = '') => {
     // إذا اللغة عربية، نرجع النص الافتراضي أو المفتاح (لأن النص موجود في الكود أصلاً)
     if (language === 'ar') {
