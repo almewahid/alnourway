@@ -1,83 +1,89 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { translations } from "./translations";
-import { supabase } from "@/components/api/supabaseClient";
 
 const LanguageContext = createContext();
 
+// ترجمات مباشرة - كل key يرجع النص العربي مباشرة
+const directTranslations = {
+  "home": "الرئيسية",
+  "learn_islam": "تعلم الإسلام",
+  "learn_islam_desc": "ابدأ رحلتك في تعلم الإسلام من الأساسيات",
+  "learn_islam_title": "تعلم الإسلام",
+  "learn_islam_subtitle": "ابدأ رحلتك في تعلم الإسلام",
+  "discover_islam": "اكتشف الإسلام",
+  "repentance": "التوبة",
+  "repentance_desc": "دليلك الشامل للتوبة والرجوع إلى الله",
+  "fatwa": "الفتاوى",
+  "fatwa_desc": "اسأل واحصل على فتاوى شرعية موثوقة",
+  "reconciliation": "الإصلاح",
+  "reconciliation_desc": "إصلاح ذات البين والمصالحة",
+  "live_streams": "البث المباشر",
+  "ai_guide": "المرشد الذكي",
+  "courses": "الدورات",
+  "convert_stories": "قصص المهتدين",
+  "convert_stories_desc": "قصص ملهمة لمن اعتنق الإسلام",
+  "lectures_library": "مكتبة المحاضرات",
+  "lectures_desc": "محاضرات إسلامية شاملة",
+  "find_center": "ابحث عن مركز",
+  "find_center_desc": "ابحث عن مراكز إسلامية قريبة منك",
+  "principles_title": "أركان الإسلام",
+  "principles_desc": "تعرف على الأركان الخمسة للإسلام",
+  "islam_pillars": "أركان الإسلام الخمسة",
+  "contact_preacher": "تواصل مع داعية",
+  "contact_scholar": "تواصل مع مفتي",
+  "contact_teacher": "تواصل مع محفظ",
+  "quran_courses": "دورات القرآن",
+  "quran_courses_desc": "تعلم القرآن الكريم مع معلمين متخصصين",
+  "recommendations": "التوصيات",
+  "settings": "الإعدادات",
+  "daily_azkar": "الأذكار اليومية",
+  "daily_azkar_desc": "أذكار الصباح والمساء وأذكار متنوعة",
+  "islamic_library": "المكتبة الإسلامية",
+  "islamic_library_desc": "مكتبة شاملة من الكتب والمراجع الإسلامية",
+  "join_team": "انضم للفريق",
+  "happy_user": "مستخدم سعيد",
+  "lecture": "محاضرة",
+  "country": "دولة",
+  "login": "تسجيل الدخول",
+  "logout": "تسجيل الخروج",
+  "register": "إنشاء حساب",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "add": "إضافة",
+  "search": "بحث",
+  "loading": "جارٍ التحميل...",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "name": "الاسم",
+  "phone": "رقم الهاتف",
+  "message": "الرسالة",
+  "subject": "الموضوع",
+  "description": "الوصف",
+  "success": "تمت العملية بنجاح",
+  "error": "حدث خطأ",
+  "required": "هذا الحقل مطلوب",
+  "invalid_email": "البريد الإلكتروني غير صحيح",
+  "password_min": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+};
+
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(localStorage.getItem('language') || 'ar');
-  const [isRTL, setIsRTL] = useState(language === 'ar' || language === 'ur');
+  const [language] = useState('ar'); // دائماً عربي
+  const [isRTL] = useState(true); // دائماً RTL
 
   useEffect(() => {
-    const fetchUserPreference = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data, error } = await supabase
-            .from('UserPreference')
-            .select('default_language')
-            .eq('user_email', user.email)
-            .maybeSingle();
-          
-          if (error) {
-            console.log("Error fetching language preference", error);
-            return;
-          }
-          
-          if (data?.default_language && data.default_language !== language) {
-            setLanguage(data.default_language);
-          }
-        }
-      } catch (e) {
-        console.log("Error fetching language preference", e);
-      }
-    };
-    fetchUserPreference();
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'ar';
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('language', language);
-    const rtl = language === 'ar' || language === 'ur';
-    setIsRTL(rtl);
-    document.documentElement.dir = rtl ? 'rtl' : 'ltr';
-    document.documentElement.lang = language;
-  }, [language]);
-
-  // دالة الترجمة مع معالجة الأخطاء
+  // دالة الترجمة - ترجع العربي مباشرة
   const t = (key) => {
-    try {
-      const translation = translations[language]?.[key] || translations['ar']?.[key];
-      
-      if (translation && typeof translation === 'string') {
-        return translation;
-      }
-      
-      return key;
-    } catch (error) {
-      console.warn('Translation error for key:', key, error);
-      return key;
-    }
+    return directTranslations[key] || key;
   };
 
-  const changeLanguage = async (lang) => {
-    setLanguage(lang);
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from('UserPreference')
-          .upsert({
-            user_email: user.email,
-            default_language: lang,
-            updated_date: new Date().toISOString()
-          }, {
-            onConflict: 'user_email'
-          });
-      }
-    } catch (e) {
-      console.log("Error saving language preference", e);
-    }
+  // تعطيل تغيير اللغة
+  const changeLanguage = () => {
+    console.log('تغيير اللغة معطل - الموقع عربي فقط');
   };
 
   return (
