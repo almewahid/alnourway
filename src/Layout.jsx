@@ -22,30 +22,30 @@ import NotificationManager from "@/components/NotificationManager";
 import { Toaster } from "@/components/ui/sonner";
 import ChatWidget from "@/components/ChatWidget";
 
-// استخدام مفاتيح الترجمة
+// استخدام النصوص العربية مباشرة
 const getNavigationItems = (t) => [
-{ titleKey: "home", url: createPageUrl("Home"), icon: Home, color: "text-teal-600" },
-{ titleKey: "learn_islam", url: createPageUrl("LearnIslam"), icon: BookOpen, color: "text-teal-600" },
-{ titleKey: "repentance", url: createPageUrl("Repentance"), icon: Heart, color: "text-rose-600" },
-{ titleKey: "fatwa", url: createPageUrl("Fatwa"), icon: MessageSquare, color: "text-emerald-600" },
-{ titleKey: "live_streams", url: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
-{ titleKey: "reconciliation", url: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
-{ titleKey: "ai_guide", url: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
-{ titleKey: "courses", url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
+{ titleKey: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "text-teal-600" },
+{ titleKey: "تعلم الإسلام", url: createPageUrl("LearnIslam"), icon: BookOpen, color: "text-teal-600" },
+{ titleKey: "التوبة", url: createPageUrl("Repentance"), icon: Heart, color: "text-rose-600" },
+{ titleKey: "الفتاوى", url: createPageUrl("Fatwa"), icon: MessageSquare, color: "text-emerald-600" },
+{ titleKey: "البث المباشر", url: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
+{ titleKey: "الإصلاح", url: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
+{ titleKey: "المرشد الذكي", url: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
+{ titleKey: "الدورات", url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
 ];
 
 const getQuickLinks = (t) => [
-{ titleKey: "contact_scholar", url: createPageUrl("ContactScholar"), icon: UserIcon, color: "text-emerald-600" },
-{ titleKey: "contact_preacher", url: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
-{ titleKey: "contact_teacher", url: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-purple-600" },
-{ titleKey: "quran_courses", url: createPageUrl("QuranCourses"), icon: GraduationCap, color: "text-teal-600" },
-{ titleKey: "recommendations", url: createPageUrl("Recommendations"), icon: Star, color: "text-purple-600" },
-{ titleKey: "settings", url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
+{ titleKey: "تواصل مع مفتي", url: createPageUrl("ContactScholar"), icon: UserIcon, color: "text-emerald-600" },
+{ titleKey: "تواصل مع داعية", url: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
+{ titleKey: "تواصل مع محفظ", url: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-purple-600" },
+{ titleKey: "دورات القرآن", url: createPageUrl("QuranCourses"), icon: GraduationCap, color: "text-teal-600" },
+{ titleKey: "التوصيات", url: createPageUrl("Recommendations"), icon: Star, color: "text-purple-600" },
+{ titleKey: "الإعدادات", url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
 ];
 
 const getBottomNavItems = (t) => [
-{ titleKey: "home", url: createPageUrl("Home"), icon: Home, color: "from-teal-500 to-teal-600" },
-{ titleKey: "my_profile", url: createPageUrl("Profile"), icon: UserIcon, color: "from-purple-500 to-purple-600" },
+{ titleKey: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "from-teal-500 to-teal-600" },
+{ titleKey: "حسابي", url: createPageUrl("Profile"), icon: UserIcon, color: "from-purple-500 to-purple-600" },
 ];
 export default function Layout({ children, currentPageName }) {
 return (
