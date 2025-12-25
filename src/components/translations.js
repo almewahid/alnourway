@@ -1,4 +1,4 @@
-// ملف ترجمات نظيف - بدون أكواد JSX
+// ملف ترجمات كامل - جميع المفاتيح المطلوبة
 
 export const translations = {
   ar: {
@@ -21,8 +21,21 @@ export const translations = {
     "contact_scholar": "تواصل مع مفتي",
     "contact_teacher": "تواصل مع محفظ",
     "quran_courses": "دورات القرآن",
+    "quran_courses_desc": "تعلم القرآن الكريم مع معلمين متخصصين",
     "recommendations": "التوصيات",
     "settings": "الإعدادات",
+    
+    // الأقسام الإضافية
+    "daily_azkar": "الأذكار اليومية",
+    "daily_azkar_desc": "أذكار الصباح والمساء وأذكار متنوعة",
+    "islamic_library": "المكتبة الإسلامية",
+    "islamic_library_desc": "مكتبة شاملة من الكتب والمراجع الإسلامية",
+    "join_team": "انضم للفريق",
+    
+    // الإحصائيات
+    "happy_user": "مستخدم سعيد",
+    "lecture": "محاضرة",
+    "country": "دولة",
     
     // أزرار عامة
     "login": "تسجيل الدخول",
@@ -73,8 +86,21 @@ export const translations = {
     "contact_scholar": "Contact Scholar",
     "contact_teacher": "Contact Teacher",
     "quran_courses": "Quran Courses",
+    "quran_courses_desc": "Learn Quran with specialized teachers",
     "recommendations": "Recommendations",
     "settings": "Settings",
+    
+    // Additional sections
+    "daily_azkar": "Daily Azkar",
+    "daily_azkar_desc": "Morning, evening and various supplications",
+    "islamic_library": "Islamic Library",
+    "islamic_library_desc": "Comprehensive library of Islamic books and references",
+    "join_team": "Join Team",
+    
+    // Statistics
+    "happy_user": "Happy Users",
+    "lecture": "Lectures",
+    "country": "Countries",
     
     // Common buttons
     "login": "Login",
@@ -125,8 +151,21 @@ export const translations = {
     "contact_scholar": "Contacter un érudit",
     "contact_teacher": "Contacter un enseignant",
     "quran_courses": "Cours de Coran",
+    "quran_courses_desc": "Apprenez le Coran avec des enseignants spécialisés",
     "recommendations": "Recommandations",
     "settings": "Paramètres",
+    
+    // Sections supplémentaires
+    "daily_azkar": "Azkar quotidiens",
+    "daily_azkar_desc": "Supplications du matin, du soir et diverses",
+    "islamic_library": "Bibliothèque islamique",
+    "islamic_library_desc": "Bibliothèque complète de livres et références islamiques",
+    "join_team": "Rejoindre l'équipe",
+    
+    // Statistiques
+    "happy_user": "Utilisateurs satisfaits",
+    "lecture": "Conférences",
+    "country": "Pays",
     
     // Boutons communs
     "login": "Connexion",
@@ -177,8 +216,21 @@ export const translations = {
     "contact_scholar": "联系学者",
     "contact_teacher": "联系老师",
     "quran_courses": "古兰经课程",
+    "quran_courses_desc": "与专业教师学习古兰经",
     "recommendations": "推荐",
     "settings": "设置",
+    
+    // 附加部分
+    "daily_azkar": "每日祈祷",
+    "daily_azkar_desc": "早晚祈祷和各种祷告",
+    "islamic_library": "伊斯兰图书馆",
+    "islamic_library_desc": "伊斯兰书籍和参考资料综合图书馆",
+    "join_team": "加入团队",
+    
+    // 统计
+    "happy_user": "满意用户",
+    "lecture": "讲座",
+    "country": "国家",
     
     // 常用按钮
     "login": "登录",
