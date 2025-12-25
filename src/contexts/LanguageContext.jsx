@@ -14,11 +14,13 @@ export const LanguageProvider = ({ children }) => {
       // تحقق من إصدار localStorage
       const currentVersion = localStorage.getItem(VERSION_KEY);
       
-      // إذا الإصدار مختلف، امسح localStorage القديم
+      // إذا الإصدار مختلف، امسح المفاتيح المشكلة فقط
       if (currentVersion !== STORAGE_VERSION) {
-        localStorage.clear();
+        const keysToRemove = ['language', 'theme', 'app_settings'];
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        
         localStorage.setItem(VERSION_KEY, STORAGE_VERSION);
-        return 'ar';
+        return localStorage.getItem('language') || 'ar';
       }
       
       return localStorage.getItem('language') || 'ar';
