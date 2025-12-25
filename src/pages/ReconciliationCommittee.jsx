@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Award, Briefcase, GraduationCap, Heart, Sparkles, Shield, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ReconciliationRequestModal from "@/components/ReconciliationRequestModal";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 
 export default function ReconciliationCommittee() {
   const { t } = useLanguage();

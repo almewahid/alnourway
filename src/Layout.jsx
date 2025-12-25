@@ -2,8 +2,8 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, BookOpen, Heart, MessageSquare, Menu, Bell, User as UserIcon, Sparkles, Users, GraduationCap, Shield, Star, Settings, Radio, Globe, LogOut } from "lucide-react";
-import { useLanguage } from "@/components/LanguageContext";
-import { LanguageProvider } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
+import { LanguageProvider } from "@/contexts/LanguageContext.jsx";
 import {
 Sidebar,
 SidebarContent,

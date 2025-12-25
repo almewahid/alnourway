@@ -15,7 +15,7 @@ import AIFatwaAssistant from "@/components/AIFatwaAssistant";
 import RatingWidget from "@/components/RatingWidget";
 import CommentsSection from "@/components/CommentsSection";
 import ShareButtons from "@/components/ShareButtons";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 
 export default function Fatwa() {
   const { t } = useLanguage();

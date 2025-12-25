@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, MapPin, Video, Heart, Sparkles, MessageCircle, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 
 export default function LearnIslam() {
   const { t } = useLanguage();

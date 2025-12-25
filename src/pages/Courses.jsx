@@ -11,7 +11,7 @@ import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import AIRecommendations from "@/components/AIRecommendations";
 import { ArrowRight } from "lucide-react";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 
 export default function Courses() {
   const { t } = useLanguage();

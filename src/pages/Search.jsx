@@ -6,7 +6,7 @@ import { Search as SearchIcon, BookOpen, Video, FileText, Globe, Filter, Calenda
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { Button } from "@/components/ui/button";
 
 export default function Search() {
