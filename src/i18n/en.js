@@ -1,4 +1,4 @@
-export const en = {
+const en = {
   // Main features
   "تعلم الإسلام": "Learn Islam",
   "ابدأ رحلتك في تعلم الإسلام من الأساسيات": "Start your journey to learn Islam from the basics",
@@ -40,3 +40,5 @@ export const en = {
   "تواصل مع محفظ": "Contact Teacher",
   "تواصل مع داعية": "Contact Preacher",
 };
+
+export default en;
