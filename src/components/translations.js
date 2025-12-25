@@ -1,4 +1,4 @@
-// ملف ترجمات كامل - جميع المفاتيح المطلوبة
+// ملف ترجمات شامل - جميع المفاتيح
 
 export const translations = {
   ar: {
@@ -6,6 +6,9 @@ export const translations = {
     "home": "الرئيسية",
     "learn_islam": "تعلم الإسلام",
     "learn_islam_desc": "ابدأ رحلتك في تعلم الإسلام من الأساسيات",
+    "learn_islam_title": "تعلم الإسلام",
+    "learn_islam_subtitle": "ابدأ رحلتك في تعلم الإسلام",
+    "discover_islam": "اكتشف الإسلام",
     "repentance": "التوبة",
     "repentance_desc": "دليلك الشامل للتوبة والرجوع إلى الله",
     "fatwa": "الفتاوى",
@@ -15,6 +18,17 @@ export const translations = {
     "live_streams": "البث المباشر",
     "ai_guide": "المرشد الذكي",
     "courses": "الدورات",
+    
+    // صفحة تعلم الإسلام
+    "convert_stories": "قصص المهتدين",
+    "convert_stories_desc": "قصص ملهمة لمن اعتنق الإسلام",
+    "lectures_library": "مكتبة المحاضرات",
+    "lectures_desc": "محاضرات إسلامية شاملة",
+    "find_center": "ابحث عن مركز",
+    "find_center_desc": "ابحث عن مراكز إسلامية قريبة منك",
+    "principles_title": "أركان الإسلام",
+    "principles_desc": "تعرف على الأركان الخمسة للإسلام",
+    "islam_pillars": "أركان الإسلام الخمسة",
     
     // قائمة التنقل
     "contact_preacher": "تواصل مع داعية",
@@ -71,6 +85,9 @@ export const translations = {
     "home": "Home",
     "learn_islam": "Learn Islam",
     "learn_islam_desc": "Start your journey in learning Islam from basics",
+    "learn_islam_title": "Learn Islam",
+    "learn_islam_subtitle": "Start your journey in learning Islam",
+    "discover_islam": "Discover Islam",
     "repentance": "Repentance",
     "repentance_desc": "Your complete guide to repentance and returning to Allah",
     "fatwa": "Fatwa",
@@ -80,6 +97,17 @@ export const translations = {
     "live_streams": "Live Streams",
     "ai_guide": "AI Guide",
     "courses": "Courses",
+    
+    // Learn Islam page
+    "convert_stories": "Convert Stories",
+    "convert_stories_desc": "Inspiring stories of those who embraced Islam",
+    "lectures_library": "Lectures Library",
+    "lectures_desc": "Comprehensive Islamic lectures",
+    "find_center": "Find Center",
+    "find_center_desc": "Find Islamic centers near you",
+    "principles_title": "Pillars of Islam",
+    "principles_desc": "Learn about the five pillars of Islam",
+    "islam_pillars": "Five Pillars of Islam",
     
     // Navigation
     "contact_preacher": "Contact Preacher",
@@ -136,6 +164,9 @@ export const translations = {
     "home": "Accueil",
     "learn_islam": "Apprendre l'Islam",
     "learn_islam_desc": "Commencez votre voyage dans l'apprentissage de l'Islam",
+    "learn_islam_title": "Apprendre l'Islam",
+    "learn_islam_subtitle": "Commencez votre voyage dans l'apprentissage de l'Islam",
+    "discover_islam": "Découvrir l'Islam",
     "repentance": "Repentir",
     "repentance_desc": "Votre guide complet pour le repentir",
     "fatwa": "Fatwa",
@@ -145,6 +176,17 @@ export const translations = {
     "live_streams": "Diffusions en direct",
     "ai_guide": "Guide IA",
     "courses": "Cours",
+    
+    // Page Apprendre l'Islam
+    "convert_stories": "Histoires de convertis",
+    "convert_stories_desc": "Histoires inspirantes de ceux qui ont embrassé l'Islam",
+    "lectures_library": "Bibliothèque de conférences",
+    "lectures_desc": "Conférences islamiques complètes",
+    "find_center": "Trouver un centre",
+    "find_center_desc": "Trouvez des centres islamiques près de chez vous",
+    "principles_title": "Piliers de l'Islam",
+    "principles_desc": "Découvrez les cinq piliers de l'Islam",
+    "islam_pillars": "Cinq piliers de l'Islam",
     
     // Navigation
     "contact_preacher": "Contacter un prédicateur",
@@ -201,6 +243,9 @@ export const translations = {
     "home": "主页",
     "learn_islam": "学习伊斯兰",
     "learn_islam_desc": "从基础开始学习伊斯兰",
+    "learn_islam_title": "学习伊斯兰",
+    "learn_islam_subtitle": "开始您的伊斯兰学习之旅",
+    "discover_islam": "发现伊斯兰",
     "repentance": "悔改",
     "repentance_desc": "悔改和回归真主的完整指南",
     "fatwa": "教法裁决",
@@ -210,6 +255,17 @@ export const translations = {
     "live_streams": "直播",
     "ai_guide": "AI指南",
     "courses": "课程",
+    
+    // 学习伊斯兰页面
+    "convert_stories": "皈依故事",
+    "convert_stories_desc": "那些皈依伊斯兰的励志故事",
+    "lectures_library": "讲座图书馆",
+    "lectures_desc": "全面的伊斯兰讲座",
+    "find_center": "查找中心",
+    "find_center_desc": "查找您附近的伊斯兰中心",
+    "principles_title": "伊斯兰支柱",
+    "principles_desc": "了解伊斯兰的五大支柱",
+    "islam_pillars": "伊斯兰五大支柱",
     
     // 导航
     "contact_preacher": "联系传教士",
