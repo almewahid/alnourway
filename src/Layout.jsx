@@ -149,8 +149,8 @@ return (
 <NotificationManager />
 <Toaster position="top-center" richColors />
 <ChatWidget />
-<link rel="icon" type="image/png" sizes="192x192" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/760ac07b0_android-chrome-512x512.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
 <link rel="manifest" href="/manifest.json" />
 <meta name="theme-color" content="#059669" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -160,7 +160,7 @@ return (
 <SidebarHeader className="border-b border-emerald-100 dark:border-emerald-900 p-6 bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-900 dark:to-emerald-950">
 <div className="flex items-center gap-3">
 <img 
-src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" 
+src="/icon-192.png" 
 alt="طريق النور" 
 className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 />
@@ -304,7 +304,7 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 </SidebarTrigger>
 <div className="flex items-center gap-2 min-w-0">
 <img 
-src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" 
+src="/icon-192.png" 
 alt="طريق النور" 
 className="w-8 h-8 flex-shrink-0"
 />
