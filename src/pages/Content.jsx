@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +7,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Video, FileText, Play, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function Content() {
+export default function Content() {}
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("articles");
 
   return (
@@ -32,7 +34,7 @@ export default function Content() {
 
         <div className="flex justify-center mb-8">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-white/95 backdrop-blur-sm shadow-lg">
+            <TabsList className="bg-white dark:bg-slate-800/95 backdrop-blur-sm shadow-lg transition-colors duration-300">
               <TabsTrigger value="articles" className="gap-2">
                 <FileText className="w-4 h-4" />
                 المقالات
@@ -48,13 +50,13 @@ export default function Content() {
         {activeTab === "articles" ? (
           <div className="grid md:grid-cols-2 gap-6">
             <Link to={createPageUrl("Stories")}>
-              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-white/95 backdrop-blur-sm h-full hover:-translate-y-2 cursor-pointer rounded-3xl">
+              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full hover:-translate-y-2 cursor-pointer rounded-3xl transition-colors duration-300">
                 <CardContent className="p-6 md:p-8 text-center">
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-4 md:mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">قصص ملهمة</h3>
-                  <p className="text-gray-600 text-base md:text-lg">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3 transition-colors duration-300">قصص ملهمة</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg transition-colors duration-300">
                     اقرأ قصص المهتدين والتائبين
                   </p>
                 </CardContent>
@@ -62,13 +64,13 @@ export default function Content() {
             </Link>
 
             <Link to={createPageUrl("Fatwa")}>
-              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-white/95 backdrop-blur-sm h-full hover:-translate-y-2 cursor-pointer rounded-3xl">
+              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full hover:-translate-y-2 cursor-pointer rounded-3xl transition-colors duration-300">
                 <CardContent className="p-6 md:p-8 text-center">
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mb-4 md:mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <FileText className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">الفتاوى</h3>
-                  <p className="text-gray-600 text-base md:text-lg">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3 transition-colors duration-300">الفتاوى</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg transition-colors duration-300">
                     تصفح الفتاوى الشرعية
                   </p>
                 </CardContent>
@@ -78,13 +80,13 @@ export default function Content() {
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
             <Link to={createPageUrl("Lectures")}>
-              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-white/95 backdrop-blur-sm h-full hover:-translate-y-2 cursor-pointer rounded-3xl">
+              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full hover:-translate-y-2 cursor-pointer rounded-3xl transition-colors duration-300">
                 <CardContent className="p-6 md:p-8 text-center">
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4 md:mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Play className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">المحاضرات</h3>
-                  <p className="text-gray-600 text-base md:text-lg">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3 transition-colors duration-300">المحاضرات</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg transition-colors duration-300">
                     شاهد واستمع للمحاضرات الإسلامية
                   </p>
                 </CardContent>

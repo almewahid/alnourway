@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +13,8 @@ import OnlineIndicator from "@/components/OnlineIndicator";
 import Breadcrumb from "@/components/Breadcrumb";
 import { createPageUrl } from "@/utils";
 
-export default function Chat() {
+export default function Chat() {}
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState("");
@@ -63,15 +65,15 @@ export default function Chat() {
     });
   };
 
-  useEffect(() => {
+  useEffect(() => {}
     loadUser();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {}
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
+  useEffect(() => {}
     if (selectedConversation) {
       markMessagesAsRead();
     }
@@ -180,13 +182,13 @@ export default function Chat() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 p-4 md:p-6 flex items-center justify-center">
-        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full">
+        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl max-w-md w-full transition-colors duration-300">
           <CardContent className="p-8 md:p-12 text-center">
             <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-6" />
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
               يرجى تسجيل الدخول
             </h3>
-            <p className="text-gray-600 mb-8">
+            <p className="text-gray-600 dark:text-gray-400 mb-8 transition-colors duration-300">
               سجل الدخول لبدء المحادثات مع العلماء والدعاة
             </p>
             <Button
@@ -228,7 +230,7 @@ export default function Chat() {
 
         <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
           {/* قائمة المحادثات */}
-          <Card className="lg:col-span-1 border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-h-[600px] flex flex-col">
+          <Card className="lg:col-span-1 border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl max-h-[600px] flex flex-col transition-colors duration-300">
             <CardContent className="p-4 md:p-6 flex-1 flex flex-col overflow-hidden">
               <div className="relative mb-4 flex-shrink-0">
                 <Input
@@ -294,7 +296,7 @@ export default function Chat() {
                 ) : (
                   <div className="text-center py-8">
                     <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-600 text-sm">لا توجد محادثات</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300">لا توجد محادثات</p>
                   </div>
                 )}
               </div>
@@ -302,13 +304,13 @@ export default function Chat() {
           </Card>
 
           {/* نافذة المحادثة */}
-          <Card className="lg:col-span-2 border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl flex flex-col h-[600px]">
+          <Card className="lg:col-span-2 border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl flex flex-col h-[600px] transition-colors duration-300">
             {selectedConversation ? (
               <>
                 <div className="p-4 md:p-6 border-b bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-3xl flex-shrink-0">
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-800/20 flex items-center justify-center transition-colors duration-300">
                         <User className="w-6 h-6 text-white" />
                       </div>
                       <div className="absolute -bottom-0.5 -right-0.5">
@@ -323,7 +325,7 @@ export default function Chat() {
                   
                   <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
                     <DialogTrigger asChild>
-                      <Button variant="secondary" size="sm" className="gap-2 bg-white/20 hover:bg-white/30 text-white border-0">
+                      <Button variant="secondary" size="sm" className="gap-2 bg-white/20 hover:bg-white dark:bg-slate-800/30 text-white border-0 transition-colors duration-300">
                         <CalendarIcon className="w-4 h-4" />
                         <span className="hidden sm:inline">طلب موعد</span>
                       </Button>
@@ -409,13 +411,13 @@ export default function Chat() {
                   ) : (
                     <div className="text-center py-8">
                       <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-600">ابدأ المحادثة</p>
+                      <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">ابدأ المحادثة</p>
                     </div>
                   )}
                   
                   {isTyping && (
                     <div className="flex justify-start">
-                      <div className="bg-gray-100 rounded-2xl px-4 py-2">
+                      <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 transition-colors duration-300">
                         <div className="flex gap-1">
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -426,7 +428,7 @@ export default function Chat() {
                   )}
                 </div>
 
-                <form onSubmit={handleSendMessage} className="p-4 md:p-6 border-t bg-gray-50 rounded-b-3xl flex-shrink-0">
+                <form onSubmit={handleSendMessage} className="p-4 md:p-6 border-t bg-gray-50 dark:bg-slate-900 rounded-b-3xl flex-shrink-0 transition-colors duration-300">
                   <div className="flex gap-2">
                     <Input
                       placeholder="اكتب رسالتك..."
@@ -448,10 +450,10 @@ export default function Chat() {
               <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center">
                   <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
                     اختر محادثة
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
                     اختر محادثة من القائمة لبدء المحادثة
                   </p>
                 </div>

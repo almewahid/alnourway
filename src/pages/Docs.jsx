@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Star, Layout, Database, PieChart, GitMerge, FileText, Server, Lock, Link2, FileJson, Table as TableIcon, LayoutDashboard, Code, BarChart3 } from "lucide-react";
 
@@ -19,23 +20,24 @@ import apiEndpoints from "../components/docs/apiEndpoints";
 import sampleData from "../components/docs/sampleData";
 
 export default function Docs() {
+  const { t } = useLanguage();
   const [mainTab, setMainTab] = useState("features");
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-12" dir="rtl">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 md:p-12 transition-colors duration-300" dir="rtl">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 text-center md:text-right flex items-center justify-between flex-row-reverse md:flex-row">
             <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg text-sm font-medium">
                 Internal Use Only
             </div>
             <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">توثيق النظام</h1>
-                <p className="text-gray-500">المرجع التقني للكيانات والواجهة البرمجية (API) والهيكلية.</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">توثيق النظام</h1>
+                <p className="text-gray-500 dark:text-gray-400 transition-colors duration-300">المرجع التقني للكيانات والواجهة البرمجية (API) والهيكلية.</p>
             </div>
         </div>
 
         <Tabs value={mainTab} onValueChange={setMainTab} className="space-y-6">
-          <TabsList className="bg-white p-2 shadow-sm border h-auto flex-wrap justify-center w-full md:w-fit mx-auto md:mr-0 rounded-xl">
+          <TabsList className="bg-white dark:bg-slate-800 p-2 shadow-sm border h-auto flex-wrap justify-center w-full md:w-fit mx-auto md:mr-0 rounded-xl transition-colors duration-300">
             <TabsTrigger value="features" className="gap-2 px-6 py-3 text-lg data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
                 <Star className="w-5 h-5" />
                 مزايا الموقع
@@ -57,7 +59,7 @@ export default function Docs() {
           <TabsContent value="frontend" className="mt-6">
             <Tabs defaultValue="sitemap" className="space-y-6">
                <div className="flex justify-center md:justify-start">
-                   <TabsList className="bg-white border shadow-sm">
+                   <TabsList className="bg-white dark:bg-slate-800 border shadow-sm transition-colors duration-300">
                        <TabsTrigger value="sitemap" className="gap-2">
                            <GitMerge className="w-4 h-4" />
                            Sitemap
@@ -88,7 +90,7 @@ export default function Docs() {
           <TabsContent value="backend" className="mt-6">
              <Tabs defaultValue="pages" className="space-y-6">
                 <div className="flex justify-center md:justify-start flex-wrap">
-                   <TabsList className="bg-white border shadow-sm h-auto flex-wrap justify-start">
+                   <TabsList className="bg-white dark:bg-slate-800 border shadow-sm h-auto flex-wrap justify-start transition-colors duration-300">
                        <TabsTrigger value="pages" className="gap-2">
                            <LayoutDashboard className="w-4 h-4" />
                            Backend صفحات

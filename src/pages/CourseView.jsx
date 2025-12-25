@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,13 +13,14 @@ import { Progress } from "@/components/ui/progress";
 import jsPDF from "jspdf";
 
 export default function CourseView() {
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const courseId = urlParams.get('id');
   const [activeLesson, setActiveLesson] = useState(null);
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
-  useEffect(() => {
+  useEffect(() => {}
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 
@@ -64,7 +66,7 @@ export default function CourseView() {
       if (!newCompleted.includes(lessonId)) {
         newCompleted.push(lessonId);
         
-        const { error } = await supabase.from('UserCourseProgress').upsert({
+        const { error } = await supabase.from('UserCourseProgress').upsert({}
           user_email: user.email,
           course_id: courseId,
           completed_lessons: newCompleted,
@@ -108,42 +110,42 @@ export default function CourseView() {
      // For this environment, we'll generate an English/Transliterated certificate or assume standard font support
      // Since I cannot upload font files easily here, I will use English for the generated PDF to avoid garbage text.
      
-     doc.setFont("helvetica", "bold");
+     doc.setFont("helvetica"), "bold");
      doc.setFontSize(40);
      doc.setTextColor(5, 150, 105);
-     doc.text("CERTIFICATE OF COMPLETION", 148.5, 50, { align: "center" });
+     doc.text("CERTIFICATE OF COMPLETION"), 148.5, 50, { align: "center" });
 
-     doc.setFont("helvetica", "normal");
+     doc.setFont("helvetica"), "normal");
      doc.setFontSize(20);
      doc.setTextColor(60, 60, 60);
-     doc.text("This is to certify that", 148.5, 80, { align: "center" });
+     doc.text("This is to certify that"), 148.5, 80, { align: "center" });
 
-     doc.setFont("helvetica", "bolditalic");
+     doc.setFont("helvetica"), "bolditalic");
      doc.setFontSize(30);
      doc.setTextColor(0, 0, 0);
      doc.text(user.user_metadata?.full_name || user.email, 148.5, 100, { align: "center" });
 
-     doc.setFont("helvetica", "normal");
+     doc.setFont("helvetica"), "normal");
      doc.setFontSize(20);
-     doc.text("has successfully completed the course", 148.5, 120, { align: "center" });
+     doc.text("has successfully completed the course"), 148.5, 120, { align: "center" });
 
-     doc.setFont("helvetica", "bold");
+     doc.setFont("helvetica"), "bold");
      doc.setFontSize(25);
      doc.setTextColor(5, 150, 105);
      doc.text(course.title, 148.5, 140, { align: "center" });
 
-     doc.setFont("helvetica", "normal");
+     doc.setFont("helvetica"), "normal");
      doc.setFontSize(15);
      doc.setTextColor(100, 100, 100);
      const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
      doc.text(`Date: ${date}`, 50, 170);
-     doc.text("Tariq Al-Noor Academy", 220, 170);
+     doc.text("Tariq Al-Noor Academy"), 220, 170);
 
      doc.save("certificate.pdf");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-4 md:p-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex justify-between items-center">
           <Link to={createPageUrl("Courses")}>
@@ -182,7 +184,7 @@ export default function CourseView() {
                  </div>
                  <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
-                       <h2 className="text-2xl font-bold text-gray-900">{activeLesson.title}</h2>
+                       <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{activeLesson.title}</h2>
                        <Button 
                          onClick={() => updateProgressMutation.mutate(activeLesson.id)}
                          disabled={userProgress?.completed_lessons?.includes(activeLesson.id)}
@@ -196,7 +198,7 @@ export default function CourseView() {
                          ) : "تحديد كمكتمل"}
                        </Button>
                     </div>
-                    <div className="prose max-w-none text-gray-700 leading-relaxed">
+                    <div className="prose max-w-none text-gray-700 dark:text-gray-300 leading-relaxed transition-colors duration-300">
                        {activeLesson.text_content}
                     </div>
                     {activeLesson.attachment_url && (
@@ -212,11 +214,11 @@ export default function CourseView() {
                  </CardContent>
               </Card>
             ) : (
-              <Card className="border-0 shadow-lg bg-white p-8 text-center">
+              <Card className="border-0 shadow-lg bg-white dark:bg-slate-800 p-8 text-center transition-colors duration-300">
                  <GraduationCap className="w-20 h-20 text-teal-600 mx-auto mb-6" />
-                 <h1 className="text-3xl font-bold text-gray-900 mb-4">{course.title}</h1>
-                 <p className="text-xl text-gray-600 mb-8">{course.description}</p>
-                 <p className="text-gray-500">اختر درساً من القائمة لبدء التعلم</p>
+                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{course.title}</h1>
+                 <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 transition-colors duration-300">{course.description}</p>
+                 <p className="text-gray-500 dark:text-gray-400 transition-colors duration-300">اختر درساً من القائمة لبدء التعلم</p>
               </Card>
             )}
           </div>
@@ -226,7 +228,7 @@ export default function CourseView() {
                 <CardHeader className="bg-teal-50 border-b border-teal-100">
                    <CardTitle>محتوى الدورة</CardTitle>
                    <div className="mt-4">
-                      <div className="flex justify-between text-sm text-gray-600 mb-2">
+                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">
                          <span>نسبة الإنجاز</span>
                          <span>{Math.round(progressPercentage)}%</span>
                       </div>
@@ -239,8 +241,8 @@ export default function CourseView() {
                          <AccordionItem key={module.id} value={module.id} className="border-b px-4">
                             <AccordionTrigger className="hover:no-underline py-4">
                                <div className="text-right">
-                                  <div className="font-bold text-gray-900 text-base">{module.title}</div>
-                                  <div className="text-xs text-gray-500 font-normal mt-1">{module.CourseLesson.length} دروس</div>
+                                  <div className="font-bold text-gray-900 dark:text-white text-base transition-colors duration-300">{module.title}</div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-400 font-normal mt-1 transition-colors duration-300">{module.CourseLesson.length} دروس</div>
                                </div>
                             </AccordionTrigger>
                             <AccordionContent>
@@ -259,7 +261,7 @@ export default function CourseView() {
                                            {isCompleted ? (
                                               <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
                                            ) : (
-                                              <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0" />
+                                              <div className="w-4 h-4 rounded-full border-2 border-gray-300 dark:border-slate-600 flex-shrink-0 transition-colors duration-300" />
                                            )}
                                            <span className="text-sm font-medium line-clamp-1">{lesson.title}</span>
                                            {lesson.content_type === 'video' ? (

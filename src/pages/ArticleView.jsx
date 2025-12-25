@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,12 +10,13 @@ import ShareButtons from "@/components/ShareButtons";
 import CommentsSection from "@/components/CommentsSection";
 
 export default function ArticleView() {
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(() => {}
     if (articleId) {
       fetchArticle();
     }
@@ -41,7 +43,7 @@ export default function ArticleView() {
   if (!article) return <div className="min-h-screen flex items-center justify-center">المقال غير موجود</div>;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-800 transition-colors duration-300">
       {/* Header Image */}
       <div className="h-[40vh] md:h-[50vh] relative w-full bg-gray-900">
         <img 
@@ -71,7 +73,7 @@ export default function ArticleView() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto p-6 md:p-12 -mt-10 relative z-10 bg-white rounded-t-3xl md:rounded-3xl shadow-xl min-h-[500px]">
+      <div className="max-w-4xl mx-auto p-6 md:p-12 -mt-10 relative z-10 bg-white dark:bg-slate-800 rounded-t-3xl md:rounded-3xl shadow-xl min-h-[500px] transition-colors duration-300">
         <Link to={createPageUrl("Blog")}>
           <Button variant="ghost" className="mb-8 pl-0 hover:pl-2 transition-all">
             <ArrowRight className="w-4 h-4 ml-2" />
@@ -79,8 +81,8 @@ export default function ArticleView() {
           </Button>
         </Link>
 
-        <div className="prose prose-lg prose-blue max-w-none mb-12 leading-loose text-gray-800">
-          {article.content.split('\n').map((paragraph, idx) => (
+        <div className="prose prose-lg prose-blue max-w-none mb-12 leading-loose text-gray-800 dark:text-white transition-colors duration-300">
+          {article.content.split('\n').map((paragraph, idx) => (}
             <p key={idx} className="mb-6">{paragraph}</p>
           ))}
         </div>

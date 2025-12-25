@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import { UserPlus, AlertCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Register() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -63,7 +65,7 @@ export default function Register() {
 
       setSuccess("تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك من البريد الإلكتروني");
       
-      setTimeout(() => {
+      setTimeout(() => {}
         navigate('/login');
       }, 3000);
     } catch (err) {
@@ -87,9 +89,9 @@ export default function Register() {
           </div>
         </div>
 
-        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl">
+        <Card className="border-0 shadow-2xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl transition-colors duration-300">
           <CardHeader className="pb-4">
-            <CardTitle className="text-2xl font-bold text-center text-gray-900">
+            <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white transition-colors duration-300">
               إنشاء حساب جديد
             </CardTitle>
           </CardHeader>
@@ -119,7 +121,7 @@ export default function Register() {
 
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <Label htmlFor="full_name" className="text-gray-700 font-medium mb-2 block">
+                <Label htmlFor="full_name" className="text-gray-700 dark:text-gray-300 font-medium mb-2 block transition-colors duration-300">
                   الاسم الكامل
                 </Label>
                 <Input
@@ -135,7 +137,7 @@ export default function Register() {
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-gray-700 font-medium mb-2 block">
+                <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium mb-2 block transition-colors duration-300">
                   البريد الإلكتروني
                 </Label>
                 <Input
@@ -151,7 +153,7 @@ export default function Register() {
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-gray-700 font-medium mb-2 block">
+                <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-medium mb-2 block transition-colors duration-300">
                   كلمة المرور
                 </Label>
                 <Input
@@ -167,7 +169,7 @@ export default function Register() {
               </div>
 
               <div>
-                <Label htmlFor="confirmPassword" className="text-gray-700 font-medium mb-2 block">
+                <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300 font-medium mb-2 block transition-colors duration-300">
                   تأكيد كلمة المرور
                 </Label>
                 <Input

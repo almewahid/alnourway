@@ -128,15 +128,15 @@ export default function Search() {
           <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <SearchIcon className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
             {t('advanced_search')}
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
             {t('search_placeholder')}
           </p>
         </motion.div>
 
-        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mb-8">
+        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm mb-8 transition-colors duration-300">
           <CardContent className="p-6">
             <div className="relative mb-4">
               <Input
@@ -150,8 +150,8 @@ export default function Search() {
             
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-600">{t('filter_by')}:</span>
+                    <Filter className="w-4 h-4 text-gray-500 dark:text-gray-400 transition-colors duration-300" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('filter_by')}:</span>
                 </div>
                 <Button 
                     variant="ghost" 
@@ -197,7 +197,7 @@ export default function Search() {
                     className="mt-4 pt-4 border-t grid md:grid-cols-3 gap-4"
                 >
                     <div className="space-y-2">
-                        <label className="text-sm text-gray-600 flex items-center gap-1">
+                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 transition-colors duration-300">
                             <Calendar className="w-4 h-4" />
                             {t('date_from')}
                         </label>
@@ -208,7 +208,7 @@ export default function Search() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm text-gray-600 flex items-center gap-1">
+                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 transition-colors duration-300">
                             <Calendar className="w-4 h-4" />
                             {t('date_to')}
                         </label>
@@ -219,7 +219,7 @@ export default function Search() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm text-gray-600 flex items-center gap-1">
+                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 transition-colors duration-300">
                             <User className="w-4 h-4" />
                             {t('speaker_author')}
                         </label>
@@ -236,7 +236,7 @@ export default function Search() {
 
         <div className="flex justify-center mb-8">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-white shadow-lg flex-wrap h-auto">
+            <TabsList className="bg-white dark:bg-slate-800 shadow-lg flex-wrap h-auto transition-colors duration-300">
               <TabsTrigger value="all" className="gap-2">
                 {t('all')} ({allResults.length})
               </TabsTrigger>
@@ -266,7 +266,7 @@ export default function Search() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white/90 backdrop-blur-sm">
+                  <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
@@ -279,10 +279,10 @@ export default function Search() {
                           {result.type === 'fatwa' && <FileText className="w-6 h-6 text-emerald-600" />}
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-gray-900 mb-1">
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
                             {result.title || result.question}
                           </h3>
-                          <p className="text-gray-600 text-sm line-clamp-2">
+                          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 transition-colors duration-300">
                             {result.type === 'lecture' && (result.speaker || result.description)}
                             {result.type === 'story' && (result.excerpt || result.content?.substring(0, 150))}
                             {result.type === 'fatwa' && result.answer?.substring(0, 150)}
@@ -304,10 +304,10 @@ export default function Search() {
                 </motion.div>
               ))
             ) : (
-              <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+              <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
                 <CardContent className="p-12 text-center">
                   <SearchIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
                     {t('no_results')}
                   </h3>
                 </CardContent>
@@ -315,10 +315,10 @@ export default function Search() {
             )}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
             <CardContent className="p-12 text-center">
               <SearchIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
               {t('start_search')}
               </h3>
             </CardContent>

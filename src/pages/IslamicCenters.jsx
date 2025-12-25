@@ -13,7 +13,7 @@ export default function IslamicCenters() {
   const [searchQuery, setSearchQuery] = useState("");
   const [userLocation, setUserLocation] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => {}
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -68,7 +68,7 @@ export default function IslamicCenters() {
     center.country?.includes(searchQuery)
   );
 
-  const sortedCenters = [...filteredCenters].sort((a, b) => {
+  const sortedCenters = [...filteredCenters].sort((a, b) => {}
     if (a.distance && b.distance) {
       return parseFloat(a.distance) - parseFloat(b.distance);
     }

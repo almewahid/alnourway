@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,12 +16,13 @@ import CommentsModeration from "@/components/admin/CommentsModeration";
 import AIContentGenerator from "@/components/admin/AIContentGenerator";
 
 export default function Admin() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("analytics");
   const [showBulkUpload, setShowBulkUpload] = useState(false);
   const [bulkUploadEntity, setBulkUploadEntity] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => {}
     loadUser();
   }, []);
 
@@ -628,16 +630,16 @@ export default function Admin() {
           <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Shield className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
             لوحة التحكم
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
             إدارة محتوى التطبيق والإحصائيات
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white shadow-lg p-2 flex-wrap h-auto gap-2">
+          <TabsList className="bg-white dark:bg-slate-800 shadow-lg p-2 flex-wrap h-auto gap-2 transition-colors duration-300">
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
               الإحصائيات
@@ -672,8 +674,8 @@ export default function Admin() {
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-3 shadow-md`}>
                         <stat.icon className="w-6 h-6 text-white" />
                       </div>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                      <p className="text-sm text-gray-600">{stat.title}</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{stat.value}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{stat.title}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -688,18 +690,18 @@ export default function Admin() {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
                       <Video className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                      <p className="text-3xl font-bold text-gray-900">{lecturesThisWeek}</p>
-                      <p className="text-sm text-gray-600">محاضرة جديدة</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{lecturesThisWeek}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">محاضرة جديدة</p>
                     </div>
                     <div className="text-center">
                       <Heart className="w-8 h-8 mx-auto mb-2 text-rose-600" />
-                      <p className="text-3xl font-bold text-gray-900">{storiesThisWeek}</p>
-                      <p className="text-sm text-gray-600">قصة جديدة</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{storiesThisWeek}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">قصة جديدة</p>
                     </div>
                     <div className="text-center">
                       <MessageSquare className="w-8 h-8 mx-auto mb-2 text-emerald-600" />
-                      <p className="text-3xl font-bold text-gray-900">{fatwasThisWeek}</p>
-                      <p className="text-sm text-gray-600">فتوى جديدة</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{fatwasThisWeek}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">فتوى جديدة</p>
                     </div>
                   </div>
                 </CardContent>
@@ -713,17 +715,17 @@ export default function Admin() {
                 <CardContent>
                   <div className="space-y-3">
                     {topLectures.map((lecture, idx) => (
-                      <div key={lecture.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={lecture.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900 rounded-lg transition-colors duration-300">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold">
                             {idx + 1}
                           </div>
                           <div>
-                            <p className="font-semibold text-gray-900">{lecture.title}</p>
-                            <p className="text-sm text-gray-600">{lecture.speaker}</p>
+                            <p className="font-semibold text-gray-900 dark:text-white transition-colors duration-300">{lecture.title}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{lecture.speaker}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-600">
+                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors duration-300">
                           <Eye className="w-4 h-4" />
                           <span className="font-semibold">{lecture.views_count || 0}</span>
                         </div>
@@ -755,7 +757,7 @@ export default function Admin() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">التعليقات المعلقة</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 transition-colors duration-300">التعليقات المعلقة</p>
                         <p className="text-3xl font-bold text-amber-700">{pendingComments}</p>
                       </div>
                       <MessageCircleMore className="w-12 h-12 text-amber-400" />
@@ -767,7 +769,7 @@ export default function Admin() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">بث مباشر الآن</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 transition-colors duration-300">بث مباشر الآن</p>
                         <p className="text-3xl font-bold text-red-700">{liveNow}</p>
                       </div>
                       <Activity className="w-12 h-12 text-red-400" />
@@ -779,7 +781,7 @@ export default function Admin() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">بثوث قادمة</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 transition-colors duration-300">بثوث قادمة</p>
                         <p className="text-3xl font-bold text-blue-700">{upcomingStreams}</p>
                       </div>
                       <Calendar className="w-12 h-12 text-blue-400" />
@@ -792,7 +794,7 @@ export default function Admin() {
 
           {visibleSections.map((section) => (
             <TabsContent key={section.id} value={section.id}>
-              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">

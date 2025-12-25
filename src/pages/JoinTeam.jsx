@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
@@ -12,6 +13,7 @@ import { Users, CheckCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function JoinTeam() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -61,8 +63,8 @@ export default function JoinTeam() {
           <div className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
             <CheckCircle className="w-12 h-12 text-white" />
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">تم إرسال طلبك بنجاح!</h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">تم إرسال طلبك بنجاح!</h2>
+          <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 transition-colors duration-300">
             سنراجع طلبك ونتواصل معك قريباً إن شاء الله
           </p>
           <Button
@@ -89,15 +91,15 @@ export default function JoinTeam() {
             <span className="text-emerald-800 font-semibold">انضم إلى فريقنا</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
             كن جزءاً من طريق النور
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
             شارك في نشر الهداية والعلم النافع
           </p>
         </motion.div>
 
-        <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm">
+        <Card className="border-0 shadow-2xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
           <CardHeader>
             <CardTitle className="text-2xl text-center">نموذج الانضمام</CardTitle>
           </CardHeader>

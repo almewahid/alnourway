@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import InterestsSelector from "@/components/InterestsSelector";
 import Breadcrumb from "@/components/Breadcrumb";
 
 export default function Settings() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
   const [fontSize, setFontSize] = useState(localStorage.getItem('fontSize') || 'medium');
@@ -27,7 +29,7 @@ export default function Settings() {
     scheduled_meetings: true
   });
 
-  useEffect(() => {
+  useEffect(() => {}
     loadUser();
     loadNotificationSettings();
   }, []);
@@ -136,13 +138,13 @@ export default function Settings() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6 flex items-center justify-center">
-        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4">
+        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4 transition-colors duration-300">
           <CardContent className="p-6 md:p-12 text-center">
             <SettingsIcon className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-6" />
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
               يرجى تسجيل الدخول
             </h3>
-            <p className="text-gray-600 mb-8 text-sm md:text-base">
+            <p className="text-gray-600 dark:text-gray-400 mb-8 text-sm md:text-base transition-colors duration-300">
               سجل الدخول للوصول إلى إعداداتك
             </p>
             <button
@@ -172,10 +174,10 @@ export default function Settings() {
           <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg">
             <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 transition-colors duration-300">
             الإعدادات
           </h1>
-          <p className="text-base md:text-lg lg:text-xl text-gray-600 px-4">
+          <p className="text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-400 px-4 transition-colors duration-300">
             تخصيص تجربتك في التطبيق
           </p>
         </motion.div>
@@ -189,7 +191,7 @@ export default function Settings() {
           </TabsList>
 
           <TabsContent value="profile">
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <User className="w-5 h-5 text-blue-600" />
@@ -212,7 +214,7 @@ export default function Settings() {
                     id="email"
                     value={user?.email || ''}
                     disabled
-                    className="mt-2 bg-gray-50"
+                    className="mt-2 bg-gray-50 dark:bg-slate-900 transition-colors duration-300"
                   />
                 </div>
                 <Button
@@ -226,7 +228,7 @@ export default function Settings() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mt-6">
+            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm mt-6 transition-colors duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl text-red-600">
                   <Shield className="w-5 h-5" />
@@ -256,7 +258,7 @@ export default function Settings() {
                         if (error) throw error;
                         alert("تم تحديث كلمة المرور بنجاح");
                      } catch(e) {
-                        alert("خطأ في تحديث كلمة المرور: " + e.message);
+                        alert("خطأ في تحديث كلمة المرور: ") + e.message);
                      }
                   }}
                   className="bg-red-500 hover:bg-red-600 text-white w-full"
@@ -268,7 +270,7 @@ export default function Settings() {
           </TabsContent>
 
           <TabsContent value="notifications">
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <Bell className="w-5 h-5 text-purple-600" />
@@ -279,7 +281,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">إشعارات المتصفح</p>
-                    <p className="text-xs md:text-sm text-gray-500">تلقي إشعارات في المتصفح</p>
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">تلقي إشعارات في المتصفح</p>
                   </div>
                   {notifications.push ? (
                     <Switch
@@ -299,7 +301,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">إشعارات البريد الإلكتروني</p>
-                    <p className="text-xs md:text-sm text-gray-500">تلقي الإشعارات عبر البريد</p>
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">تلقي الإشعارات عبر البريد</p>
                   </div>
                   <Switch
                     checked={notifications.email}
@@ -309,7 +311,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">تحديثات الفتاوى</p>
-                    <p className="text-xs md:text-sm text-gray-500">إشعار عند الرد على فتواك</p>
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">إشعار عند الرد على فتواك</p>
                   </div>
                   <Switch
                     checked={notifications.fatwa_updates}
@@ -319,7 +321,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">محتوى جديد</p>
-                    <p className="text-xs md:text-sm text-gray-500">إشعار عند إضافة محتوى جديد</p>
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">إشعار عند إضافة محتوى جديد</p>
                   </div>
                   <Switch
                     checked={notifications.new_content}
@@ -329,7 +331,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">البث المباشر</p>
-                    <p className="text-xs md:text-sm text-gray-500">إشعار عند بدء بث مباشر</p>
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">إشعار عند بدء بث مباشر</p>
                   </div>
                   <Switch
                     checked={notifications.live_streams}
@@ -339,7 +341,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">مواعيد اللقاءات</p>
-                    <p className="text-xs md:text-sm text-gray-500">تذكير بمواعيد اللقاءات المجدولة</p>
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">تذكير بمواعيد اللقاءات المجدولة</p>
                   </div>
                   <Switch
                     checked={notifications.scheduled_meetings}
@@ -352,7 +354,7 @@ export default function Settings() {
 
           <TabsContent value="appearance">
             <div className="space-y-4 md:space-y-6">
-              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                     {darkMode ? <Moon className="w-5 h-5 text-indigo-600" /> : <Sun className="w-5 h-5 text-amber-500" />}
@@ -363,7 +365,7 @@ export default function Settings() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <p className="font-medium text-sm md:text-base">الوضع الليلي</p>
-                      <p className="text-xs md:text-sm text-gray-500">تفعيل المظهر الداكن</p>
+                      <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">تفعيل المظهر الداكن</p>
                     </div>
                     <Switch
                       checked={darkMode}
@@ -391,7 +393,7 @@ export default function Settings() {
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                     <Globe className="w-5 h-5 text-emerald-600" />
@@ -414,7 +416,7 @@ export default function Settings() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-xs md:text-sm text-gray-500 mt-2">
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-2 transition-colors duration-300">
                     سيتم إعادة تحميل التطبيق عند تغيير اللغة
                   </p>
                 </CardContent>
@@ -423,7 +425,7 @@ export default function Settings() {
           </TabsContent>
 
           <TabsContent value="interests">
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <Heart className="w-5 h-5 text-rose-600" />
@@ -431,7 +433,7 @@ export default function Settings() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
+                <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-4 md:mb-6 transition-colors duration-300">
                   اختر المواضيع التي تهمك لتحصل على توصيات أفضل
                 </p>
                 <InterestsSelector userEmail={user?.email} />
@@ -448,7 +450,7 @@ export default function Settings() {
                 window.location.href = '/';
               }}
               variant="ghost"
-              className="w-full text-white hover:bg-white/20 hover:text-white text-sm md:text-base"
+              className="w-full text-white hover:bg-white dark:bg-slate-800/20 hover:text-white text-sm md:text-base transition-colors duration-300"
             >
               تسجيل الخروج
             </Button>

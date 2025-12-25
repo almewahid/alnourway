@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,10 +11,11 @@ import Breadcrumb from "@/components/Breadcrumb";
 import LectureCard from "@/components/LectureCard";
 
 export default function Recommendations() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState({ lectures: [], stories: [], fatwas: [], books: [] });
 
-  useEffect(() => {
+  useEffect(() => {}
     loadUser();
   }, []);
 
@@ -158,13 +160,13 @@ export default function Recommendations() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-800 p-4 md:p-6 flex items-center justify-center">
-        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4">
+        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4 transition-colors duration-300">
           <CardContent className="p-6 md:p-12 text-center">
             <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-6" />
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
               يرجى تسجيل الدخول
             </h3>
-            <p className="text-gray-600 mb-8 text-sm md:text-base">
+            <p className="text-gray-600 dark:text-gray-400 mb-8 text-sm md:text-base transition-colors duration-300">
               سجل الدخول للحصول على توصيات مخصصة بناءً على اهتماماتك
             </p>
             <Link to="/auth">
@@ -251,13 +253,13 @@ export default function Recommendations() {
                       transition={{ delay: index * 0.05 }}
                     >
                       <Link to={createPageUrl("Stories") + `?id=${story.id}`}>
-                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl">
+                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl transition-colors duration-300">
                           <CardContent className="p-4">
                             <div className="flex items-start gap-2 mb-2">
                               <Star className="w-4 h-4 text-purple-600 flex-shrink-0 mt-1" />
-                              <h3 className="font-bold text-gray-900 text-sm md:text-base line-clamp-2">{story.title}</h3>
+                              <h3 className="font-bold text-gray-900 dark:text-white text-sm md:text-base line-clamp-2 transition-colors duration-300">{story.title}</h3>
                             </div>
-                            <p className="text-xs md:text-sm text-gray-600 line-clamp-3">{story.excerpt || story.content?.substring(0, 100)}</p>
+                            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 line-clamp-3 transition-colors duration-300">{story.excerpt || story.content?.substring(0, 100)}</p>
                           </CardContent>
                         </Card>
                       </Link>
@@ -282,16 +284,16 @@ export default function Recommendations() {
                       transition={{ delay: index * 0.05 }}
                     >
                       <Link to={createPageUrl("BookReader") + `?id=${book.id}`}>
-                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl">
+                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl transition-colors duration-300">
                           <CardContent className="p-3 md:p-4">
                             {book.cover_url && (
                               <img src={book.cover_url} alt={book.title} className="w-full h-32 md:h-48 object-cover rounded-lg mb-2 md:mb-3" />
                             )}
                             <div className="flex items-start gap-2 mb-2">
                               <Star className="w-4 h-4 text-purple-600 flex-shrink-0 mt-1" />
-                              <h3 className="font-bold text-gray-900 text-xs md:text-sm line-clamp-2">{book.title}</h3>
+                              <h3 className="font-bold text-gray-900 dark:text-white text-xs md:text-sm line-clamp-2 transition-colors duration-300">{book.title}</h3>
                             </div>
-                            <p className="text-xs text-gray-600 truncate">{book.author}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate transition-colors duration-300">{book.author}</p>
                           </CardContent>
                         </Card>
                       </Link>

@@ -19,7 +19,7 @@ export default function QuranCourses() {
   const [activeTab, setActiveTab] = useState("browse");
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => {}
     loadUser();
   }, []);
 

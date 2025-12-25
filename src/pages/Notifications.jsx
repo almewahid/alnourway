@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,11 +10,12 @@ import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 
 export default function Notifications() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const queryClient = useQueryClient();
 
-  useEffect(() => {
+  useEffect(() => {}
     loadUser();
   }, []);
 
@@ -105,13 +107,13 @@ export default function Notifications() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-700 via-amber-600 to-orange-800 p-4 md:p-6">
         <div className="max-w-2xl mx-auto pt-12">
-          <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl">
+          <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl transition-colors duration-300">
             <CardContent className="p-8 md:p-12 text-center">
               <BellOff className="w-16 h-16 text-gray-300 mx-auto mb-6" />
-              <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
                 يرجى تسجيل الدخول
               </h3>
-              <p className="text-gray-600 mb-8">
+              <p className="text-gray-600 dark:text-gray-400 mb-8 transition-colors duration-300">
                 سجل الدخول لمشاهدة إشعاراتك
               </p>
               <Link to="/auth">
@@ -158,7 +160,7 @@ export default function Notifications() {
               onClick={() => markAllAsReadMutation.mutate()}
               disabled={unreadCount === 0 || markAllAsReadMutation.isPending}
               variant="outline"
-              className="bg-white/95 backdrop-blur-sm hover:bg-white text-sm md:text-base rounded-2xl"
+              className="bg-white/95 backdrop-blur-sm hover:bg-white dark:bg-slate-800 text-sm md:text-base rounded-2xl transition-colors duration-300"
             >
               <CheckCircle className="w-4 h-4 ml-2" />
               تعليم الكل كمقروء
@@ -167,7 +169,7 @@ export default function Notifications() {
               onClick={() => deleteAllMutation.mutate()}
               disabled={deleteAllMutation.isPending}
               variant="outline"
-              className="bg-white/95 backdrop-blur-sm hover:bg-white text-red-600 border-red-200 text-sm md:text-base rounded-2xl"
+              className="bg-white/95 backdrop-blur-sm hover:bg-white dark:bg-slate-800 text-red-600 border-red-200 text-sm md:text-base rounded-2xl transition-colors duration-300"
             >
               <Trash2 className="w-4 h-4 ml-2" />
               حذف الكل
@@ -213,7 +215,7 @@ export default function Notifications() {
                             {notification.message}
                           </p>
                           <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                            <span className="text-xs md:text-sm text-gray-500">
+                            <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                               {new Date(notification.created_date).toLocaleDateString('ar-SA')}
                             </span>
                             
@@ -256,13 +258,13 @@ export default function Notifications() {
               );
             })
           ) : (
-            <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm rounded-3xl">
+            <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl transition-colors duration-300">
               <CardContent className="p-8 md:p-12 text-center">
                 <Bell className="w-16 h-16 text-gray-300 mx-auto mb-6" />
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
                   لا توجد إشعارات
                 </h3>
-                <p className="text-gray-600 text-sm md:text-base">
+                <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base transition-colors duration-300">
                   ستظهر هنا جميع الإشعارات الجديدة
                 </p>
               </CardContent>

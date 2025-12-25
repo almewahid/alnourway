@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Favorites() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
-  useEffect(() => {
+  useEffect(() => {}
     const loadUser = async () => {
       try {
         const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -74,15 +76,15 @@ export default function Favorites() {
     const color = getColor(favorite.item_type);
 
     return (
-      <Card key={favorite.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm">
+      <Card key={favorite.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center flex-shrink-0 shadow-md`}>
               <Icon className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">{favorite.item_title || 'بدون عنوان'}</h3>
-              <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium mb-3">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{favorite.item_title || 'بدون عنوان'}</h3>
+              <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium mb-3 transition-colors duration-300">
                 {favorite.item_type === 'lecture' && 'محاضرة'}
                 {favorite.item_type === 'story' && 'قصة'}
                 {favorite.item_type === 'fatwa' && 'فتوى'}
@@ -114,10 +116,10 @@ export default function Favorites() {
           <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Heart className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
             المفضلة
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
             المحتوى الذي قمت بحفظه
           </p>
         </motion.div>
@@ -125,7 +127,7 @@ export default function Favorites() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-4 transition-colors duration-300">جاري التحميل...</p>
           </div>
         ) : favorites.length > 0 ? (
           <Tabs defaultValue="all" className="w-full">
@@ -146,7 +148,7 @@ export default function Favorites() {
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <Video className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">لا توجد محاضرات مفضلة</p>
+                  <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">لا توجد محاضرات مفضلة</p>
                 </div>
               )}
             </TabsContent>
@@ -157,7 +159,7 @@ export default function Favorites() {
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">لا توجد قصص مفضلة</p>
+                  <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">لا توجد قصص مفضلة</p>
                 </div>
               )}
             </TabsContent>
@@ -168,19 +170,19 @@ export default function Favorites() {
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">لا توجد فتاوى مفضلة</p>
+                  <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">لا توجد فتاوى مفضلة</p>
                 </div>
               )}
             </TabsContent>
           </Tabs>
         ) : (
-          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
             <CardContent className="p-12 text-center">
               <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
                 لا توجد مفضلات بعد
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
                 ابدأ بحفظ المحاضرات والقصص والفتاوى المفضلة لديك
               </p>
             </CardContent>
