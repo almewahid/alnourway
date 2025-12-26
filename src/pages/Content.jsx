@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Video, FileText, Play, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function Content() {}
+export default function Content() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("articles");
 

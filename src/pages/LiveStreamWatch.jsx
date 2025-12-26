@@ -30,7 +30,7 @@ export default function LiveStreamWatch() {
     enabled: !!id,
   });
 
-  useEffect(() => {}
+  useEffect(() => {
     if (fetchedStream) {
       setStream(fetchedStream);
     }

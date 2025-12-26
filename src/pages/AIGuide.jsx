@@ -24,7 +24,7 @@ export default function AIGuide() {
 
   // Lectures are fetched dynamically inside handleSend to provide context
 
-  useEffect(() => {}
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }

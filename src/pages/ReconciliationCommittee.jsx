@@ -13,7 +13,7 @@ export default function ReconciliationCommittee() {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 

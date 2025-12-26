@@ -32,7 +32,7 @@ export default function Fatwa() {
   const [user, setUser] = useState(null);
   const [userFavorites, setUserFavorites] = useState([]);
 
-  useEffect(() => {}
+  useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
        if (data.user) {
           setUser(data.user);
@@ -55,7 +55,7 @@ export default function Fatwa() {
         await supabase.from('Favorite').delete().eq('user_email', user.email).eq('item_id', fatwa.id);
         setUserFavorites(prev => prev.filter(id => id !== fatwa.id));
      } else {
-        await supabase.from('Favorite').insert({}
+        await supabase.from('Favorite').insert({
            user_email: user.email,
            item_type: 'fatwa',
            item_id: fatwa.id,
@@ -75,7 +75,7 @@ export default function Fatwa() {
     { value: "أسرة", label: "أسرة" },
   ];
 
-  useEffect(() => {}
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const fatwaId = urlParams.get('id');
     if (fatwaId && fatwas) {
@@ -87,7 +87,7 @@ export default function Fatwa() {
 
   const loadOnlineMuftis = async () => {
     try {
-      const { count } = await supabase.from('Scholar').select('*'), { count: 'exact' }).eq('type', 'mufti').eq('is_available', true);
+      const { count } = await supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'mufti').eq('is_available', true);
       setOnlineMuftis(count || 0);
     } catch (error) {
       console.log('Error loading muftis:', error);
@@ -181,7 +181,7 @@ export default function Fatwa() {
                                     body: { action: 'summarize', text: selectedFatwa.answer }
                                 });
                                 if (error) throw error;
-                                alert("ملخص الجواب:\n") + (data.summary || "تعذر التلخيص"));
+                                alert("ملخص الجواب:\n" + (data.summary || "تعذر التلخيص"));
                             } catch (e) {
                                 alert("حدث خطأ أثناء التلخيص");
                             }
@@ -227,7 +227,7 @@ export default function Fatwa() {
                    onClick={async () => {
                       const { data: { user } } = await supabase.auth.getUser();
                       if(!user) { alert('يرجى تسجيل الدخول للحفظ'); return; }
-                      const { error } = await supabase.from('Favorite').insert({}
+                      const { error } = await supabase.from('Favorite').insert({
                          user_email: user.email,
                          item_type: 'fatwa',
                          item_id: selectedFatwa.id,

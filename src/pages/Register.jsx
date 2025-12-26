@@ -65,7 +65,7 @@ export default function Register() {
 
       setSuccess("تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك من البريد الإلكتروني");
       
-      setTimeout(() => {}
+      setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (err) {

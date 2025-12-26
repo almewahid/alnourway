@@ -22,7 +22,7 @@ export default function Admin() {
   const [showBulkUpload, setShowBulkUpload] = useState(false);
   const [bulkUploadEntity, setBulkUploadEntity] = useState(null);
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 

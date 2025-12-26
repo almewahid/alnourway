@@ -29,7 +29,7 @@ export default function Settings() {
     scheduled_meetings: true
   });
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
     loadNotificationSettings();
   }, []);
@@ -258,7 +258,7 @@ export default function Settings() {
                         if (error) throw error;
                         alert("تم تحديث كلمة المرور بنجاح");
                      } catch(e) {
-                        alert("خطأ في تحديث كلمة المرور: ") + e.message);
+                        alert("خطأ في تحديث كلمة المرور: " + e.message);
                      }
                   }}
                   className="bg-red-500 hover:bg-red-600 text-white w-full"

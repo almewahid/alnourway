@@ -14,13 +14,13 @@ export default function Repentance() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [onlineScholars, setOnlineScholars] = useState(0);
 
-  useEffect(() => {}
+  useEffect(() => {
     loadOnlineScholars();
   }, []);
 
   const loadOnlineScholars = async () => {
     try {
-      const { count } = await supabase.from('Scholar').select('*'), { count: 'exact' }).eq('type', 'mufti').eq('is_available', true);
+      const { count } = await supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'mufti').eq('is_available', true);
       setOnlineScholars(count || 0);
     } catch (error) {
       console.log('Error loading scholars:', error);

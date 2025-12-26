@@ -20,7 +20,7 @@ export default function CourseView() {
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
-  useEffect(() => {}
+  useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 
@@ -66,7 +66,7 @@ export default function CourseView() {
       if (!newCompleted.includes(lessonId)) {
         newCompleted.push(lessonId);
         
-        const { error } = await supabase.from('UserCourseProgress').upsert({}
+        const { error } = await supabase.from('UserCourseProgress').upsert({
           user_email: user.email,
           course_id: courseId,
           completed_lessons: newCompleted,
@@ -110,36 +110,36 @@ export default function CourseView() {
      // For this environment, we'll generate an English/Transliterated certificate or assume standard font support
      // Since I cannot upload font files easily here, I will use English for the generated PDF to avoid garbage text.
      
-     doc.setFont("helvetica"), "bold");
+     doc.setFont("helvetica", "bold");
      doc.setFontSize(40);
      doc.setTextColor(5, 150, 105);
-     doc.text("CERTIFICATE OF COMPLETION"), 148.5, 50, { align: "center" });
+     doc.text("CERTIFICATE OF COMPLETION", 148.5, 50, { align: "center" });
 
-     doc.setFont("helvetica"), "normal");
+     doc.setFont("helvetica", "normal");
      doc.setFontSize(20);
      doc.setTextColor(60, 60, 60);
-     doc.text("This is to certify that"), 148.5, 80, { align: "center" });
+     doc.text("This is to certify that", 148.5, 80, { align: "center" });
 
-     doc.setFont("helvetica"), "bolditalic");
+     doc.setFont("helvetica", "bolditalic");
      doc.setFontSize(30);
      doc.setTextColor(0, 0, 0);
      doc.text(user.user_metadata?.full_name || user.email, 148.5, 100, { align: "center" });
 
-     doc.setFont("helvetica"), "normal");
+     doc.setFont("helvetica", "normal");
      doc.setFontSize(20);
-     doc.text("has successfully completed the course"), 148.5, 120, { align: "center" });
+     doc.text("has successfully completed the course", 148.5, 120, { align: "center" });
 
-     doc.setFont("helvetica"), "bold");
+     doc.setFont("helvetica", "bold");
      doc.setFontSize(25);
      doc.setTextColor(5, 150, 105);
      doc.text(course.title, 148.5, 140, { align: "center" });
 
-     doc.setFont("helvetica"), "normal");
+     doc.setFont("helvetica", "normal");
      doc.setFontSize(15);
      doc.setTextColor(100, 100, 100);
      const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
      doc.text(`Date: ${date}`, 50, 170);
-     doc.text("Tariq Al-Noor Academy"), 220, 170);
+     doc.text("Tariq Al-Noor Academy", 220, 170);
 
      doc.save("certificate.pdf");
   };

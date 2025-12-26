@@ -19,7 +19,7 @@ export default function QuranCourses() {
   const [activeTab, setActiveTab] = useState("browse");
   const [user, setUser] = useState(null);
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 
@@ -175,7 +175,7 @@ export default function QuranCourses() {
                                     className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700"
                                     disabled={course.current_students >= course.max_students}
                                 >
-                                    {course.current_students >{t('= course.max_students ? "مكتمل" : "سجل الآن"}')}</Button>
+                                    {course.current_students >= course.max_students ? t("مكتمل") : t("سجل الآن")}</Button>
                             </div>
                         </CardContent>
                         </Card>

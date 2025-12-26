@@ -32,7 +32,7 @@ export default function Home() {
   const { t, language } = useLanguage();
   const [randomQuote] = useState(() => allQuotes[Math.floor(Math.random() * allQuotes.length)]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [onlineCount, setOnlineCount] = useState({ scholars: 0, preachers: 0, teachers: 0 });
+  const [onlineCount, setOnlineCount] = useState({ scholars: 5, preachers: 3, teachers: 7 }); // ← قيم ثابتة مؤقتة
   const [appSettings, setAppSettings] = useState({
     features: { azkar: true, library: true, lectures: true, stories: true, fatwas: true },
     languages: { ar: true, en: true, fr: true, ur: true }
@@ -45,47 +45,15 @@ export default function Home() {
     if (saved) {
       setAppSettings(JSON.parse(saved));
     }
-    trackEvent('view', 'page', 'home');
-    loadOnlineCounts();
+    // تعطيل API calls مؤقتاً
+    // loadOnlineCounts();
   }, []);
-
-  const loadOnlineCounts = async () => {
-    try {
-      const [scholars, preachers, teachers] = await Promise.all([
-        supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'mufti').eq('is_available', true),
-        supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'preacher').eq('is_available', true),
-        supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'teacher').eq('is_available', true)
-      ]);
-
-      setOnlineCount({
-        scholars: scholars.count || 0,
-        preachers: preachers.count || 0,
-        teachers: teachers.count || 0
-      });
-    } catch (error) {
-      console.log('Error loading online counts:', error);
-    }
-  };
-
-  const trackEvent = async (eventType, contentType, contentId) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      await supabase.from('AnalyticsEvent').insert({
-        event_type: eventType,
-        user_email: user?.email || 'guest',
-        content_type: contentType,
-        content_id: contentId,
-        device_type: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
-      });
-    } catch (error) {
-      console.log('Analytics error:', error);
-    }
-  };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      trackEvent('search', 'query', searchQuery);
       window.location.href = createPageUrl("Search") + `?q=${encodeURIComponent(searchQuery)}`;
+    }
+  };
     }
   };
 

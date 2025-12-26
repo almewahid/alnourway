@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { User, Mail, LogOut, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function Account() {}
+export default function Account() {
   const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 

@@ -15,7 +15,7 @@ export default function Notifications() {
   const [loading, setLoading] = useState(true);
   const queryClient = useQueryClient();
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 

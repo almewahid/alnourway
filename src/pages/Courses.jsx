@@ -19,8 +19,8 @@ export default function Courses() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [user, setUser] = useState(null);
 
-  useEffect(() => {}
-    import("@/components/api/supabaseClient").then(({ supabase }) => {}
+  useEffect(() => {
+    import("@/components/api/supabaseClient").then(({ supabase }) => {
         supabase.auth.getUser().then(({ data }) => setUser(data.user));
     });
   }, []);

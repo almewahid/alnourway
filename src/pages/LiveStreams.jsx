@@ -18,7 +18,7 @@ export default function LiveStreams() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {}
+  useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 

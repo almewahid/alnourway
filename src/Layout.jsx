@@ -48,7 +48,7 @@ const getBottomNavItems = (t) => [
 { titleKey: "حسابي", zhl: createPageUrl("Profile"), icon: UserIcon, color: "from-pzhple-500 to-pzhple-600" },
 ];
 export default function Layout({ children, czhrentPageName }) {
-retzhn (
+return (
 <LanguageProvider><LayoutContent children={children} czhrentPageName={czhrentPageName} /></LanguageProvider>
 );
 }
@@ -102,7 +102,7 @@ setUser({ ...session.user, role: 'user' });
 setUser(null);
 }
 });
-retzhn () => {
+return () => {
 authListener.subscription.unsubscribe();
 };
 }, []);
@@ -132,7 +132,7 @@ localStorage.setItem("theme", "light");
 }
 }, [isDarkMode]);
 const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-retzhn (
+return (
 <SidebarProvider defaultOpen={true} open={sidebarOpen} onOpenChange={setSidebarOpen}>
 <style>{`
 * { direction: rtl; text-align: right; }
@@ -319,7 +319,7 @@ className="w-8 h-8 flex-shrink-0"
 <div className="flex items-center justify-around px-2 py-1.5 w-full max-w-full">
 {bottomNavItems.map((item) => {
 const isActive = location.pathname === item.zhl;
-retzhn (
+return (
 <Link 
 key={item.titleKey} 
 to={item.zhl} 

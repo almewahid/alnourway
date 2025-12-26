@@ -16,7 +16,7 @@ export default function ArticleView() {
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {}
+  useEffect(() => {
     if (articleId) {
       fetchArticle();
     }
@@ -82,9 +82,9 @@ export default function ArticleView() {
         </Link>
 
         <div className="prose prose-lg prose-blue max-w-none mb-12 leading-loose text-gray-800 dark:text-white transition-colors duration-300">
-          {article.content.split('\n').map((paragraph, idx) => (}
-            <p key={idx} className="mb-6">{paragraph}</p>
-          ))}
+          {article.content.split('\n').map((paragraph, idx) => (
+              <p key={idx} className="mb-6">{paragraph}</p>
+            ))}
         </div>
 
         <div className="border-t pt-8">

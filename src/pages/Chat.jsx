@@ -13,7 +13,7 @@ import OnlineIndicator from "@/components/OnlineIndicator";
 import Breadcrumb from "@/components/Breadcrumb";
 import { createPageUrl } from "@/utils";
 
-export default function Chat() {}
+export default function Chat() {
   const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -65,15 +65,15 @@ export default function Chat() {}
     });
   };
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 
-  useEffect(() => {}
+  useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {}
+  useEffect(() => {
     if (selectedConversation) {
       markMessagesAsRead();
     }

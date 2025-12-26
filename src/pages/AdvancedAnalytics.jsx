@@ -19,7 +19,7 @@ export default function AdvancedAnalytics() {
   const [user, setUser] = useState(null);
   const [dateRange, setDateRange] = useState('7days');
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 

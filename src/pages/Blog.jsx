@@ -14,7 +14,7 @@ export default function Blog() {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
 
-  React.useEffect(() => {}
+  React.useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 

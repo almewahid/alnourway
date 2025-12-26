@@ -15,7 +15,7 @@ export default function Recommendations() {
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState({ lectures: [], stories: [], fatwas: [], books: [] });
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 

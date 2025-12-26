@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {
-  const { t } = useLanguage();
   const { t, language, changeLanguage } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +18,7 @@ export default function Profile() {
   const [interests, setInterests] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {}
+  useEffect(() => {
     loadUser();
   }, []);
 
@@ -49,7 +48,7 @@ export default function Profile() {
         // Fetch fatwa requests count
         const { count: fatwaCount } = await supabase
             .from('FatwaRequest')
-            .select('*'), { count: 'exact' })
+            .select('*', { count: 'exact' })
             .eq('email', authUser.email);
             
         setStats(prev => ({ ...prev, fatwas: fatwaCount || 0 }));
@@ -63,7 +62,7 @@ export default function Profile() {
   const handleSavePreferences = async () => {
       if (!user) return;
       try {
-          const { error } = await supabase.from('UserPreference').upsert({}
+          const { error } = await supabase.from('UserPreference').upsert({
               user_email: user.email,
               interested_topics: interests
           }, { onConflict: 'user_email' });

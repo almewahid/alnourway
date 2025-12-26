@@ -18,7 +18,7 @@ export default function Auth() {
   const { isAuthenticated } = useAuth();
 
   // معالجة OAuth callback
-  useEffect(() => {}
+  useEffect(() => {
     const handleOAuthCallback = async () => {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get('access_token');
@@ -27,7 +27,7 @@ export default function Auth() {
         console.log('✅ Google OAuth callback detected');
         setMessage({ type: 'success', text: 'تم تسجيل الدخول بنجاح!' });
         
-        setTimeout(() => {}
+        setTimeout(() => {
           navigate('/home');
         }, 1000);
       }
@@ -37,7 +37,7 @@ export default function Auth() {
   }, [navigate]);
 
   // إعادة توجيه المستخدمين المسجلين
-  useEffect(() => {}
+  useEffect(() => {
     if (isAuthenticated) {
       const from = location.state?.from?.pathname || '/home';
       navigate(from);
@@ -96,7 +96,7 @@ export default function Auth() {
         console.log('✅ Login successful:', data.user.email);
         setMessage({ type: 'success', text: 'تم تسجيل الدخول بنجاح!' });
         
-        setTimeout(() => {}
+        setTimeout(() => {
           navigate('/home');
         }, 500);
 
@@ -128,7 +128,7 @@ export default function Auth() {
             text: 'تم إنشاء الحساب! جاري تسجيل الدخول...' 
           });
           
-          setTimeout(() => {}
+          setTimeout(() => {
             navigate('/home');
           }, 1000);
         }

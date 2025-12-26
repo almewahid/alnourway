@@ -34,7 +34,7 @@ export default function Lectures() {
     initialData: [],
   });
 
-  useEffect(() => {}
+  useEffect(() => {
     if (lectureIdParam && lectures.length > 0) {
       const lecture = lectures.find(l => l.id === lectureIdParam);
       if (lecture) {

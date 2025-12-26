@@ -13,7 +13,7 @@ export default function Favorites() {
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
-  useEffect(() => {}
+  useEffect(() => {
     const loadUser = async () => {
       try {
         const { data: { user: authUser } } = await supabase.auth.getUser();
