@@ -6,12 +6,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import ShareButtons from "./ShareButtons";
 import VideoPlayer from "./VideoPlayer";
+import { getYouTubeThumbnail } from "@/utils/youtubeUtils";
 
 export default function LectureCard({ lecture, onClick, isDetailView = false }) {
   const [user, setUser] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [viewsCounted, setViewsCounted] = useState(false);
   const queryClient = useQueryClient();
+
+  // 🎯 هنا نحصل على صورة اليوتيوب تلقائياً من الرابط
+  const thumbnailUrl = getYouTubeThumbnail(lecture.url);
 
   useEffect(() => {
     loadUser();
@@ -160,12 +164,16 @@ export default function LectureCard({ lecture, onClick, isDetailView = false }) 
   return (
     <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full group hover:-translate-y-1 overflow-hidden">
       <CardContent className="p-0">
-        {lecture.thumbnail_url ? (
+        {thumbnailUrl ? (
           <div className="relative h-48 overflow-hidden">
             <img
-              src={lecture.thumbnail_url}
+              src={thumbnailUrl}
               alt={lecture.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              onError={(e) => {
+                // صورة بديلة في حالة فشل التحميل
+                e.target.src = 'https://via.placeholder.com/640x360/8b5cf6/ffffff?text=فيديو';
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

@@ -78,20 +78,20 @@ export default function AdminTable({ entity, fields, showPendingOnly }) {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
+              <tr className="border-b border-gray-200 dark:border-slate-700">
                 {fields.slice(0, 3).map((field) => (
-                  <th key={field.key} className="text-right py-3 px-4 font-semibold text-gray-700">
+                  <th key={field.key} className="text-right py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">
                     {field.label}
                   </th>
                 ))}
-                <th className="text-right py-3 px-4 font-semibold text-gray-700">الإجراءات</th>
+                <th className="text-right py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">الإجراءات</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item) => (
-                <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr key={item.id} className="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800">
                   {fields.slice(0, 3).map((field) => (
-                    <td key={field.key} className="py-3 px-4">
+                    <td key={field.key} className="py-3 px-4 dark:text-gray-300">
                       {typeof item[field.key] === 'boolean'
                         ? (item[field.key] ? 'نعم' : 'لا')
                         : (String(item[field.key] || '-').slice(0, 100))}
@@ -103,7 +103,7 @@ export default function AdminTable({ entity, fields, showPendingOnly }) {
                         size="sm"
                         variant="outline"
                         onClick={() => handleEdit(item)}
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                       >
                         <Pencil className="w-4 h-4" />
                       </Button>
@@ -111,7 +111,7 @@ export default function AdminTable({ entity, fields, showPendingOnly }) {
                         size="sm"
                         variant="outline"
                         onClick={() => handleDelete(item.id)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -123,7 +123,7 @@ export default function AdminTable({ entity, fields, showPendingOnly }) {
           </table>
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
           لا توجد بيانات
         </div>
       )}

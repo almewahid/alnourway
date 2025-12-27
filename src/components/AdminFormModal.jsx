@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import YouTubeAutoFill from "./YouTubeAutoFill";
 
 export default function AdminFormModal({ entity, fields, item, open, onClose }) {
   const queryClient = useQueryClient();
@@ -131,7 +132,7 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
       }
     });
     
-    console.log('📝 إرسال النموذج:', cleanedData);
+    console.log('📤 إرسال النموذج:', cleanedData);
     saveMutation.mutate(cleanedData);
   };
 
@@ -141,14 +142,35 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto dark:bg-slate-800 dark:text-white dark:border-slate-700">
         <DialogHeader>
-          <DialogTitle>{item ? 'تعديل' : 'إضافة جديد'}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold dark:text-white">
+            {item ? 'تعديل' : 'إضافة جديد'}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* 🎯 زر الملء التلقائي من اليوتيوب - فقط للمحاضرات عند الإضافة */}
+          {entity === "Lecture" && !item && (
+            <YouTubeAutoFill
+              onDataFetched={(data) => {
+                setFormData({
+                  ...formData,
+                  title: data.title || '',
+                  speaker: data.speaker || '',
+                  description: data.description || '',
+                  url: data.url || '',
+                  type: data.type || 'video',
+                  category: data.category || 'general',
+                  topic: data.topic || '',
+                  duration: data.duration || '',
+                });
+              }}
+            />
+          )}
+
           {fields.map((field) => (
             <div key={field.key}>
-              <Label htmlFor={field.key}>
+              <Label htmlFor={field.key} className="dark:text-gray-200 font-medium">
                 {field.label} {field.required && <span className="text-red-500">*</span>}
               </Label>
               
@@ -159,7 +181,7 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
                   onChange={(e) => handleChange(field.key, e.target.value)}
                   required={field.required}
                   rows={4}
-                  className="mt-2"
+                  className="mt-2 dark:bg-slate-900 dark:border-slate-700 dark:text-white"
                 />
               ) : field.type === 'select' ? (
                 <Select
@@ -170,7 +192,7 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
                   }}
                   required={field.required}
                 >
-                  <SelectTrigger className="mt-2">
+                  <SelectTrigger className="mt-2 dark:bg-slate-900 dark:border-slate-700 dark:text-white">
                     <SelectValue placeholder={`اختر ${field.label}`} />
                   </SelectTrigger>
                   <SelectContent>
@@ -191,14 +213,19 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
                     handleChange(field.key, value);
                   }}
                   required={field.required}
-                  className="mt-2"
+                  className="mt-2 dark:bg-slate-900 dark:border-slate-700 dark:text-white"
                 />
               )}
             </div>
           ))}
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-slate-700">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onClose}
+              className="dark:border-slate-600 dark:text-white dark:hover:bg-slate-700"
+            >
               إلغاء
             </Button>
             <Button 
@@ -206,7 +233,14 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
               className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
               disabled={saveMutation.isPending}
             >
-              {saveMutation.isPending ? 'جارٍ الحفظ...' : 'حفظ'}
+              {saveMutation.isPending ? (
+                <>
+                  <div className="w-4 h-4 ml-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  جاري الحفظ...
+                </>
+              ) : (
+                'حفظ'
+              )}
             </Button>
           </div>
         </form>

@@ -284,7 +284,6 @@ export default function Admin() {
       icon: Video,
       entity: "Lecture",
       supportsBulkUpload: true,
-      hasYouTubeAutoFill: true,
       fields: [
         { key: "title", label: "العنوان", type: "text", required: true },
         { key: "speaker", label: "المتحدث", type: "text", required: true },
