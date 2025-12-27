@@ -34,14 +34,12 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
     mutationFn: async (data) => {
       console.log('💾 محاولة حفظ البيانات:', { entity, isEdit: !!item, data });
       
-      // إضافة timeout
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('انتهت مهلة الطلب (timeout) - يرجى المحاولة مرة أخرى')), 10000);
       });
       
       const savePromise = (async () => {
         if (item) {
-          // تحديث سجل موجود
           const { data: result, error } = await supabase
             .from(entity)
             .update(data)
@@ -54,7 +52,6 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
           }
           console.log('✅ تم التحديث بنجاح:', result);
 
-          // إرسال إشعار تلقائي عند الإجابة على فتوى
           if (entity === 'FatwaRequest' && data.status === 'answered' && data.answer && item.email) {
              const { error: notifError } = await supabase
                .from('Notification')
@@ -76,7 +73,6 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
           }
 
         } else {
-          // إضافة سجل جديد
           const { data: result, error } = await supabase
             .from(entity)
             .insert(data)
@@ -90,7 +86,6 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
         }
       })();
       
-      // استخدام Promise.race للتعامل مع timeout
       return Promise.race([savePromise, timeoutPromise]);
     },
     onSuccess: () => {
@@ -112,23 +107,23 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // تنظيف البيانات: تحويل strings فارغة إلى null
+    // تنظيف البيانات: إرسال الحقول الموجودة في fields فقط
     const cleanedData = {};
-    Object.keys(formData).forEach(key => {
-      const value = formData[key];
-      const field = fields.find(f => f.key === key);
+    
+    fields.forEach(field => {
+      const value = formData[field.key];
       
       // إذا كان الحقل number وقيمته فارغة، نضع null
-      if (field?.type === 'number' && value === '') {
-        cleanedData[key] = null;
+      if (field.type === 'number' && value === '') {
+        cleanedData[field.key] = null;
       }
       // إذا كان الحقل text/textarea وقيمته فارغة وليس required
-      else if (value === '' && !field?.required) {
-        cleanedData[key] = null;
+      else if (value === '' && !field.required) {
+        cleanedData[field.key] = null;
       }
-      // باقي الحالات نبقي القيمة كما هي
-      else {
-        cleanedData[key] = value;
+      // إذا كان الحقل له قيمة
+      else if (value !== undefined && value !== '') {
+        cleanedData[field.key] = value;
       }
     });
     
@@ -149,7 +144,6 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* 🎯 زر الملء التلقائي من اليوتيوب - فقط للمحاضرات عند الإضافة */}
           {entity === "Lecture" && !item && (
             <YouTubeAutoFill
               onDataFetched={(data) => {
@@ -163,6 +157,7 @@ export default function AdminFormModal({ entity, fields, item, open, onClose }) 
                   category: data.category || 'general',
                   topic: data.topic || '',
                   duration: data.duration || '',
+                  thumbnail_url: data.thumbnail_url || '',
                 });
               }}
             />

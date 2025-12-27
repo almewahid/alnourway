@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Loader2, CheckCircle, AlertCircle, Youtube } from "lucide-react";
-import { fetchYouTubeVideoData, fetchYouTubeVideoDataWithAPI, isValidYouTubeUrl } from "@/utils/youtubeUtils";
+import { fetchYouTubeVideoData, isValidYouTubeUrl } from "@/utils/youtubeUtils";
 
 export default function YouTubeAutoFill({ onDataFetched }) {
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -28,28 +28,18 @@ export default function YouTubeAutoFill({ onDataFetched }) {
     setSuccess(false);
 
     try {
-      // 🎯 جرّب API Key الأول، لو مش موجود استخدم oEmbed
-      const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
-      
-      let data;
-      if (API_KEY) {
-        console.log('✅ استخدام YouTube API مع API Key');
-        data = await fetchYouTubeVideoDataWithAPI(youtubeUrl, API_KEY);
-      } else {
-        console.log('⚠️ لا يوجد API Key - استخدام oEmbed (بيانات محدودة)');
-        data = await fetchYouTubeVideoData(youtubeUrl);
-      }
+      const data = await fetchYouTubeVideoData(youtubeUrl);
       
       if (onDataFetched) {
         onDataFetched({
-          title: data.title || '',
-          speaker: data.speaker || '',
-          description: data.description || '',
+          title: data.title,
+          speaker: data.speaker,
+          description: data.description || "",
           url: youtubeUrl,
-          type: data.type || 'video',
-          category: data.category || 'general',
-          topic: data.topic || '',
-          duration: data.duration || '',
+          type: "video",
+          category: "general",
+          topic: data.topic || "",
+          duration: data.duration || "",
         });
       }
 
@@ -62,7 +52,7 @@ export default function YouTubeAutoFill({ onDataFetched }) {
 
     } catch (err) {
       setError("فشل جلب بيانات الفيديو. تأكد من الرابط وحاول مرة أخرى.");
-      console.error('خطأ في الملء التلقائي:', err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -75,10 +65,6 @@ export default function YouTubeAutoFill({ onDataFetched }) {
     }
   };
 
-  // 🔍 التحقق من وجود API Key
-  const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
-  const hasApiKey = !!API_KEY;
-
   return (
     <Card className="border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 mb-4">
       <CardContent className="p-4 space-y-3">
@@ -86,11 +72,6 @@ export default function YouTubeAutoFill({ onDataFetched }) {
           <Youtube className="w-5 h-5" />
           <h3 className="font-bold text-sm">ملء تلقائي من اليوتيوب</h3>
           <Sparkles className="w-4 h-4 text-amber-500" />
-          {hasApiKey && (
-            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-              API متصل ✓
-            </span>
-          )}
         </div>
 
         <div className="space-y-2">
@@ -146,18 +127,9 @@ export default function YouTubeAutoFill({ onDataFetched }) {
 
         <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
           <p>💡 <strong>نصيحة:</strong> الملء التلقائي يوفر لك الوقت!</p>
-          {hasApiKey ? (
-            <p className="text-[10px] text-green-600 dark:text-green-400">
-              ✅ API Key متصل | ✅ يملأ: العنوان، المحاضر، الوصف، المدة، الموضوع
-            </p>
-          ) : (
-            <p className="text-[10px] text-amber-600 dark:text-amber-400">
-              ⚠️ بدون API Key | ✅ يملأ: العنوان، المحاضر فقط | 
-              <a href="https://console.cloud.google.com" target="_blank" className="underline ml-1">
-                احصل على API Key
-              </a>
-            </p>
-          )}
+          <p className="text-[10px]">
+            ✅ مجاني 100% | ✅ يملأ: العنوان، المحاضر، الرابط، الصورة
+          </p>
         </div>
       </CardContent>
     </Card>

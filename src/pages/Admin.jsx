@@ -427,11 +427,11 @@ export default function Admin() {
       icon: Heart,
       entity: "ReconciliationRequest",
       fields: [
-        { key: "requester_name", label: "الاسم", type: "text" },
-        { key: "requester_email", label: "البريد", type: "email" },
-        { key: "requester_phone", label: "الهاتف", type: "text" },
-        { key: "conflict_type", label: "نوع النزاع", type: "text" },
-        { key: "conflict_description", label: "الوصف", type: "textarea" },
+        { key: "applicant_name", label: "الاسم", type: "text", required: true },
+        { key: "applicant_email", label: "البريد الإلكتروني", type: "email" },
+        { key: "applicant_phone", label: "رقم الهاتف", type: "text" },
+        { key: "case_title", label: "عنوان القضية", type: "text", required: true },
+        { key: "case_description", label: "وصف القضية", type: "textarea", required: true },
         { 
           key: "status", 
           label: "الحالة", 
@@ -443,11 +443,11 @@ export default function Admin() {
             { value: "in_progress", label: "جاري الحل" },
             { value: "resolved", label: "تم الحل" },
             { value: "rejected", label: "مرفوض" }
-          ]
+          ],
+          required: true
         },
-        { key: "meeting_date", label: "موعد الاجتماع", type: "datetime-local" },
-        { key: "meeting_link", label: "رابط الاجتماع", type: "text" },
-        { key: "notes_from_committee", label: "ملاحظات اللجنة", type: "textarea" },
+        { key: "assigned_mediator", label: "الوسيط المعين", type: "text" },
+        { key: "notes", label: "ملاحظات اللجنة", type: "textarea" },
       ]
     },
     {
