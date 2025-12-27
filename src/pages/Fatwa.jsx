@@ -32,12 +32,12 @@ export default function Fatwa() {
 
   // Categories configuration
   const categories = [
-    { value: "all", label: "الكل", icon: BookOpen },
-    { value: "عبادات", label: "عبادات", icon: Sparkles },
-    { value: "معاملات", label: "معاملات", icon: CheckCircle },
-    { value: "أحوال شخصية", label: "أحوال شخصية", icon: User },
-    { value: "عقيدة", label: "عقيدة", icon: BookOpen },
-    { value: "أخلاق", label: "أخلاق و سلوك", icon: CheckCircle },
+    { value: "all", label: t("الكل"), icon: BookOpen },
+    { value: "عبادات", label: t("عبادات"), icon: Sparkles },
+    { value: "معاملات", label: t("معاملات"), icon: CheckCircle },
+    { value: "أحوال شخصية", label: t("أحوال شخصية"), icon: User },
+    { value: "عقيدة", label: t("عقيدة"), icon: BookOpen },
+    { value: "أخلاق", label: t("أخلاق و سلوك"), icon: CheckCircle },
   ];
 
   // Fetch fatwas on mount
@@ -153,7 +153,7 @@ export default function Fatwa() {
         </div>
 
         {/* ==================== ASK QUESTION FORM (PROTECTED) ==================== */}
-        <ProtectedFeature featureName="إرسال الأسئلة الشرعية">
+        <ProtectedFeature featureName={t("إرسال الأسئلة الشرعية")}>
           <Card className="shadow-2xl border-2 border-emerald-200 dark:border-emerald-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-900/30 dark:to-blue-900/30">
               <CardTitle className="flex items-center gap-3 text-2xl text-emerald-700 dark:text-emerald-400">
@@ -194,12 +194,12 @@ export default function Fatwa() {
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-4 py-3 text-lg border-2 rounded-lg focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-400 bg-white dark:bg-slate-900 text-gray-900 dark:text-white transition-colors"
                   >
-                    <option value="">اختر الفئة</option>
-                    <option value="عبادات">عبادات</option>
-                    <option value="معاملات">معاملات</option>
-                    <option value="أحوال شخصية">أحوال شخصية</option>
-                    <option value="عقيدة">عقيدة</option>
-                    <option value="أخلاق">أخلاق و سلوك</option>
+                    <option value="">{t("اختر الفئة")}</option>
+                    <option value="عبادات">{t("عبادات")}</option>
+                    <option value="معاملات">{t("معاملات")}</option>
+                    <option value="أحوال شخصية">{t("أحوال شخصية")}</option>
+                    <option value="عقيدة">{t("عقيدة")}</option>
+                    <option value="أخلاق">{t("أخلاق و سلوك")}</option>
                   </select>
                 </div>
 

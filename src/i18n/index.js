@@ -1,15 +1,13 @@
-// تجميع جميع ملفات الترجمات
-
-import ar from './ar';
-import en from './en';
-import fr from './fr';
-import zh from './zh';
+import ar from './ar.js';
+import en from './en.js';
+import fr from './fr.js';
+import zh from './zh.js';
 
 export const translations = {
   ar,
   en,
   fr,
-  zh,
+  zh
 };
 
 export default translations;

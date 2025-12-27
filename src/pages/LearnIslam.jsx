@@ -16,40 +16,40 @@ export default function LearnIslam() {
   const sections = [
     {
       icon: BookOpen,
-      title: "أساسيات الإسلام",
-      description: "تعرف على مبادئ الدين الإسلامي الأساسية",
+      title: t("أساسيات الإسلام"),
+      description: t("تعرف على مبادئ الدين الإسلامي الأساسية"),
       color: "from-blue-100 to-blue-200 dark:from-slate-800 dark:to-slate-700",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/6cae5772d_.png",
       action: () => window.scrollTo({ top: document.getElementById('principles').offsetTop - 100, behavior: 'smooth' })
     },
     {
       icon: Users,
-      title: "تواصل مع داعية",
-      description: "احصل على إرشاد شخصي من دعاة متخصصين",
+      title: t("تواصل مع داعية"),
+      description: t("احصل على إرشاد شخصي من دعاة متخصصين"),
       color: "from-emerald-100 to-emerald-200 dark:from-slate-800 dark:to-slate-700",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8f4f91aed_.png",
       link: createPageUrl("ContactPreacher")
     },
     {
       icon: MapPin,
-      title: "ابحث عن مركز إسلامي",
-      description: "اعثر على مراكز إسلامية قريبة منك",
+      title: t("ابحث عن مركز إسلامي"),
+      description: t("اعثر على مراكز إسلامية قريبة منك"),
       color: "from-purple-100 to-purple-200 dark:from-slate-800 dark:to-slate-700",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/2d618ad07_.png",
       link: createPageUrl("IslamicCenters")
     },
     {
       icon: Video,
-      title: "مكتبة المحاضرات",
-      description: "شاهد محاضرات إسلامية متنوعة",
+      title: t("مكتبة المحاضرات"),
+      description: t("شاهد محاضرات إسلامية متنوعة"),
       color: "from-rose-100 to-rose-200 dark:from-slate-800 dark:to-slate-700",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/bb9bb2ec8_.png",
       link: createPageUrl("Lectures?category=learn_islam")
     },
     {
       icon: Heart,
-      title: "قصص المهتدين",
-      description: "تعرف على قصص من اهتدوا للإسلام",
+      title: t("قصص المهتدين"),
+      description: t("تعرف على قصص من اهتدوا للإسلام"),
       color: "from-amber-100 to-amber-200 dark:from-slate-800 dark:to-slate-700",
       image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/8c7f0d887_.png",
       link: createPageUrl("Stories?type=convert")
@@ -58,24 +58,24 @@ export default function LearnIslam() {
 
   const principles = [
     {
-      title: "أركان الإسلام الخمسة",
+      title: t("أركان الإسلام الخمسة"),
       items: [
-        "الشهادتان: أشهد أن لا إله إلا الله وأن محمداً رسول الله",
-        "إقامة الصلاة: خمس صلوات في اليوم والليلة",
-        "إيتاء الزكاة: إخراج جزء من المال للفقراء",
-        "صوم رمضان: الامتناع عن الطعام والشراب من الفجر حتى المغرب",
-        "حج البيت: لمن استطاع إليه سبيلاً"
+        t("الشهادتان: أشهد أن لا إله إلا الله وأن محمداً رسول الله"),
+        t("إقامة الصلاة: خمس صلوات في اليوم والليلة"),
+        t("إيتاء الزكاة: إخراج جزء من المال للفقراء"),
+        t("صوم رمضان: الامتناع عن الطعام والشراب من الفجر حتى المغرب"),
+        t("حج البيت: لمن استطاع إليه سبيلاً")
       ]
     },
     {
-      title: "أركان الإيمان الستة",
+      title: t("أركان الإيمان الستة"),
       items: [
-        "الإيمان بالله: الإيمان بوحدانية الله وأسمائه وصفاته",
-        "الإيمان بالملائكة: الإيمان بوجود الملائكة المكرمين",
-        "الإيمان بالكتب: القرآن والتوراة والإنجيل والزبور",
-        "الإيمان بالرسل: من آدم إلى محمد عليهم الصلاة والسلام",
-        "الإيمان باليوم الآخر: يوم البعث والحساب",
-        "الإيمان بالقدر: خيره وشره من الله تعالى"
+        t("الإيمان بالله: الإيمان بوحدانية الله وأسمائه وصفاته"),
+        t("الإيمان بالملائكة: الإيمان بوجود الملائكة المكرمين"),
+        t("الإيمان بالكتب: القرآن والتوراة والإنجيل والزبور"),
+        t("الإيمان بالرسل: من آدم إلى محمد عليهم الصلاة والسلام"),
+        t("الإيمان باليوم الآخر: يوم البعث والحساب"),
+        t("الإيمان بالقدر: خيره وشره من الله تعالى")
       ]
     }
   ];
@@ -89,14 +89,14 @@ export default function LearnIslam() {
           className="text-center mb-8 pt-4"
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 dark:from-slate-800/80 dark:to-slate-700/80 px-6 py-3 rounded-full mb-6 transition-colors duration-300 transition-colors duration-300">
-            <span className="text-blue-800 dark:text-teal-300 font-semibold transition-colors duration-300">اكتشف الإسلام</span>
+            <span className="text-blue-800 dark:text-teal-300 font-semibold transition-colors duration-300">{t("اكتشف الإسلام")}</span>
           </div>
           
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            تعلم الإسلام
+            {t("تعلم الإسلام")}
           </h1>
           <p className="text-lg md:text-xl text-white/90 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300">
-            ابدأ رحلتك في تعلم الإسلام من الأساسيات حتى الإتقان
+            {t("ابدأ رحلتك في تعلم الإسلام من الأساسيات حتى الإتقان")}
           </p>
         </motion.div>
 
@@ -179,10 +179,10 @@ export default function LearnIslam() {
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <MessageCircle className="w-16 h-16 mx-auto mb-6 text-amber-300 dark:text-teal-300 transition-colors duration-300" />
               <h2 className="text-2xl md:text-4xl font-bold mb-4">
-                هل لديك أسئلة؟
+                {t("هل لديك أسئلة؟")}
               </h2>
               <p className="text-lg md:text-xl text-emerald-50 dark:text-gray-300 mb-8 max-w-2xl mx-auto transition-colors duration-300">
-                نحن هنا لمساعدتك في رحلتك لتعلم الإسلام
+                {t("نحن هنا لمساعدتك في رحلتك لتعلم الإسلام")}
               </p>
               <Button
                 onClick={() => setShowContactModal(true)}
@@ -190,7 +190,7 @@ export default function LearnIslam() {
                 className="bg-white dark:bg-slate-800 text-emerald-600 hover:bg-emerald-50 dark:bg-slate-700 dark:text-teal-300 dark:hover:bg-slate-600 text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transition-colors duration-300"
               >
                 <MessageCircle className="w-5 h-5 md:w-6 md:h-6 ml-2" />
-                تواصل معنا الآن
+                {t("تواصل معنا الآن")}
               </Button>
             </CardContent>
           </Card>

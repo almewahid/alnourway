@@ -214,7 +214,7 @@ export default function Repentance() {
       <ContactModal
         open={showContactModal}
         onClose={() => setShowContactModal(false)}
-        requestType="التوبة"
+        requestType={t("التوبة")}
       />
     </div>
   );
