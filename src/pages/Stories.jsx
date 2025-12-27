@@ -37,7 +37,7 @@ export default function Stories() {
   // عرض القصة المختارة
   if (selectedStory) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 p-6 md:p-12">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 dark:from-slate-900 dark:via-amber-950 dark:to-rose-950 p-6 md:p-12 transition-colors duration-300">
         <div className="max-w-5xl mx-auto">
           <Button 
             variant="outline" 
@@ -74,8 +74,8 @@ export default function Stories() {
                 )}
 
                 {selectedStory.country && (
-                  <div className="inline-flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-full">
-                    <span className="text-amber-700 font-semibold">{selectedStory.country}</span>
+                  <div className="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-900/30 px-4 py-2 transition-colors duration-300 rounded-full">
+                    <span className="text-amber-700 dark:text-amber-300 font-semibold transition-colors duration-300">{selectedStory.country}</span>
                   </div>
                 )}
 
@@ -104,7 +104,7 @@ export default function Stories() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 dark:from-slate-900 dark:via-amber-950 dark:to-rose-950 p-6 md:p-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -117,7 +117,7 @@ export default function Stories() {
 
         <div className="flex justify-center mb-8">
           <Tabs value={selectedType} onValueChange={setSelectedType}>
-            <TabsList className="bg-white dark:bg-slate-800 shadow-lg transition-colors duration-300">
+            <TabsList className="bg-white dark:bg-slate-800/90 shadow-lg backdrop-blur-sm transition-colors duration-300 transition-colors duration-300">
               <TabsTrigger value="all" className="gap-2">
                 <BookOpen className="w-4 h-4" />{t('جميع القصص')}</TabsTrigger>
               <TabsTrigger value="convert" className="gap-2">
@@ -130,7 +130,7 @@ export default function Stories() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 dark:border-amber-400 mx-auto transition-colors duration-300"></div>
             <p className="text-gray-500 dark:text-gray-400 mt-4 transition-colors duration-300">{t('جاري التحميل...')}</p>
           </div>
         ) : filteredStories.length > 0 ? (
@@ -151,7 +151,7 @@ export default function Stories() {
         ) : (
           <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
             <CardContent className="p-12 text-center">
-              <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <Heart className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4 transition-colors duration-300" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا توجد قصص حالياً')}</h3>
               <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('سنضيف المزيد من القصص الملهمة قريباً')}</p>
             </CardContent>

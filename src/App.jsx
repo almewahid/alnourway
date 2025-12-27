@@ -20,8 +20,27 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
+// 🆕 تحديد الصفحات التي تحتاج تسجيل دخول
+const protectedPages = [
+  'profile',                    // الملف الشخصي
+  'settings',                   // الإعدادات
+  'admin',                      // لوحة الإدارة
+  'notifications',              // الإشعارات
+  'favorites',                  // المفضلة
+  'recommendations',            // التوصيات
+  'advancedanalytics',          // التحليلات المتقدمة
+  'reconciliationcommittee',    // لجنة المصالحة
+  'jointeam',                   // انضم للفريق
+  'chat',                       // المحادثات
+  'contactpreacher',            // التواصل مع الداعية
+  'contactscholar',             // التواصل مع العالم
+  'contactteacher',             // التواصل مع المعلم
+  'Docs',                       // المستندات
+  // أضف أي صفحات أخرى تريد حمايتها
+];
+
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
@@ -46,37 +65,47 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Public routes */}
+      {/* Public routes - متاحة للجميع */}
       <Route path="/auth" element={<Auth />} />
       <Route path="/login" element={<Navigate to="/auth" replace />} />
       <Route path="/register" element={<Navigate to="/auth" replace />} />
       
-      {/* Protected routes */}
+      {/* Main page - متاحة للجميع */}
       <Route path="/" element={
-        <ProtectedRoute>
-          <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
-          </LayoutWrapper>
-        </ProtectedRoute>
+        <LayoutWrapper currentPageName={mainPageKey}>
+          <MainPage />
+        </LayoutWrapper>
       } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <ProtectedRoute>
-              <LayoutWrapper currentPageName={path}>
-                <Page />
-              </LayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-      ))}
+
+      {/* Dynamic routes - بعضها محمي وبعضها عام */}
+      {Object.entries(Pages).map(([path, Page]) => {
+        const isProtected = protectedPages.includes(path);
+        
+        return (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={
+              isProtected ? (
+                <ProtectedRoute>
+                  <LayoutWrapper currentPageName={path}>
+                    <Page />
+                  </LayoutWrapper>
+                </ProtectedRoute>
+              ) : (
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              )
+            }
+          />
+        );
+      })}
+      
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
-
 
 function App() {
   return (

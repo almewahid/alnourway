@@ -55,7 +55,7 @@ export default function Lectures() {
 
   if (selectedLecture) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 p-4 md:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-slate-900 dark:via-purple-950 dark:to-blue-950 p-4 md:p-6 transition-colors duration-300">
         <div className="max-w-5xl mx-auto">
           <div className="mb-4">
             <Breadcrumb items={[
@@ -91,20 +91,20 @@ export default function Lectures() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-700 via-teal-600 to-teal-800 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-teal-700 via-teal-600 to-teal-800 dark:from-slate-900 dark:via-teal-950 dark:to-slate-900 p-4 md:p-6 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8 pt-4"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-6">
-            <Video className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">{t('المكتبة المرئية والصوتية')}</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 dark:from-blue-900/50 dark:to-emerald-900/50 px-6 py-3 transition-colors duration-300 rounded-full mb-6">
+            <Video className="w-5 h-5 text-blue-600 dark:text-blue-400 transition-colors duration-300" />
+            <span className="text-blue-800 dark:text-blue-200 font-semibold transition-colors duration-300">{t('المكتبة المرئية والصوتية')}</span>
           </div>
           
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{t('مكتبة المحاضرات')}</h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">{t('استمع وشاهد محاضرات إسلامية قيّمة')}</p>
+          <p className="text-lg md:text-xl text-white/90 dark:text-white/80 max-w-2xl transition-colors duration-300 mx-auto">{t('استمع وشاهد محاضرات إسلامية قيّمة')}</p>
         </motion.div>
 
         <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm mb-6 md:mb-8 transition-colors duration-300">
@@ -115,13 +115,13 @@ export default function Lectures() {
                   placeholder={t("ابحث عن محاضرة...")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pr-10 w-full"
+                  className="pr-10 w-full dark:bg-slate-900 dark:border-slate-700 dark:text-white dark:placeholder:text-gray-500 transition-colors duration-300"
                 />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
               </div>
 
               <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full dark:bg-slate-900 dark:border-slate-700 dark:text-white transition-colors duration-300">
                   <SelectValue placeholder={t("نوع المحاضرة")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -132,7 +132,7 @@ export default function Lectures() {
               </Select>
 
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full dark:bg-slate-900 dark:border-slate-700 dark:text-white transition-colors duration-300">
                   <SelectValue placeholder={t("التصنيف")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -148,7 +148,7 @@ export default function Lectures() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 dark:border-purple-400 mx-auto transition-colors duration-300"></div>
             <p className="text-gray-500 dark:text-gray-400 mt-4 transition-colors duration-300">{t('جاري التحميل...')}</p>
           </div>
         ) : filteredLectures.length > 0 ? (
@@ -170,9 +170,9 @@ export default function Lectures() {
           <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
             <CardContent className="p-8 md:p-12 text-center">
               {selectedType === "audio" ? (
-                <Music className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-4" />
+                <Music className="w-12 h-12 md:w-16 md:h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4 transition-colors duration-300" />
               ) : (
-                <Video className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-4" />
+                <Video className="w-12 h-12 md:w-16 md:h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4 transition-colors duration-300" />
               )}
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا توجد محاضرات')}</h3>
               <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">

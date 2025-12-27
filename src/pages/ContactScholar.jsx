@@ -43,16 +43,16 @@ export default function ContactScholar() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-emerald-950 p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-teal-100 px-6 py-3 rounded-full mb-6">
-            <User className="w-5 h-5 text-emerald-600" />
-            <span className="text-emerald-800 font-semibold">{t('تواصل مع مفتي')}</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 px-6 py-3 rounded-full mb-6">
+            <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400 transition-colors duration-300" />
+            <span className="text-emerald-800 dark:text-emerald-200 transition-colors duration-300 font-semibold">{t('تواصل مع مفتي')}</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('علماؤنا في خدمتك')}</h1>

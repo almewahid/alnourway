@@ -3,11 +3,12 @@ import { useLanguage } from "@/contexts/LanguageContext.jsx";
 import { supabase } from "@/components/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Calendar, User, Share2, Tag } from "lucide-react";
+import { ArrowRight, Calendar, User, Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ShareButtons from "@/components/ShareButtons";
 import CommentsSection from "@/components/CommentsSection";
+import ProtectedFeature from "@/components/ProtectedFeature";
 
 export default function ArticleView() {
   const { t } = useLanguage();
@@ -39,8 +40,17 @@ export default function ArticleView() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
-  if (!article) return <div className="min-h-screen flex items-center justify-center">المقال غير موجود</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+  );
+  
+  if (!article) return (
+    <div className="min-h-screen flex items-center justify-center">
+      المقال غير موجود
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-800 transition-colors duration-300">
@@ -83,8 +93,8 @@ export default function ArticleView() {
 
         <div className="prose prose-lg prose-blue max-w-none mb-12 leading-loose text-gray-800 dark:text-white transition-colors duration-300">
           {article.content.split('\n').map((paragraph, idx) => (
-              <p key={idx} className="mb-6">{paragraph}</p>
-            ))}
+            <p key={idx} className="mb-6">{paragraph}</p>
+          ))}
         </div>
 
         <div className="border-t pt-8">
@@ -95,8 +105,15 @@ export default function ArticleView() {
           <ShareButtons title={article.title} description={article.meta_description} />
         </div>
 
+        {/* التعليقات محمية */}
         <div className="mt-12">
-          <CommentsSection contentType="article" contentId={article.id} contentTitle={article.title} />
+          <ProtectedFeature featureName="التعليقات">
+            <CommentsSection 
+              contentType="article" 
+              contentId={article.id} 
+              contentTitle={article.title} 
+            />
+          </ProtectedFeature>
         </div>
       </div>
     </div>

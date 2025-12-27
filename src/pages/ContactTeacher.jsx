@@ -34,16 +34,16 @@ export default function ContactTeacher() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-purple-950 p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-blue-100 px-6 py-3 rounded-full mb-6">
-            <BookOpen className="w-5 h-5 text-purple-600" />
-            <span className="text-purple-800 font-semibold">{t('تواصل مع محفظ')}</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/50 dark:to-blue-900/50 px-6 py-3 rounded-full mb-6">
+            <BookOpen className="w-5 h-5 text-purple-600 dark:text-purple-400 transition-colors duration-300" />
+            <span className="text-purple-800 dark:text-purple-200 transition-colors duration-300 font-semibold">{t('تواصل مع محفظ')}</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('المحفظون المتاحون')}</h1>
@@ -113,7 +113,7 @@ export default function ContactTeacher() {
 
                       {teacher.languages && teacher.languages.length > 0 && (
                         <div className="flex items-center gap-2">
-                          <Globe className="w-4 h-4 text-purple-600" />
+                          <Globe className="w-4 h-4 text-purple-600 dark:text-purple-400 transition-colors duration-300" />
                           <div className="flex flex-wrap gap-2">
                             {teacher.languages.map((lang, idx) => (
                               <span key={idx} className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full text-xs">

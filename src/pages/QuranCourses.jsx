@@ -87,16 +87,16 @@ export default function QuranCourses() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50 p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-teal-950 p-6 md:p-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-100 to-cyan-100 px-6 py-3 rounded-full mb-6">
-            <BookOpen className="w-5 h-5 text-teal-600" />
-            <span className="text-teal-800 font-semibold">{t('دورات القرآن الكريم')}</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-100 to-cyan-100 dark:from-teal-900/50 dark:to-cyan-900/50 px-6 py-3 rounded-full mb-6 transition-colors duration-300">
+            <BookOpen className="w-5 h-5 text-teal-600 dark:text-teal-400 transition-colors duration-300" />
+            <span className="text-teal-800 dark:text-teal-200 font-semibold transition-colors duration-300">{t('دورات القرآن الكريم')}</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('تعلم وحفظ القرآن الكريم')}</h1>
@@ -132,7 +132,7 @@ export default function QuranCourses() {
 
                 {isLoading ? (
                 <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 dark:border-teal-400 mx-auto transition-colors duration-300"></div>
                 </div>
                 ) : filteredCourses.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -155,18 +155,18 @@ export default function QuranCourses() {
                             <p className="text-gray-600 dark:text-gray-400 line-clamp-2 transition-colors duration-300">{course.description}</p>
 
                             <div className="flex flex-wrap gap-2">
-                            <span className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-medium">
+                            <span className="px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium transition-colors duration-300">
                                 {courseTypes[course.type]}
                             </span>
-                            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-                                {course.gender === "male" ? "رجال" : course.gender === "female" ? "نساء" : "الكل"}
+                            <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium transition-colors duration-300">
+                                {course.gender === "male" ? t("رجال") : course.gender === "female" ? t("نساء") : t("الكل")}
                             </span>
                             </div>
 
                             <div className="mt-auto space-y-3 pt-4">
                                 {course.schedule && (
                                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300">
-                                    <Clock className="w-4 h-4 text-teal-500" />
+                                    <Clock className="w-4 h-4 text-teal-500 dark:text-teal-400 transition-colors duration-300" />
                                     <span>{course.schedule}</span>
                                 </div>
                                 )}
@@ -198,17 +198,17 @@ export default function QuranCourses() {
                         {myEnrollments.map((enrollment) => {
                             const course = enrollment.course || {}; // Handle joined data safely
                             return (
-                                <Card key={enrollment.id} className="border-0 shadow-lg overflow-hidden">
+                                <Card key={enrollment.id} className="border-0 shadow-lg overflow-hidden dark:bg-slate-800/90 transition-colors duration-300">
                                     <div className="h-2 bg-gradient-to-r from-teal-500 to-cyan-500" />
                                     <CardContent className="p-6">
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
-                                                <h3 className="font-bold text-lg text-gray-900 dark:text-white transition-colors duration-300">{course.title || "دورة محذوفة"}</h3>
+                                                <h3 className="font-bold text-lg text-gray-900 dark:text-white transition-colors duration-300">{course.title || t("دورة محذوفة")}</h3>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{course.teacher_name}</p>
                                             </div>
                                             <Badge variant={enrollment.status === 'approved' ? 'default' : 'secondary'} 
-                                                   className={enrollment.status === 'approved' ? 'bg-green-100 text-green-700' : ''}>
-                                                {enrollment.status === 'approved' ? 'نشط' : 'قيد الانتظار'}
+                                                   className={enrollment.status === 'approved' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 transition-colors duration-300' : 'dark:bg-slate-700 transition-colors duration-300'}>
+                                                {enrollment.status === 'approved' ? t('نشط') : t('قيد الانتظار')}
                                             </Badge>
                                         </div>
                                         
@@ -220,12 +220,12 @@ export default function QuranCourses() {
                                                         <span>{enrollment.progress || 0}%</span>
                                                     </div>
                                                     <div className="h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden transition-colors duration-300">
-                                                        <div className="h-full bg-teal-500" style={{ width: `${enrollment.progress || 0}%` }} />
+                                                        <div className="h-full bg-teal-500 dark:bg-teal-400 transition-colors duration-300" style={{ width: `${enrollment.progress || 0}%` }} />
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                                                    <Clock3 className="w-4 h-4 text-teal-500" />
-                                                    <span>موعد الدرس: {course.schedule}</span>
+                                                    <Clock3 className="w-4 h-4 text-teal-500 dark:text-teal-400 transition-colors duration-300" />
+                                                    <span>{t('موعد الدرس')}: {course.schedule}</span>
                                                 </div>
                                             </div>
                                         )}

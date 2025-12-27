@@ -36,12 +36,12 @@ export default function Courses() {
   });
 
   const categories = [
-    { value: "all", label: t("all") },
-    { value: "aqeedah", label: t("aqeedah") },
-    { value: "fiqh", label: t("fiqh") },
-    { value: "hadith", label: t("hadith") },
-    { value: "tafsir", label: t("tafsir") },
-    { value: "general", label: t("general") },
+    { value: "all", label: t("الكل") },
+    { value: "aqeedah", label: t("العقيدة") },
+    { value: "fiqh", label: t("الفقه") },
+    { value: "hadith", label: t("الحديث") },
+    { value: "tafsir", label: t("التفسير") },
+    { value: "general", label: t("عام") },
   ];
 
   const filteredCourses = courses.filter(course => {
@@ -52,21 +52,26 @@ export default function Courses() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-6 md:p-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-          <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+          <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 dark:from-teal-600 dark:to-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transition-colors duration-300">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('educational_courses')}</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('courses_subtitle')}</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('الدورات التعليمية')}</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('دورات شاملة في العلوم الإسلامية')}</p>
         </motion.div>
 
         <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm mb-8 transition-colors duration-300">
           <CardContent className="p-6">
             <div className="relative">
-              <Input placeholder={t('search_course')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-lg py-6 pr-12" />
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Input 
+                placeholder={t('ابحث عن دورة...')} 
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
+                className="text-lg py-6 pr-12 dark:bg-slate-900 dark:border-slate-700 dark:text-white dark:placeholder:text-gray-500 transition-colors duration-300" 
+              />
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
             </div>
           </CardContent>
         </Card>
@@ -81,7 +86,7 @@ export default function Courses() {
               className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${
                 selectedCategory === cat.value
                   ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-teal-50"
+                  : "bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-slate-700"
               }`}
             >
               {cat.label}
@@ -91,7 +96,7 @@ export default function Courses() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 dark:border-teal-400 mx-auto transition-colors duration-300"></div>
           </div>
         ) : filteredCourses.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -106,22 +111,22 @@ export default function Courses() {
                         <GraduationCap className="w-16 h-16 text-white/50" />
                       </div>
                     )}
-                    <Badge className="absolute top-4 right-4 bg-white/90 text-teal-800 hover:bg-white dark:bg-slate-800 transition-colors duration-300">
+                    <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-slate-800/90 text-teal-800 dark:text-teal-300 hover:bg-white dark:hover:bg-slate-800 transition-colors duration-300">
                       {categories.find(c => c.value === course.category)?.label || course.category}
                     </Badge>
                   </div>
                   <CardContent className="p-6 flex-1 flex flex-col">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{course.title}</h3>
-                    <p className="text-teal-600 font-medium text-sm mb-3">{course.instructor}</p>
+                    <p className="text-teal-600 dark:text-teal-400 font-medium text-sm mb-3 transition-colors duration-300">{course.instructor}</p>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 leading-relaxed line-clamp-2 transition-colors duration-300">{course.description}</p>
-                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-100">
+                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-100 dark:border-slate-700 transition-colors duration-300">
                       <div className="flex items-center text-gray-500 dark:text-gray-400 text-xs transition-colors duration-300">
                         <Clock className="w-3 h-3 ml-1" />
-                        <span>{t('available_now')}</span>
+                        <span>{t('متاح الآن')}</span>
                       </div>
                       <Link to={createPageUrl(`CourseView?id=${course.id}`)}>
-                        <Button className="bg-teal-600 hover:bg-teal-700 text-white gap-2">
-                           {t('view_course')}
+                        <Button className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-800 text-white gap-2 transition-colors duration-300">
+                           {t('عرض الدورة')}
                            <ArrowRight className="w-4 h-4" />
                         </Button>
                       </Link>
@@ -133,9 +138,9 @@ export default function Courses() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <GraduationCap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('no_courses')}</h3>
-            <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('no_courses_desc')}</p>
+            <GraduationCap className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4 transition-colors duration-300" />
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا توجد دورات متاحة')}</h3>
+            <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('لم نجد نتائج لبحثك')}</p>
           </div>
         )}
       </div>

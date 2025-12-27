@@ -12,133 +12,124 @@ export const AuthProvider = ({ children }) => {
   const [appPublicSettings, setAppPublicSettings] = useState(null);
 
   useEffect(() => {
-    checkAppState();
+    let mounted = true;
+    let isLoadingUser = false; // منع التحميل المتعدد
 
-    // Listen for auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
+    const loadUserData = async (authUser) => {
+      // منع التحميل المتزامن
+      if (isLoadingUser || !mounted) return;
       
-      if (session?.user) {
-        await loadUserData(session.user);
-      } else {
-        setUser(null);
+      isLoadingUser = true;
+      
+      try {
+        // جلب بيانات المستخدم من جدول Profile
+        const { data: profile, error } = await supabase
+          .from('Profile')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('⚠️ Error loading profile:', error);
+        }
+
+        if (!mounted) return;
+
+        // دمج البيانات
+        const userData = {
+          id: authUser.id,
+          email: authUser.email,
+          full_name: profile?.full_name || authUser.user_metadata?.full_name || authUser.email,
+          role: profile?.role || 'user',
+          avatar_url: profile?.avatar_url,
+          ...authUser.user_metadata,
+          profile_id: profile?.id
+        };
+
+        console.log('✅ User data loaded:', userData.email, 'Role:', userData.role);
+        setUser(userData);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('❌ Error in loadUserData:', error);
+        if (!mounted) return;
+        
+        // حتى لو فشل، استخدم بيانات Auth
+        setUser({
+          id: authUser.id,
+          email: authUser.email,
+          full_name: authUser.user_metadata?.full_name || authUser.email,
+          role: 'user',
+          ...authUser.user_metadata
+        });
+        setIsAuthenticated(true);
+      } finally {
+        isLoadingUser = false;
+      }
+    };
+
+    const initAuth = async () => {
+      try {
+        setIsLoadingAuth(true);
+        setAuthError(null);
+        
+        // فحص الجلسة الحالية
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
+        if (error) {
+          console.error('Session check failed:', error);
+          setAuthError({
+            type: 'auth_error',
+            message: error.message
+          });
+          setIsAuthenticated(false);
+          setUser(null);
+        } else if (session?.user) {
+          await loadUserData(session.user);
+        } else {
+          setIsAuthenticated(false);
+          setUser(null);
+        }
+        
+        setIsLoadingAuth(false);
+      } catch (error) {
+        console.error('Unexpected error:', error);
+        if (!mounted) return;
+        
+        setAuthError({
+          type: 'unknown',
+          message: error.message || 'An unexpected error occurred'
+        });
+        setIsLoadingAuth(false);
         setIsAuthenticated(false);
       }
-      setIsLoadingAuth(false);
-    });
+    };
+
+    // الاستماع لتغييرات تسجيل الدخول - مرة واحدة فقط
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+        
+        console.log('Auth state changed:', event, session?.user?.email);
+        
+        // فقط عند تسجيل الخروج
+        if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setIsAuthenticated(false);
+          setIsLoadingAuth(false);
+        }
+        // تجاهل الأحداث الأخرى لأن initAuth تعاملت معها
+      }
+    );
+
+    initAuth();
 
     return () => {
+      mounted = false;
       authListener?.subscription?.unsubscribe();
     };
-  }, []);
-
-  const loadUserData = async (authUser) => {
-    try {
-      // ✅ جلب بيانات المستخدم من جدول Profile
-      const { data: profile, error } = await supabase
-        .from('Profile')
-        .select('*')
-        .eq('user_id', authUser.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('⚠️ Error loading profile:', error);
-      }
-
-      // دمج البيانات
-      const userData = {
-        id: authUser.id,
-        email: authUser.email,
-        full_name: profile?.full_name || authUser.user_metadata?.full_name || authUser.email,
-        role: profile?.role || 'user', // ✅ من جدول Profile
-        avatar_url: profile?.avatar_url,
-        ...authUser.user_metadata,
-        profile_id: profile?.id
-      };
-
-      console.log('✅ User data loaded:', userData.email, 'Role:', userData.role);
-      setUser(userData);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('❌ Error in loadUserData:', error);
-      // حتى لو فشل، استخدم بيانات Auth
-      setUser({
-        id: authUser.id,
-        email: authUser.email,
-        full_name: authUser.user_metadata?.full_name || authUser.email,
-        role: 'user',
-        ...authUser.user_metadata
-      });
-      setIsAuthenticated(true);
-    }
-  };
-
-  const checkAppState = async () => {
-    try {
-      setIsLoadingAuth(true);
-      setAuthError(null);
-      
-      // Check if user is authenticated with Supabase
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (error) {
-        console.error('Session check failed:', error);
-        setAuthError({
-          type: 'auth_error',
-          message: error.message
-        });
-        setIsAuthenticated(false);
-        setUser(null);
-      } else if (session?.user) {
-        // ✅ تحميل بيانات المستخدم من Profile
-        await loadUserData(session.user);
-      } else {
-        // No active session
-        setIsAuthenticated(false);
-        setUser(null);
-      }
-      
-      setIsLoadingAuth(false);
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      setAuthError({
-        type: 'unknown',
-        message: error.message || 'An unexpected error occurred'
-      });
-      setIsLoadingAuth(false);
-      setIsAuthenticated(false);
-    }
-  };
-
-  const checkUserAuth = async () => {
-    try {
-      setIsLoadingAuth(true);
-      
-      const { data: { user: authUser }, error } = await supabase.auth.getUser();
-      
-      if (error) throw error;
-      
-      if (authUser) {
-        await loadUserData(authUser);
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-      
-      setIsLoadingAuth(false);
-    } catch (error) {
-      console.error('User auth check failed:', error);
-      setIsLoadingAuth(false);
-      setIsAuthenticated(false);
-      
-      if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
-      }
-    }
-  };
+  }, []); // بدون dependencies - تشغيل مرة واحدة فقط
 
   const logout = async (shouldRedirect = true) => {
     try {
@@ -167,10 +158,7 @@ export const AuthProvider = ({ children }) => {
       
       if (error) throw error;
       
-      if (data.user) {
-        await loadUserData(data.user);
-      }
-      
+      // سيتم تحميل البيانات تلقائيًا عبر onAuthStateChange
       return data;
     } catch (error) {
       console.error('Sign in error:', error);
@@ -196,6 +184,58 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const checkUserAuth = async () => {
+    try {
+      setIsLoadingAuth(true);
+      
+      const { data: { user: authUser }, error } = await supabase.auth.getUser();
+      
+      if (error) throw error;
+      
+      if (authUser) {
+        // تحديث البيانات
+        const { data: profile } = await supabase
+          .from('Profile')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .single();
+
+        const userData = {
+          id: authUser.id,
+          email: authUser.email,
+          full_name: profile?.full_name || authUser.user_metadata?.full_name || authUser.email,
+          role: profile?.role || 'user',
+          avatar_url: profile?.avatar_url,
+          ...authUser.user_metadata,
+          profile_id: profile?.id
+        };
+
+        setUser(userData);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+      
+      setIsLoadingAuth(false);
+    } catch (error) {
+      console.error('User auth check failed:', error);
+      setIsLoadingAuth(false);
+      setIsAuthenticated(false);
+      
+      if (error.status === 401 || error.status === 403) {
+        setAuthError({
+          type: 'auth_required',
+          message: 'Authentication required'
+        });
+      }
+    }
+  };
+
+  const checkAppState = async () => {
+    await checkUserAuth();
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -204,10 +244,10 @@ export const AuthProvider = ({ children }) => {
       isLoadingPublicSettings,
       authError,
       appPublicSettings,
-      role: user?.role,  // ✅ إضافة role
-      isAdmin: user?.role === 'admin',  // ✅ إضافة
-      isModerator: user?.role === 'moderator',  // ✅ إضافة
-      isModeratorOrAdmin: user?.role === 'moderator' || user?.role === 'admin',  // ✅ إضافة
+      role: user?.role,
+      isAdmin: user?.role === 'admin',
+      isModerator: user?.role === 'moderator',
+      isModeratorOrAdmin: user?.role === 'moderator' || user?.role === 'admin',
       logout,
       navigateToLogin,
       checkAppState,

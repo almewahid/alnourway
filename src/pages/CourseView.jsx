@@ -224,9 +224,9 @@ export default function CourseView() {
           </div>
 
           <div className="lg:col-span-1">
-             <Card className="border-0 shadow-lg sticky top-6">
-                <CardHeader className="bg-teal-50 border-b border-teal-100">
-                   <CardTitle>محتوى الدورة</CardTitle>
+             <Card className="border-0 shadow-lg sticky top-6 dark:bg-slate-800 transition-colors duration-300">
+                <CardHeader className="bg-teal-50 dark:bg-teal-900/30 border-b border-teal-100 dark:border-teal-800 transition-colors duration-300">
+                   <CardTitle className="text-gray-900 dark:text-white transition-colors duration-300">محتوى الدورة</CardTitle>
                    <div className="mt-4">
                       <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">
                          <span>نسبة الإنجاز</span>
@@ -255,7 +255,9 @@ export default function CourseView() {
                                            key={lesson.id}
                                            onClick={() => setActiveLesson(lesson)}
                                            className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors text-right ${
-                                              isActive ? "bg-teal-100 text-teal-900" : "hover:bg-gray-50 text-gray-700"
+                                              isActive 
+                                                ? "bg-teal-100 dark:bg-teal-900/40 text-teal-900 dark:text-teal-200" 
+                                                : "hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300"
                                            }`}
                                         >
                                            {isCompleted ? (
