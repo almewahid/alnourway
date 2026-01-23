@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "@/contexts/LanguageContext.jsx";
+import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";

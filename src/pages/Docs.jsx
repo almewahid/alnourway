@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "@/contexts/LanguageContext.jsx";
+import { useLanguage } from "@/components/LanguageContext";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Star, Layout, Database, PieChart, GitMerge, FileText, Server, Lock, Link2, FileJson, Table as TableIcon, LayoutDashboard, Code, BarChart3 } from "lucide-react";
 

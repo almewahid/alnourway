@@ -345,28 +345,13 @@ isActive ? 'text-gray-900' : 'text-gray-600'
 
 {/* Footer */}
 <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 px-6 text-center text-sm text-gray-600 dark:text-gray-300 hidden md:block">
-  <div className="max-w-7xl mx-auto">
-    <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-2">
-      <Link to={createPageUrl("PrivacyPolicy")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
-        {t('privacy_policy')}
-      </Link>
-      <span className="text-gray-300 dark:text-gray-600">|</span>
-      <Link to={createPageUrl("TermsAndConditions")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
-        {t('terms_and_conditions')}
-      </Link>
-      <span className="text-gray-300 dark:text-gray-600">|</span>
-      <Link to={createPageUrl("CookiesPolicy")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
-        {t('cookies_policy')}
-      </Link>
-      <span className="text-gray-300 dark:text-gray-600">|</span>
-      <Link to={createPageUrl("ContactPreacher")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
-        {t('contact')}
-      </Link>
-    </div>
-    <div className="text-xs text-gray-500 dark:text-gray-400">
-      © 2026 طريق النور - جميع الحقوق محفوظة / Tariq Al-Noor - All Rights Reserved
-    </div>
-  </div>
+<div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-4">
+  <span>© 2026 طريق النور - جميع الحقوق محفوظة</span>
+  <span className="text-gray-300 dark:text-gray-600">|</span>
+  <Link to={createPageUrl("PrivacyPolicy")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+    Privacy Policy / سياسة الخصوصية
+  </Link>
+</div>
 </footer>
 </main>
 </div>

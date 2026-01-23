@@ -7,7 +7,7 @@ import { Heart, Users, Video, CheckCircle, Sparkles, MessageCircle } from "lucid
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import { supabase } from "@/components/api/supabaseClient";
-import { useLanguage } from "@/contexts/LanguageContext.jsx";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Repentance() {
   const { t } = useLanguage();

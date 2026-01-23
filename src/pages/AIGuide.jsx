@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLanguage } from "@/contexts/LanguageContext.jsx";
+import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

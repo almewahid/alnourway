@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Heart, MessageSquare, Users, Globe, Calendar, Library, Video, Search, User, Handshake } from "lucide-react";
 import { supabase } from "@/components/api/supabaseClient";
 import AIRecommendations from "@/components/AIRecommendations";
-import { useLanguage } from "@/contexts/LanguageContext.jsx";
+import { useLanguage } from "@/components/LanguageContext";
 
 const verses = [
   { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", ref: "سورة الشرح - آية 6" },
@@ -92,36 +92,32 @@ export default function Home() {
   const features = [
     {
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%81_%D8%B9%D9%84%D9%89_%D8%A7%D9%84%D8%A7%D8%B3%D9%84%D8%A7%D9%85_z4rxqo.png",
-      title: t('تعلم الإسلام'),
-      description: t('ابدأ رحلتك في تعلم الإسلام من الأساسيات'),
-      subtitle: t('ابدأ رحلتك مع معلمين متخصصين'),
-      color: "from-teal-100 to-teal-200 dark:from-slate-800 dark:to-slate-700",
+      title: t('learn_islam'),
+      description: t('learn_islam_desc'),
+      color: "from-teal-100 to-teal-200",
       link: createPageUrl("LearnIslam")
     },
     {
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562068/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D8%AA%D9%88%D8%A8%D8%A9_o8ukrq.png",
-      title: t('التوبة'),
-      description: t('دليلك الشامل للتوبة والرجوع إلى الله'),
-      subtitle: t('باب التوبة مفتوح.. تواصل الآن'),
-      color: "from-rose-100 to-rose-200 dark:from-slate-800 dark:to-slate-700",
+      title: t('repentance'),
+      description: t('repentance_desc'),
+      color: "from-rose-100 to-rose-200",
       link: createPageUrl("Repentance")
     },
     {
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D9%81%D8%AA%D9%88%D9%89_d9nvcw.png",
-      title: t('الفتاوى'),
-      description: t('اسأل واحصل على فتاوى شرعية موثوقة'),
-      subtitle: t('اسأل مفتينا واحصل على إجابة شرعية'),
-      color: "from-emerald-100 to-emerald-200 dark:from-slate-800 dark:to-slate-700",
+      title: t('fatwa'),
+      description: t('fatwa_desc'),
+      color: "from-emerald-100 to-emerald-200",
       link: createPageUrl("Fatwa"),
       onlineCount: onlineCount.scholars,
-      countLabel: t('تواصل مع مفتي')
+      countLabel: t('contact_scholar')
     },
     {
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A5%D8%B5%D9%84%D8%A7%D8%AD_%D8%B0%D8%A7%D8%AA_%D8%A7%D9%84%D8%A8%D9%8A%D9%86_tjvu5j.png",
-      title: t('الإصلاح'),
-      description: t('إصلاح ذات البين والمصالحة'),
-      subtitle: t('تواصل للمصالحة وإصلاح ذات البين'),
-      color: "from-cyan-100 to-cyan-200 dark:from-slate-800 dark:to-slate-700",
+      title: t('reconciliation'),
+      description: t('reconciliation_desc'),
+      color: "from-cyan-100 to-cyan-200",
       link: createPageUrl("ReconciliationCommittee")
     }
   ];
@@ -129,23 +125,21 @@ export default function Home() {
   const additionalFeatures = [
     {
       icon: BookOpen,
-      title: t('دورات القرآن'),
-      description: t('تعلم القرآن الكريم مع معلمين متخصصين'),
-      subtitle: t('احجز مقعدك مع محفظ متخصص'),
-      color: "from-teal-100 to-teal-200 dark:from-slate-800 dark:to-slate-700",
+      title: t('quran_courses'),
+      description: t('quran_courses_desc'),
+      color: "from-teal-100 to-teal-200",
       iconColor: "text-teal-700",
       link: createPageUrl("QuranCourses"),
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%81%D8%B1%D8%B9%D9%8A_%D8%AF%D9%88%D8%B1%D8%A7%D8%AA_%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86_it1oto.png",
       show: true,
       onlineCount: onlineCount.teachers,
-      countLabel: t('تواصل مع محفظ')
+      countLabel: t('contact_teacher')
     },
     {
       icon: Calendar,
-      title: t('الأذكار اليومية'),
-      description: t('أذكار الصباح والمساء وأذكار متنوعة'),
-      subtitle: t('اجعل يومك مليئاً بالذكر والدعاء'),
-      color: "from-amber-100 to-amber-200 dark:from-slate-800 dark:to-slate-700",
+      title: t('daily_azkar'),
+      description: t('daily_azkar_desc'),
+      color: "from-amber-100 to-amber-200",
       iconColor: "text-amber-700",
       link: createPageUrl("Azkar"),
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%81%D8%B1%D8%B9%D9%8A_%D8%A3%D8%B0%D9%83%D8%A7%D8%B1_a1bjup.png",
@@ -153,10 +147,9 @@ export default function Home() {
     },
     {
       icon: Library,
-      title: t('المكتبة الإسلامية'),
-      description: t('مكتبة شاملة من الكتب والمراجع الإسلامية'),
-      subtitle: t('آلاف الكتب في متناول يدك'),
-      color: "from-indigo-100 to-indigo-200 dark:from-slate-800 dark:to-slate-700",
+      title: t('islamic_library'),
+      description: t('islamic_library_desc'),
+      color: "from-indigo-100 to-indigo-200",
       iconColor: "text-indigo-700",
       link: createPageUrl("Library"),
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562068/%D9%81%D8%B1%D8%B9%D9%8A_%D8%A7%D9%84%D9%85%D9%83%D8%AA%D8%A8%D8%A9_kmf8ph.png",
@@ -165,27 +158,27 @@ export default function Home() {
   ];
 
   const stats = [
-    { icon: Users, value: "10,000+", label: t('مستخدم سعيد') },
-    { icon: BookOpen, value: "500+", label: t('محاضرة') },
-    { icon: Globe, value: "50+", label: t('دولة') }
+    { icon: Users, value: "10,000+", label: t('happy_user') },
+    { icon: BookOpen, value: "500+", label: t('lecture') },
+    { icon: Globe, value: "50+", label: t('country') }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-700 via-teal-600 to-teal-800 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 md:p-6 transition-colors duration-300 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-teal-700 via-teal-600 to-teal-800 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Search and Join Team */}
         <div className="flex flex-col md:flex-row items-center gap-3 max-w-3xl mx-auto mb-8 pt-4">
           <div className="relative flex-1 w-full">
             <Input
-              placeholder={t("ابحث...")}
+              placeholder="ابحث..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="pr-12 py-6 text-lg bg-white dark:bg-slate-800/95 dark:bg-slate-800/95 dark:text-white dark:placeholder-gray-400 backdrop-blur-sm rounded-full border-0 shadow-lg transition-colors duration-300 transition-colors duration-300"
+              className="pr-12 py-6 text-lg bg-white/95 backdrop-blur-sm rounded-full border-0 shadow-lg"
             />
             <button
               onClick={handleSearch}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 rounded-full flex items-center justify-center transition-colors duration-300 transition-colors duration-300"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-teal-600 hover:bg-teal-700 rounded-full flex items-center justify-center transition-colors"
             >
               <Search className="w-5 h-5 text-white" />
             </button>
@@ -193,10 +186,10 @@ export default function Home() {
 
           <Link to={createPageUrl("JoinTeam")} className="w-full md:w-auto">
             <Button 
-              className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 dark:from-amber-600 dark:to-amber-700 dark:hover:from-amber-700 dark:hover:to-amber-800 text-white shadow-lg rounded-full px-8 py-6 text-lg whitespace-nowrap transition-all duration-300 transition-colors duration-300"
+              className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg rounded-full px-8 py-6 text-lg whitespace-nowrap"
             >
               <Users className="w-5 h-5 ml-2" />
-              {t('انضم للفريق')}
+              {t('join_team')}
             </Button>
           </Link>
         </div>
@@ -210,23 +203,22 @@ export default function Home() {
             <Link key={index} to={feature.link} onClick={() => trackEvent('view', 'section', feature.title)}>
               <Card className={`group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative flex flex-col`}>
                 {feature.onlineCount > 0 && (
-                  <div className="absolute top-2 left-2 z-10 bg-emerald-500 dark:bg-teal-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 transition-colors duration-300">
-                    <div className="w-1.5 h-1.5 bg-white dark:bg-slate-800 rounded-full animate-pulse transition-colors duration-300"></div>
+                  <div className="absolute top-2 left-2 z-10 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                     {feature.onlineCount} {feature.countLabel}
                   </div>
                 )}
-                {/* تكبير الصورة قليلاً */}
-                <div className="w-full aspect-[4/5] overflow-hidden">
+                {/* To change image size, modify aspect ratio below (e.g. aspect-[16/9] for smaller height) */}
+                <div className="w-full aspect-[7/8] overflow-hidden">
                   <img 
                     src={feature.image} 
                     alt={feature.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                 </div>
-                <CardContent className="p-3 md:p-4 text-center flex-1 flex flex-col justify-center">
-                  <h3 className="text-base md:text-lg font-bold text-gray-800 dark:text-white mb-1 transition-colors duration-300">{feature.title}</h3>
-                  <p className="text-[9px] md:text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed mb-1 transition-colors duration-300">{feature.description}</p>
-                  <p className="text-[9px] md:text-[10px] text-teal-700 dark:text-teal-400 font-semibold leading-relaxed transition-colors duration-300">{feature.subtitle}</p>
+                <CardContent className="p-4 md:p-6 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="text-base md:text-lg font-bold text-gray-800 mb-2">{feature.title}</h3>
+                  <p className="text-[10px] md:text-xs text-gray-700 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
             </Link>
@@ -239,25 +231,24 @@ export default function Home() {
             <Link key={index} to={feature.link} onClick={() => trackEvent('view', 'section', feature.title)}>
               <Card className={`group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br ${feature.color} overflow-hidden h-full hover:-translate-y-2 rounded-3xl relative flex flex-col`}>
                 {feature.onlineCount > 0 && (
-                  <div className="absolute top-2 left-2 z-10 bg-teal-500 dark:bg-teal-400 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 transition-colors duration-300">
-                    <div className="w-1.5 h-1.5 bg-white dark:bg-slate-800 rounded-full animate-pulse transition-colors duration-300"></div>
+                  <div className="absolute top-2 left-2 z-10 bg-teal-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                     {feature.onlineCount} {feature.countLabel}
                   </div>
                 )}
-                {/* تكبير الصورة قليلاً */}
-                <div className="w-full aspect-[4/5] overflow-hidden">
+                {/* To change image size, modify aspect ratio below */}
+                <div className="w-full aspect-[8/8] overflow-hidden">
                     {feature.image ? (
                       <img src={feature.image} alt={feature.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-white dark:bg-slate-800/30 dark:bg-slate-700/30 transition-colors duration-300">
-                        <feature.icon className={`w-16 h-16 ${feature.iconColor} dark:text-teal-400`} />
+                      <div className="w-full h-full flex items-center justify-center bg-white/30">
+                        <feature.icon className={`w-16 h-16 ${feature.iconColor}`} />
                       </div>
                     )}
                 </div>
-                <CardContent className="p-3 md:p-4 text-center flex-1 flex flex-col justify-center">
-                  <h3 className="text-sm md:text-base font-bold text-gray-800 dark:text-white mb-1 transition-colors duration-300">{feature.title}</h3>
-                  <p className="text-[10px] md:text-xs text-gray-700 dark:text-gray-300 leading-relaxed mb-1 transition-colors duration-300">{feature.description}</p>
-                  <p className="text-[9px] md:text-[10px] text-teal-700 dark:text-teal-400 font-semibold leading-relaxed transition-colors duration-300">{feature.subtitle}</p>
+                <CardContent className="p-4 md:p-6 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">{feature.title}</h3>
+                  <p className="text-xs text-gray-700 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
             </Link>
@@ -265,13 +256,13 @@ export default function Home() {
         </div>
 
         {/* الإحصائيات - صف واحد */}
-        <div className="bg-gradient-to-br from-amber-500/20 to-amber-600/20 dark:from-slate-800/80 dark:to-slate-700/80 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-2xl mb-8 transition-colors duration-300 transition-colors duration-300">
+        <div className="bg-gradient-to-br from-amber-500/20 to-amber-600/20 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-2xl mb-8">
           <div className="flex flex-row justify-around items-center gap-4 md:gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <stat.icon className="w-8 h-8 md:w-10 md:h-10 text-amber-300 dark:text-teal-400 mx-auto mb-2 transition-colors duration-300 transition-colors duration-300" />
+                <stat.icon className="w-8 h-8 md:w-10 md:h-10 text-amber-300 mx-auto mb-2" />
                 <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
-                <div className="text-amber-100 dark:text-gray-300 text-xs md:text-sm whitespace-nowrap transition-colors duration-300">{stat.label}</div>
+                <div className="text-amber-100 text-xs md:text-sm whitespace-nowrap">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -279,11 +270,11 @@ export default function Home() {
 
         {/* الآية/الحديث */}
         <div className="text-center">
-          <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800/10 dark:bg-slate-800/50 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border border-white/20 dark:border-slate-700/50 transition-colors duration-300 transition-colors duration-300">
+          <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border border-white/20">
             <h2 className="text-xl md:text-2xl font-bold text-white mb-3 leading-relaxed">
               {randomQuote.text}
             </h2>
-            <p className="text-amber-200 dark:text-teal-300 text-sm md:text-base transition-colors duration-300">{randomQuote.ref}</p>
+            <p className="text-amber-200 text-sm md:text-base">{randomQuote.ref}</p>
           </div>
         </div>
       </div>
