@@ -158,7 +158,7 @@ return (
 <div className="min-h-screen flex w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 transition-colors duration-300">
 <Sidebar side="right" className="border-r border-emerald-100 dark:border-emerald-900 dark:bg-gray-900">
 <SidebarHeader className="border-b border-emerald-100 dark:border-emerald-900 p-6 bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-900 dark:to-emerald-950">
-<div className="flex items-center gap-3">
+<Link to={createPageUrl("Home")} onClick={handleLinkClick} className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
 <img 
 src="/icon-192.png" 
 alt="طريق النور" 
@@ -168,7 +168,7 @@ className="w-12 h-12 rounded-full shadow-lg border-2 border-white/20"
 <h1 className="text-xl font-bold text-white drop-shadow-lg">طريق النور</h1>
 <p className="text-xs text-emerald-100">منصة إسلامية شاملة</p>
 </div>
-</div>
+</Link>
 </SidebarHeader>
 <SidebarContent className="p-3">
 <SidebarGroup>
@@ -347,17 +347,17 @@ isActive ? 'text-gray-900' : 'text-gray-600'
 <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 px-6 text-center text-sm text-gray-600 dark:text-gray-300 hidden md:block">
   <div className="max-w-7xl mx-auto">
     <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-2">
-      <Link to={createPageUrl("PrivacyPolicy")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+      <a href="/privacy-policy" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('privacy_policy')}
-      </Link>
+      </a>
       <span className="text-gray-300 dark:text-gray-600">|</span>
-      <Link to={createPageUrl("TermsAndConditions")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+      <a href="/terms" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('terms_and_conditions')}
-      </Link>
+      </a>
       <span className="text-gray-300 dark:text-gray-600">|</span>
-      <Link to={createPageUrl("CookiesPolicy")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+      <a href="/cookies" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('cookies_policy')}
-      </Link>
+      </a>
       <span className="text-gray-300 dark:text-gray-600">|</span>
       <Link to={createPageUrl("ContactPreacher")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('contact')}
