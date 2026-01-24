@@ -113,7 +113,9 @@ const registerServiceWorker = async () => {
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   // Detect if running in WebView (WKWebView for iOS)
-  const isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent);
+  // Check for custom User-Agent or WebKit without Safari
+  const isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent) ||
+                    /TariqAlNoorApp\/iOS/.test(navigator.userAgent);
 
   // Disable Service Worker on iOS WebView for App Store compliance
   if (isIOS && isWebView) {
@@ -381,6 +383,10 @@ isActive ? 'text-gray-900' : 'text-gray-600'
       <span className="text-gray-300 dark:text-gray-600">|</span>
       <Link to={createPageUrl("Support")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('support')}
+      </Link>
+      <span className="text-gray-300 dark:text-gray-600">|</span>
+      <Link to={createPageUrl("DeleteAccount")} className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:underline transition-colors">
+        حذف الحساب | Delete Account
       </Link>
       </div>
     <div className="text-xs text-gray-500 dark:text-gray-400">

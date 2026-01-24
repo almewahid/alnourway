@@ -1,71 +1,66 @@
 import { useEffect } from 'react';
 
 /**
- * External Links Handler Component
- * Handles external links for WebView compatibility
- * Opens external links in the default browser instead of WebView
- * Required for Apple App Store and Google Play compliance
+ * ExternalLinksHandler Component
+ * 
+ * Purpose: Ensures all external links open in the default browser (Safari)
+ * instead of inside the WebView - required for Apple App Store compliance
+ * 
+ * This component:
+ * 1. Intercepts clicks on all <a> tags
+ * 2. Checks if the link is external (different domain)
+ * 3. Opens external links in the default browser
+ * 4. Allows internal navigation to work normally
  */
-
-const isExternalLink = (url) => {
-  if (!url) return false;
-  
-  try {
-    // Handle relative URLs
-    if (url.startsWith('/') || url.startsWith('#') || url.startsWith('?')) {
-      return false;
-    }
-    
-    // Handle mailto, tel, etc.
-    if (url.startsWith('mailto:') || url.startsWith('tel:') || url.startsWith('sms:')) {
-      return false;
-    }
-    
-    const currentHost = window.location.host;
-    const linkUrl = new URL(url, window.location.origin);
-    
-    return linkUrl.host !== currentHost;
-  } catch (e) {
-    // If URL parsing fails, treat as internal
-    return false;
-  }
-};
-
-const handleExternalLink = (url, event = null) => {
-  if (event) {
-    event.preventDefault();
-  }
-  
-  if (isExternalLink(url)) {
-    // Open in default browser (Safari/Chrome) instead of WebView
-    window.open(url, '_blank', 'noopener,noreferrer');
-  } else {
-    // Internal link - let it work normally
-    window.location.href = url;
-  }
-};
-
 export default function ExternalLinksHandler() {
   useEffect(() => {
+    // Detect if running in iOS WebView
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    const isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent) ||
+                      /TariqAlNoorApp\/iOS/.test(navigator.userAgent);
+
+    // Only activate this handler in iOS WebView
+    if (!isIOS || !isWebView) {
+      return;
+    }
+
     const handleClick = (e) => {
       const target = e.target.closest('a');
+      
       if (!target) return;
-      
+
       const href = target.getAttribute('href');
-      if (!href) return;
       
-      if (isExternalLink(href)) {
+      // Skip if no href or it's a special protocol
+      if (!href || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#')) {
+        return;
+      }
+
+      // Check if it's an external link
+      const isExternal = href.startsWith('http://') || href.startsWith('https://');
+      const isCurrentDomain = href.includes(window.location.hostname);
+
+      // If external and not current domain, open in default browser
+      if (isExternal && !isCurrentDomain) {
         e.preventDefault();
-        handleExternalLink(href);
+        
+        // Use window.open with _system to open in Safari (iOS)
+        window.open(href, '_system');
+        
+        console.log('External link opened in default browser:', href);
       }
     };
-    
+
+    // Add click listener to document
     document.addEventListener('click', handleClick);
-    
+
+    // Cleanup
     return () => {
       document.removeEventListener('click', handleClick);
     };
   }, []);
-  
+
   return null;
 }

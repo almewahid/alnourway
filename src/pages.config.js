@@ -40,6 +40,7 @@ import Stories from './pages/Stories';
 import TermsAndConditions from './pages/TermsAndConditions';
 import Support from './pages/Support';
 import AdminSupport from './pages/AdminSupport';
+import DeleteAccount from './pages/DeleteAccount';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +86,7 @@ export const PAGES = {
     "Stories": Stories,
     "Support": Support,
     "AdminSupport": AdminSupport,
+    "DeleteAccount": DeleteAccount,
     "TermsAndConditions": TermsAndConditions,
 }
 
