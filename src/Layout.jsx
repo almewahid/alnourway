@@ -21,6 +21,7 @@ import { supabase } from "@/components/api/supabaseClient";
 import NotificationManager from "@/components/NotificationManager";
 import { Toaster } from "@/components/ui/sonner";
 import ChatWidget from "@/components/ChatWidget";
+import ExternalLinksHandler from "@/components/ExternalLinksHandler";
 
 // استخدام النصوص العربية مباشرة
 const getNavigationItems = (t) => [
@@ -65,8 +66,8 @@ const quickLinks = React.useMemo(() => getQuickLinks(t), [language]);
 const bottomNavItems = React.useMemo(() => getBottomNavItems(t), [language]);
 
 React.useEffect(() => {
-loadUser();
-registerServiceWorker();
+  loadUser();
+  registerServiceWorker();
 }, []);
 const loadUser = async () => {
 try {
@@ -107,14 +108,28 @@ authListener.subscription.unsubscribe();
 };
 }, []);
 const registerServiceWorker = async () => {
-if ('serviceWorker' in navigator) {
-try {
-await navigator.serviceWorker.register('/service-worker.js');
-console.log('Service Worker registered');
-} catch (error) {
-console.log('Service Worker registration failed:', error);
-}
-}
+  // Detect iOS devices
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  // Detect if running in WebView (WKWebView for iOS)
+  const isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent);
+
+  // Disable Service Worker on iOS WebView for App Store compliance
+  if (isIOS && isWebView) {
+    console.log('Service Worker disabled on iOS WebView for App Store compliance');
+    return;
+  }
+
+  // Enable Service Worker for web browsers and Android
+  if ('serviceWorker' in navigator) {
+    try {
+      await navigator.serviceWorker.register('/service-worker.js');
+      console.log('Service Worker registered');
+    } catch (error) {
+      console.log('Service Worker registration failed:', error);
+    }
+  }
 };
 const handleLinkClick = () => {
 if (window.innerWidth < 768) {
@@ -149,6 +164,7 @@ return (
 <NotificationManager />
 <Toaster position="top-center" richColors />
 <ChatWidget />
+<ExternalLinksHandler />
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
 <link rel="manifest" href="/manifest.json" />
@@ -347,22 +363,26 @@ isActive ? 'text-gray-900' : 'text-gray-600'
 <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 px-6 text-center text-sm text-gray-600 dark:text-gray-300 hidden md:block">
   <div className="max-w-7xl mx-auto">
     <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-2">
-      <a href="/privacy-policy" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+      <Link to={createPageUrl("PrivacyPolicy")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('privacy_policy')}
-      </a>
+      </Link>
       <span className="text-gray-300 dark:text-gray-600">|</span>
-      <a href="/terms" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+      <Link to={createPageUrl("TermsAndConditions")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('terms_and_conditions')}
-      </a>
+      </Link>
       <span className="text-gray-300 dark:text-gray-600">|</span>
-      <a href="/cookies" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+      <Link to={createPageUrl("CookiesPolicy")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('cookies_policy')}
-      </a>
+      </Link>
       <span className="text-gray-300 dark:text-gray-600">|</span>
       <Link to={createPageUrl("ContactPreacher")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
         {t('contact')}
       </Link>
-    </div>
+      <span className="text-gray-300 dark:text-gray-600">|</span>
+      <Link to={createPageUrl("Support")} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition-colors">
+        {t('support')}
+      </Link>
+      </div>
     <div className="text-xs text-gray-500 dark:text-gray-400">
       © 2026 طريق النور - جميع الحقوق محفوظة / Tariq Al-Noor - All Rights Reserved
     </div>

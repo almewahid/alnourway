@@ -38,6 +38,7 @@ import Search from './pages/Search';
 import Settings from './pages/Settings';
 import Stories from './pages/Stories';
 import TermsAndConditions from './pages/TermsAndConditions';
+import Support from './pages/Support';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "Search": Search,
     "Settings": Settings,
     "Stories": Stories,
+    "Support": Support,
     "TermsAndConditions": TermsAndConditions,
 }
 

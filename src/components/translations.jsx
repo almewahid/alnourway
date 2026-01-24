@@ -174,6 +174,7 @@ export const translations = {
     terms_and_conditions: "الشروط والأحكام",
     cookies_policy: "سياسة الكوكيز",
     contact: "اتصل بنا",
+    support: "الدعم الفني",
   },
   en: {
     // Navigation
@@ -350,6 +351,7 @@ export const translations = {
     terms_and_conditions: "Terms & Conditions",
     cookies_policy: "Cookies Policy",
     contact: "Contact",
+    support: "Support",
   },
   fr: {
     // Navigation
