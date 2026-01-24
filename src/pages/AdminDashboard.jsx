@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, MessageSquare, Heart, FileText, Activity, Clock, ArrowRight, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Users, MessageSquare, Heart, FileText, Activity, Clock, ArrowRight, CheckCircle, XCircle, AlertCircle, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
         supabase.from('Profile').select('*', { count: 'exact', head: true }),
         supabase.from('FatwaRequest').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('ReconciliationRequest').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-        supabase.from('ContactRequest').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('ContactRequest').select('*', { count: 'exact', head: true }).eq('status', 'معلق'),
         supabase.from('UserLearningPath').select('*', { count: 'exact', head: true })
       ]);
 
@@ -102,11 +102,12 @@ export default function AdminDashboard() {
       alert: stats.pendingReconciliations > 0
     },
     { 
-      title: "مسارات تعلم", 
-      value: stats.activeLearningPaths, 
-      icon: Activity, 
-      color: "text-purple-600", 
-      bg: "bg-purple-100" 
+      title: "رسائل دعم معلقة", 
+      value: stats.pendingContacts, 
+      icon: MessageCircle, 
+      color: "text-cyan-600", 
+      bg: "bg-cyan-100",
+      alert: stats.pendingContacts > 0
     }
   ];
 
@@ -257,39 +258,65 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white border-0">
-            <CardContent className="p-6">
-              <Activity className="w-8 h-8 mb-4 opacity-80" />
-              <h3 className="text-lg font-bold mb-2">تقرير الأداء</h3>
-              <p className="text-indigo-100 text-sm mb-4">عرض تقارير تفصيلية عن أداء المنصة وتفاعل المستخدمين</p>
-              <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
-                عرض التقارير
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link to={createPageUrl("Admin")} className="block">
+            <Card className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white border-0 h-full hover:shadow-xl transition-shadow cursor-pointer">
+              <CardContent className="p-6">
+                <Activity className="w-8 h-8 mb-4 opacity-80" />
+                <h3 className="text-lg font-bold mb-2">تقرير الأداء</h3>
+                <p className="text-indigo-100 text-sm mb-4">عرض تقارير تفصيلية عن أداء المنصة وتفاعل المستخدمين</p>
+                <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
+                  عرض التقارير
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">
-            <CardContent className="p-6">
-              <Users className="w-8 h-8 mb-4 opacity-80" />
-              <h3 className="text-lg font-bold mb-2">إدارة المستخدمين</h3>
-              <p className="text-emerald-100 text-sm mb-4">مراجعة حسابات المستخدمين والصلاحيات</p>
-              <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
-                إدارة المستخدمين
-              </Button>
-            </CardContent>
-          </Card>
+          <Link to={createPageUrl("Admin")} className="block">
+            <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 h-full hover:shadow-xl transition-shadow cursor-pointer">
+              <CardContent className="p-6">
+                <Users className="w-8 h-8 mb-4 opacity-80" />
+                <h3 className="text-lg font-bold mb-2">إدارة المستخدمين</h3>
+                <p className="text-emerald-100 text-sm mb-4">مراجعة حسابات المستخدمين والصلاحيات</p>
+                <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
+                  إدارة المستخدمين
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0">
-            <CardContent className="p-6">
-              <FileText className="w-8 h-8 mb-4 opacity-80" />
-              <h3 className="text-lg font-bold mb-2">المحتوى الجديد</h3>
-              <p className="text-purple-100 text-sm mb-4">مراجعة ونشر المحتوى الجديد المقترح</p>
-              <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
-                مراجعة المحتوى
-              </Button>
-            </CardContent>
-          </Card>
+          <Link to={createPageUrl("Admin")} className="block">
+            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 h-full hover:shadow-xl transition-shadow cursor-pointer">
+              <CardContent className="p-6">
+                <FileText className="w-8 h-8 mb-4 opacity-80" />
+                <h3 className="text-lg font-bold mb-2">المحتوى الجديد</h3>
+                <p className="text-purple-100 text-sm mb-4">مراجعة ونشر المحتوى الجديد المقترح</p>
+                <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
+                  مراجعة المحتوى
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to={createPageUrl("AdminSupport")} className="block">
+            <Card className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white border-0 h-full hover:shadow-xl transition-shadow cursor-pointer">
+              <CardContent className="p-6">
+                <MessageCircle className="w-8 h-8 mb-4 opacity-80" />
+                <h3 className="text-lg font-bold mb-2">رسائل الدعم</h3>
+                <p className="text-cyan-100 text-sm mb-4">إدارة والرد على رسائل الدعم الواردة من المستخدمين</p>
+                <div className="flex items-center gap-2">
+                  <Button variant="secondary" className="flex-1 bg-white/20 hover:bg-white/30 text-white border-0">
+                    عرض الرسائل
+                  </Button>
+                  {stats.pendingContacts > 0 && (
+                    <div className="bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                      {stats.pendingContacts}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>
