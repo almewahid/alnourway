@@ -39,7 +39,7 @@ import Settings from './pages/Settings';
 import Stories from './pages/Stories';
 import TermsAndConditions from './pages/TermsAndConditions';
 import Support from './pages/Support';
-import AdminSupport from './pages/AdminSupport';
+import AdminSupport from './pages/Adminsupport';
 import DeleteAccount from './pages/DeleteAccount';
 import __Layout from './Layout.jsx';
 
@@ -85,7 +85,7 @@ export const PAGES = {
     "Settings": Settings,
     "Stories": Stories,
     "Support": Support,
-    "AdminSupport": AdminSupport,
+    "Adminsupport": Adminsupport,
     "DeleteAccount": DeleteAccount,
     "TermsAndConditions": TermsAndConditions,
 }
