@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 60
     environment:
       vars:
-        APPLE_APP_ID: "com.yourname.alnoorway" # عدّلها لتطابق bundle id في capacitor.config.*
+        APPLE_APP_ID: "com.osama.alnoorway"
       node: latest
       xcode: latest
     triggering:
