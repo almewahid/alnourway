@@ -85,7 +85,7 @@ export const PAGES = {
     "Settings": Settings,
     "Stories": Stories,
     "Support": Support,
-    "Adminsupport": Adminsupport,
+    "AdminSupport": AdminSupport,
     "DeleteAccount": DeleteAccount,
     "TermsAndConditions": TermsAndConditions,
 }
