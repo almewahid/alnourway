@@ -3,10 +3,12 @@ workflows:
     name: iOS Capacitor Build
     max_build_duration: 60
     environment:
+      groups:
+        - appstore_credentials
       vars:
-        APPLE_APP_ID: "com.osama.alnoorway"
-      node: latest
-      xcode: latest
+        APPLE_APP_ID: com.osama.alnoorway
+        NODE: latest
+        XCODE: latest
     triggering:
       events:
         - push
@@ -15,33 +17,30 @@ workflows:
           include: true
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
       - name: Build web app
-        script: |
-          npm run build
+        script: npm run build
       - name: Sync Capacitor iOS
-        script: |
-          npx cap sync ios
+        script: npx cap sync ios
       - name: Build iOS app
         script: |
-          xcodebuild \
-            -workspace ios/App/App.xcworkspace \
+          xcodebuild -workspace ios/App/App.xcworkspace \
             -scheme App \
             -configuration Release \
             -sdk iphoneos \
-            -archivePath $CM_BUILD_DIR/ios_archive.xcarchive archive
-          xcodebuild \
-            -exportArchive \
-            -archivePath $CM_BUILD_DIR/ios_archive.xcarchive \
+            -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
+            archive
+          xcodebuild -exportArchive \
+            -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
             -exportOptionsPlist ios/App/exportOptions.plist \
-            -exportPath $CM_BUILD_DIR/ios_export
+            -exportPath $CM_BUILD_DIR/ios/export
     artifacts:
-      - $CM_BUILD_DIR/ios_export/*.ipa
+      - $CM_BUILD_DIR/ios/export/*.ipa
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_API_KEY
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        key_id: $APP_STORE_CONNECT_KEY_ID
+        api_key: MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgDRHzyzgvjS7E386fivfRTXr3tpxh4ooLxES/c81NXsagCgYIKoZIzj0DAQehRANCAASg2QXMhRhikra8RTw0flB/KLPDjTMK3/uiqznr+bIOVf1rsxE85oT09D9IP2U97SMEo3gs5N/Pp6W6mikBKqFT
+        key_id: H7P8AK33H4
+        issuer_id: 73f80bdd-1323-4133-a244-3175d8b6b0dd
         submit_to_testflight: true
-        submit_to_app_store: false
+        beta_groups:
+          - Internal Testers
