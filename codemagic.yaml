@@ -31,7 +31,6 @@ workflows:
       -sdk iphoneos \
       DEVELOPMENT_TEAM=AU27C9M3JX \
       CODE_SIGN_STYLE=Automatic \
-      PROVISIONING_PROFILE_SPECIFIER="" \
       -allowProvisioningUpdates \
       -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
       archive
