@@ -8,6 +8,8 @@
     <string>automatic</string>
     <key>stripSwiftSymbols</key>
     <true/>
+    <key>teamID</key>
+    <string>AU27C9M3JX</string>
     <key>uploadBitcode</key>
     <false/>
 </dict>

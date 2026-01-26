@@ -29,6 +29,7 @@ workflows:
             -scheme App \
             -configuration Release \
             -sdk iphoneos \
+                  DEVELOPMENT_TEAM=AU27C9M3JX \
             -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
             archive
           xcodebuild -exportArchive \
