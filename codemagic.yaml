@@ -8,7 +8,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.osama.alnoorway
       vars:
-        XCODE_WORKSPACE: "$CM_BUILD_DIR/ios/App/App.xcworkspace"
+        XCODE_PROJECT: "$CM_BUILD_DIR/ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
       xcode: latest
       cocoapods: default
@@ -28,13 +28,16 @@ workflows:
       - name: Sync Capacitor iOS
         script: |
           npx cap sync ios
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios/App && pod install
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
+            --workspace "$CM_BUILD_DIR/ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
