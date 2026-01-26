@@ -8,7 +8,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.osama.alnoorway
       vars:
-        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_WORKSPACE: "$CM_BUILD_DIR/ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
       xcode: latest
       cocoapods: default
@@ -42,7 +42,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - almewahid@gmail.com
+          - osakr100@gmail.com
       app_store_connect:
         api_key: MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgDRHzyzgvjS7E386fivfRTXr3tpxh4ooLxES/c81NXsagCgYIKoZIzj0DAQehRANCAASg2QXMhRhikra8RTw0flB/KLPDjTMK3/uiqznr+bIOVf1rsxE85oT09D9IP2U97SMEo3gs5N/Pp6W6mikBKqFT
         key_id: H7P8AK33H4
