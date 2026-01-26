@@ -24,19 +24,21 @@ workflows:
       - name: Sync Capacitor iOS
         script: npx cap sync ios
       - name: Build iOS app
-        script: |
-          xcodebuild -project ios/App/App.xcodeproj \
-            -scheme App \
-            -configuration Release \
-            -sdk iphoneos \
-            DEVELOPMENT_TEAM=AU27C9M3JX \
-            -allowProvisioningUpdates \
-            -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
-            archive
-          xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
-            -exportOptionsPlist ios/App/exportOptions.plist \
-            -exportPath $CM_BUILD_DIR/ios/export
+  script: |
+    xcodebuild -project ios/App/App.xcodeproj \
+      -scheme App \
+      -configuration Release \
+      -sdk iphoneos \
+      DEVELOPMENT_TEAM=AU27C9M3JX \
+      CODE_SIGN_STYLE=Automatic \
+      PROVISIONING_PROFILE_SPECIFIER="" \
+      -allowProvisioningUpdates \
+      -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
+      archive
+    xcodebuild -exportArchive \
+      -archivePath $CM_BUILD_DIR/ios/archive.xcarchive \
+      -exportOptionsPlist ios/App/exportOptions.plist \
+      -exportPath $CM_BUILD_DIR/ios/export
     artifacts:
       - $CM_BUILD_DIR/ios/export/*.ipa
     publishing:
