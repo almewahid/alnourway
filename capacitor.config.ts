@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.alnoorway.tareeqalnoor',
+  appId: 'com.osama.alnoorway',
   appName: 'طريق النور',
   webDir: 'dist',
   server: {
