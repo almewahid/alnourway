@@ -46,7 +46,9 @@ workflows:
         recipients:
           - osakr100@gmail.com
       app_store_connect:
-        auth: key
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        api_key: MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgDRHzyzgvjS7E386fivfRTXr3tpxh4ooLxES/c81NXsagCgYIKoZIzj0DAQehRANCAASg2QXMhRhikra8RTw0flB/KLPDjTMK3/uiqznr+bIOVf1rsxE85oT09D9IP2U97SMEo3gs5N/Pp6W6mikBKqFT
+        key_id: H7P8AK33H4
+        issuer_id: 73f80bdd-1323-4133-a244-3175d8b6b0dd
         submit_to_testflight: true
+        beta_groups:
+          - Internal Testers
