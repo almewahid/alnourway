@@ -3,6 +3,8 @@ workflows:
     name: iOS Capacitor Build
     max_build_duration: 60
     instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: codemagic
     environment:
       groups:
         - appstore_credentials
@@ -47,6 +49,4 @@ workflows:
           - osakr100@gmail.com
       app_store_connect:
         auth: integration
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
