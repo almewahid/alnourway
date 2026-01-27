@@ -38,13 +38,17 @@ workflows:
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME"
+      - name: Prepare API Key
+        script: |
+          mkdir -p ~/private_keys
+          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8
       - name: Upload to App Store Connect
         script: |
           app-store-connect publish \
             --path build/ios/ipa/App.ipa \
             --key-id $APP_STORE_CONNECT_KEY_IDENTIFIER \
             --issuer-id $APP_STORE_CONNECT_ISSUER_ID \
-            --private-key $APP_STORE_CONNECT_PRIVATE_KEY \
+            --private-key @file:~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8 \
             --testflight
     artifacts:
       - build/ios/ipa/*.ipa
