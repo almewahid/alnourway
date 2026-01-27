@@ -46,6 +46,7 @@ workflows:
         script: |
           app-store-connect publish \
             --path build/ios/ipa/App.ipa \
+            --apple-id 6758340330 \
             --key-id $APP_STORE_CONNECT_KEY_IDENTIFIER \
             --issuer-id $APP_STORE_CONNECT_ISSUER_ID \
             --private-key @file:~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8 \
