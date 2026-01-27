@@ -46,7 +46,7 @@ workflows:
         recipients:
           - osakr100@gmail.com
       app_store_connect:
-        auth: key
+        auth: api_key
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
