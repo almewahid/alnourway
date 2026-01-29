@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import CourseEnrollmentModal from "@/components/CourseEnrollmentModal";
 import { Badge } from "@/components/ui/badge";
 
 export default function QuranCourses() {
-  const { t } = useLanguage();
   const [selectedGender, setSelectedGender] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [showEnrollModal, setShowEnrollModal] = useState(false);
@@ -65,16 +63,16 @@ export default function QuranCourses() {
   });
 
   const courseTypes = {
-    all: t("جميع الدورات"),
-    memorization: t("تحفيظ القرآن"),
-    recitation: t("تلاوة القرآن"),
-    tajweed: t("أحكام التجويد")
+    all: "جميع الدورات",
+    memorization: "تحفيظ القرآن",
+    recitation: "تلاوة القرآن",
+    tajweed: "أحكام التجويد"
   };
 
   const levelLabels = {
-    beginner: t("مبتدئ"),
-    intermediate: t("متوسط"),
-    advanced: t("متقدم")
+    beginner: "مبتدئ",
+    intermediate: "متوسط",
+    advanced: "متقدم"
   };
 
   const handleEnroll = (course) => {
@@ -87,26 +85,30 @@ export default function QuranCourses() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-teal-950 p-6 md:p-12 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50 p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-100 to-cyan-100 dark:from-teal-900/50 dark:to-cyan-900/50 px-6 py-3 rounded-full mb-6 transition-colors duration-300">
-            <BookOpen className="w-5 h-5 text-teal-600 dark:text-teal-400 transition-colors duration-300" />
-            <span className="text-teal-800 dark:text-teal-200 font-semibold transition-colors duration-300">{t('دورات القرآن الكريم')}</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-100 to-cyan-100 px-6 py-3 rounded-full mb-6">
+            <BookOpen className="w-5 h-5 text-teal-600" />
+            <span className="text-teal-800 font-semibold">دورات القرآن الكريم</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('تعلم وحفظ القرآن الكريم')}</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('دورات متخصصة في التحفيظ والتلاوة والتجويد')}</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+            تعلم وحفظ القرآن الكريم
+          </h1>
+          <p className="text-xl text-gray-600">
+            دورات متخصصة في التحفيظ والتلاوة والتجويد
+          </p>
         </motion.div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <div className="flex justify-center">
-                <TabsList className="bg-white dark:bg-slate-800 shadow-md p-1 transition-colors duration-300">
-                    <TabsTrigger value="browse" className="px-8">{t('تصفح الدورات')}</TabsTrigger>
+                <TabsList className="bg-white shadow-md p-1">
+                    <TabsTrigger value="browse" className="px-8">تصفح الدورات</TabsTrigger>
                     {user && <TabsTrigger value="my_courses" className="px-8">دوراتي ({myEnrollments.length})</TabsTrigger>}
                 </TabsList>
             </div>
@@ -114,15 +116,15 @@ export default function QuranCourses() {
             <TabsContent value="browse">
                 <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
                 <Tabs value={selectedGender} onValueChange={setSelectedGender}>
-                    <TabsList className="bg-white dark:bg-slate-800 shadow-lg transition-colors duration-300">
-                    <TabsTrigger value="all">{t('الكل')}</TabsTrigger>
-                    <TabsTrigger value="male">{t('رجال')}</TabsTrigger>
-                    <TabsTrigger value="female">{t('نساء')}</TabsTrigger>
+                    <TabsList className="bg-white shadow-lg">
+                    <TabsTrigger value="all">الكل</TabsTrigger>
+                    <TabsTrigger value="male">رجال</TabsTrigger>
+                    <TabsTrigger value="female">نساء</TabsTrigger>
                     </TabsList>
                 </Tabs>
 
                 <Tabs value={selectedType} onValueChange={setSelectedType}>
-                    <TabsList className="bg-white dark:bg-slate-800 shadow-lg transition-colors duration-300">
+                    <TabsList className="bg-white shadow-lg">
                     {Object.entries(courseTypes).map(([key, label]) => (
                         <TabsTrigger key={key} value={key}>{label}</TabsTrigger>
                     ))}
@@ -132,7 +134,7 @@ export default function QuranCourses() {
 
                 {isLoading ? (
                 <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 dark:border-teal-400 mx-auto transition-colors duration-300"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
                 </div>
                 ) : filteredCourses.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -143,7 +145,7 @@ export default function QuranCourses() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                     >
-                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/90 backdrop-blur-sm h-full flex flex-col transition-colors duration-300">
+                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full flex flex-col">
                         <CardHeader className="bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-t-xl shrink-0">
                             <CardTitle className="text-xl">{course.title}</CardTitle>
                             <div className="flex items-center gap-2 text-teal-50 text-sm">
@@ -152,21 +154,21 @@ export default function QuranCourses() {
                             </div>
                         </CardHeader>
                         <CardContent className="p-6 space-y-4 flex-1 flex flex-col">
-                            <p className="text-gray-600 dark:text-gray-400 line-clamp-2 transition-colors duration-300">{course.description}</p>
+                            <p className="text-gray-600 line-clamp-2">{course.description}</p>
 
                             <div className="flex flex-wrap gap-2">
-                            <span className="px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium transition-colors duration-300">
+                            <span className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-medium">
                                 {courseTypes[course.type]}
                             </span>
-                            <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium transition-colors duration-300">
-                                {course.gender === "male" ? t("رجال") : course.gender === "female" ? t("نساء") : t("الكل")}
+                            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                                {course.gender === "male" ? "رجال" : course.gender === "female" ? "نساء" : "الكل"}
                             </span>
                             </div>
 
                             <div className="mt-auto space-y-3 pt-4">
                                 {course.schedule && (
-                                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300">
-                                    <Clock className="w-4 h-4 text-teal-500 dark:text-teal-400 transition-colors duration-300" />
+                                <div className="flex items-center gap-2 text-gray-600 text-sm">
+                                    <Clock className="w-4 h-4 text-teal-500" />
                                     <span>{course.schedule}</span>
                                 </div>
                                 )}
@@ -175,7 +177,8 @@ export default function QuranCourses() {
                                     className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700"
                                     disabled={course.current_students >= course.max_students}
                                 >
-                                    {course.current_students >= course.max_students ? t("مكتمل") : t("سجل الآن")}</Button>
+                                    {course.current_students >= course.max_students ? "مكتمل" : "سجل الآن"}
+                                </Button>
                             </div>
                         </CardContent>
                         </Card>
@@ -183,10 +186,12 @@ export default function QuranCourses() {
                     ))}
                 </div>
                 ) : (
-                <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+                <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
                     <CardContent className="p-12 text-center">
                     <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا توجد دورات متاحة')}</h3>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        لا توجد دورات متاحة
+                    </h3>
                     </CardContent>
                 </Card>
                 )}
@@ -198,34 +203,34 @@ export default function QuranCourses() {
                         {myEnrollments.map((enrollment) => {
                             const course = enrollment.course || {}; // Handle joined data safely
                             return (
-                                <Card key={enrollment.id} className="border-0 shadow-lg overflow-hidden dark:bg-slate-800/90 transition-colors duration-300">
+                                <Card key={enrollment.id} className="border-0 shadow-lg overflow-hidden">
                                     <div className="h-2 bg-gradient-to-r from-teal-500 to-cyan-500" />
                                     <CardContent className="p-6">
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
-                                                <h3 className="font-bold text-lg text-gray-900 dark:text-white transition-colors duration-300">{course.title || t("دورة محذوفة")}</h3>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{course.teacher_name}</p>
+                                                <h3 className="font-bold text-lg text-gray-900">{course.title || "دورة محذوفة"}</h3>
+                                                <p className="text-sm text-gray-500">{course.teacher_name}</p>
                                             </div>
                                             <Badge variant={enrollment.status === 'approved' ? 'default' : 'secondary'} 
-                                                   className={enrollment.status === 'approved' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 transition-colors duration-300' : 'dark:bg-slate-700 transition-colors duration-300'}>
-                                                {enrollment.status === 'approved' ? t('نشط') : t('قيد الانتظار')}
+                                                   className={enrollment.status === 'approved' ? 'bg-green-100 text-green-700' : ''}>
+                                                {enrollment.status === 'approved' ? 'نشط' : 'قيد الانتظار'}
                                             </Badge>
                                         </div>
                                         
                                         {enrollment.status === 'approved' && (
                                             <div className="space-y-4">
-                                                <div className="bg-gray-50 dark:bg-slate-900 p-3 rounded-lg transition-colors duration-300">
+                                                <div className="bg-gray-50 p-3 rounded-lg">
                                                     <div className="flex justify-between text-sm mb-1">
-                                                        <span>{t('التقدم')}</span>
+                                                        <span>التقدم</span>
                                                         <span>{enrollment.progress || 0}%</span>
                                                     </div>
-                                                    <div className="h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden transition-colors duration-300">
-                                                        <div className="h-full bg-teal-500 dark:bg-teal-400 transition-colors duration-300" style={{ width: `${enrollment.progress || 0}%` }} />
+                                                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-teal-500" style={{ width: `${enrollment.progress || 0}%` }} />
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                                                    <Clock3 className="w-4 h-4 text-teal-500 dark:text-teal-400 transition-colors duration-300" />
-                                                    <span>{t('موعد الدرس')}: {course.schedule}</span>
+                                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                    <Clock3 className="w-4 h-4 text-teal-500" />
+                                                    <span>موعد الدرس: {course.schedule}</span>
                                                 </div>
                                             </div>
                                         )}
@@ -235,9 +240,9 @@ export default function QuranCourses() {
                         })}
                     </div>
                 ) : (
-                    <div className="text-center py-12 bg-white dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-slate-600 transition-colors duration-300">
-                        <p className="text-gray-500 dark:text-gray-400 text-lg transition-colors duration-300">{t('لم تسجل في أي دورة بعد')}</p>
-                        <Button variant="link" onClick={() => setActiveTab('browse')}>{t('تصفح الدورات')}</Button>
+                    <div className="text-center py-12 bg-white/50 rounded-xl border border-dashed border-gray-300">
+                        <p className="text-gray-500 text-lg">لم تسجل في أي دورة بعد</p>
+                        <Button variant="link" onClick={() => setActiveTab('browse')}>تصفح الدورات</Button>
                     </div>
                 )}
             </TabsContent>

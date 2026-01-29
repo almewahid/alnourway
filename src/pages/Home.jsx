@@ -91,21 +91,21 @@ export default function Home() {
 
   const features = [
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%81_%D8%B9%D9%84%D9%89_%D8%A7%D9%84%D8%A7%D8%B3%D9%84%D8%A7%D9%85_z4rxqo.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612733/learn_islam_w24ajs.png",
       title: t('learn_islam'),
       description: t('learn_islam_desc'),
       color: "from-teal-100 to-teal-200",
       link: createPageUrl("LearnIslam")
     },
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562068/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D8%AA%D9%88%D8%A8%D8%A9_o8ukrq.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612737/repentance_pqgrov.png",
       title: t('repentance'),
       description: t('repentance_desc'),
       color: "from-rose-100 to-rose-200",
       link: createPageUrl("Repentance")
     },
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A7%D9%84%D9%81%D8%AA%D9%88%D9%89_d9nvcw.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/fatwa_ay8xyw.png",
       title: t('fatwa'),
       description: t('fatwa_desc'),
       color: "from-emerald-100 to-emerald-200",
@@ -114,7 +114,7 @@ export default function Home() {
       countLabel: t('contact_scholar')
     },
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%82%D8%B3%D9%85_%D8%A5%D8%B5%D9%84%D8%A7%D8%AD_%D8%B0%D8%A7%D8%AA_%D8%A7%D9%84%D8%A8%D9%8A%D9%86_tjvu5j.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612738/reconciliation_yq58qe.png",
       title: t('reconciliation'),
       description: t('reconciliation_desc'),
       color: "from-cyan-100 to-cyan-200",
@@ -130,7 +130,7 @@ export default function Home() {
       color: "from-teal-100 to-teal-200",
       iconColor: "text-teal-700",
       link: createPageUrl("QuranCourses"),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%81%D8%B1%D8%B9%D9%8A_%D8%AF%D9%88%D8%B1%D8%A7%D8%AA_%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86_it1oto.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/courses_kuv6yk.png",
       show: true,
       onlineCount: onlineCount.teachers,
       countLabel: t('contact_teacher')
@@ -142,7 +142,7 @@ export default function Home() {
       color: "from-amber-100 to-amber-200",
       iconColor: "text-amber-700",
       link: createPageUrl("Azkar"),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562069/%D9%81%D8%B1%D8%B9%D9%8A_%D8%A3%D8%B0%D9%83%D8%A7%D8%B1_a1bjup.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/azkar_xfmtkq.png",
       show: appSettings.features.azkar
     },
     {
@@ -152,7 +152,7 @@ export default function Home() {
       color: "from-indigo-100 to-indigo-200",
       iconColor: "text-indigo-700",
       link: createPageUrl("Library"),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1765562068/%D9%81%D8%B1%D8%B9%D9%8A_%D8%A7%D9%84%D9%85%D9%83%D8%AA%D8%A8%D8%A9_kmf8ph.png",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612734/library_qeqidv.png",
       show: appSettings.features.library
     }
   ];
@@ -209,11 +209,11 @@ export default function Home() {
                   </div>
                 )}
                 {/* To change image size, modify aspect ratio below (e.g. aspect-[16/9] for smaller height) */}
-                <div className="w-full aspect-[7/8] overflow-hidden">
+                <div className="w-full aspect-[7/8] overflow-hidden flex items-center justify-center">
                   <img 
                     src={feature.image} 
                     alt={feature.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    className="w-[90%] h-[90%] object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                 </div>
                 <CardContent className="p-4 md:p-6 text-center flex-1 flex flex-col justify-center">
@@ -237,9 +237,9 @@ export default function Home() {
                   </div>
                 )}
                 {/* To change image size, modify aspect ratio below */}
-                <div className="w-full aspect-[8/8] overflow-hidden">
+                <div className="w-full aspect-[8/8] overflow-hidden flex items-center justify-center">
                     {feature.image ? (
-                      <img src={feature.image} alt={feature.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={feature.image} alt={feature.title} className="w-[90%] h-[90%] object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-white/30">
                         <feature.icon className={`w-16 h-16 ${feature.iconColor}`} />

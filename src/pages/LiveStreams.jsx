@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +12,6 @@ import { createPageUrl } from "@/utils";
 import CreateStreamModal from "@/components/CreateStreamModal";
 
 export default function LiveStreams() {
-  const { t } = useLanguage();
   const [filter, setFilter] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [user, setUser] = useState(null);
@@ -44,35 +42,41 @@ export default function LiveStreams() {
 
   const getCategoryLabel = (category) => {
     const labels = {
-      lecture: t("محاضرة"),
-      quran_class: t("درس قرآن"),
-      qa_session: t("جلسة أسئلة وأجوبة"),
-      special_event: t("حدث خاص")
+      lecture: "محاضرة",
+      quran_class: "درس قرآن",
+      qa_session: "جلسة أسئلة وأجوبة",
+      special_event: "حدث خاص"
     };
     return labels[category] || category;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-purple-800 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-6 md:p-12 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-slate-800/80 dark:to-slate-700/80 px-6 py-3 rounded-full mb-6 transition-colors duration-300">
-            <Radio className="w-5 h-5 text-purple-600 dark:text-purple-400 transition-colors duration-300" />
-            <span className="text-purple-800 dark:text-purple-300 font-semibold transition-colors duration-300">{t("البث المباشر")}</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-3 rounded-full mb-6">
+            <Radio className="w-5 h-5 text-purple-600" />
+            <span className="text-purple-800 font-semibold">البث المباشر</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">{t("المحاضرات والدروس المباشرة")}</h1>
-          <p className="text-xl text-white/90 dark:text-gray-300 mb-6 transition-colors duration-300">{t("شاهد البث المباشر للمحاضرات والدروس الإسلامية")}</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+            المحاضرات والدروس المباشرة
+          </h1>
+          <p className="text-xl text-gray-600 mb-6">
+            شاهد البث المباشر للمحاضرات والدروس الإسلامية
+          </p>
           
           <Button 
             onClick={() => setShowCreateModal(true)}
             className="bg-purple-600 hover:bg-purple-700 text-white gap-2"
           >
-            <Video className="w-4 h-4" />{t("جدولة بث جديد")}</Button>
+            <Video className="w-4 h-4" />
+            جدولة بث جديد
+          </Button>
         </motion.div>
 
         {/* إحصائيات سريعة */}
@@ -81,7 +85,7 @@ export default function LiveStreams() {
             <CardContent className="p-6 text-center">
               <Radio className="w-12 h-12 mx-auto mb-3 animate-pulse" />
               <div className="text-3xl font-bold mb-1">{liveStreams.length}</div>
-              <div className="text-red-100">{t("على الهواء الآن")}</div>
+              <div className="text-red-100">على الهواء الآن</div>
             </CardContent>
           </Card>
 
@@ -89,7 +93,7 @@ export default function LiveStreams() {
             <CardContent className="p-6 text-center">
               <Calendar className="w-12 h-12 mx-auto mb-3" />
               <div className="text-3xl font-bold mb-1">{upcomingStreams.length}</div>
-              <div className="text-blue-100">{t("قادمة")}</div>
+              <div className="text-blue-100">قادمة</div>
             </CardContent>
           </Card>
 
@@ -97,7 +101,7 @@ export default function LiveStreams() {
             <CardContent className="p-6 text-center">
               <Video className="w-12 h-12 mx-auto mb-3" />
               <div className="text-3xl font-bold mb-1">{pastStreams.length}</div>
-              <div className="text-purple-100">{t("التسجيلات")}</div>
+              <div className="text-purple-100">التسجيلات</div>
             </CardContent>
           </Card>
         </div>
@@ -105,12 +109,14 @@ export default function LiveStreams() {
         {/* الفلاتر */}
         <div className="flex justify-center mb-8">
           <Tabs value={filter} onValueChange={setFilter}>
-            <TabsList className="bg-white dark:bg-slate-800/80 shadow-lg transition-colors duration-300">
-              <TabsTrigger value="all">{t("الكل")}</TabsTrigger>
+            <TabsList className="bg-white shadow-lg">
+              <TabsTrigger value="all">الكل</TabsTrigger>
               <TabsTrigger value="live" className="text-red-600">
-                <Radio className="w-4 h-4 ml-1 animate-pulse" />{t("مباشر")}</TabsTrigger>
-              <TabsTrigger value="upcoming">{t("قادم")}</TabsTrigger>
-              <TabsTrigger value="past">{t("التسجيلات")}</TabsTrigger>
+                <Radio className="w-4 h-4 ml-1 animate-pulse" />
+                مباشر
+              </TabsTrigger>
+              <TabsTrigger value="upcoming">قادم</TabsTrigger>
+              <TabsTrigger value="past">التسجيلات</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -129,16 +135,18 @@ export default function LiveStreams() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="border-0 shadow-2xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-slate-800 dark:to-slate-700 h-full rounded-3xl overflow-hidden hover:-translate-y-1 cursor-pointer">
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full">
                   {stream.is_live && (
                     <div className="absolute top-4 right-4 z-10">
                       <Badge className="bg-red-600 text-white animate-pulse">
-                        <Radio className="w-3 h-3 ml-1" />{t("مباشر الآن")}</Badge>
+                        <Radio className="w-3 h-3 ml-1" />
+                        مباشر الآن
+                      </Badge>
                     </div>
                   )}
 
                   {stream.thumbnail_url ? (
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-48 overflow-hidden rounded-t-xl">
                       <img
                         src={stream.thumbnail_url}
                         alt={stream.title}
@@ -147,31 +155,31 @@ export default function LiveStreams() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     </div>
                   ) : (
-                    <div className="h-48 bg-gradient-to-br from-purple-400 to-purple-600 dark:from-purple-600 dark:to-purple-800 flex items-center justify-center">
+                    <div className="h-48 bg-gradient-to-br from-purple-400 to-purple-600 rounded-t-xl flex items-center justify-center">
                       <Video className="w-16 h-16 text-white/80" />
                     </div>
                   )}
 
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">
-                      <Badge variant="outline" className="dark:border-slate-600 dark:text-slate-300">{getCategoryLabel(stream.category)}</Badge>
+                      <Badge variant="outline">{getCategoryLabel(stream.category)}</Badge>
                       {stream.viewers_count > 0 && (
-                        <div className="flex items-center gap-1 text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
+                        <div className="flex items-center gap-1 text-gray-500 text-sm">
                           <Users className="w-4 h-4" />
                           {stream.viewers_count}
                         </div>
                       )}
                     </div>
-                    <CardTitle className="text-xl leading-snug text-gray-800 dark:text-white transition-colors duration-300">{stream.title}</CardTitle>
-                    <p className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{stream.speaker}</p>
+                    <CardTitle className="text-xl leading-snug">{stream.title}</CardTitle>
+                    <p className="text-gray-600">{stream.speaker}</p>
                   </CardHeader>
 
                   <CardContent className="space-y-4">
                     {stream.description && (
-                      <p className="text-gray-700 dark:text-gray-300 text-sm line-clamp-2 transition-colors duration-300">{stream.description}</p>
+                      <p className="text-gray-600 text-sm line-clamp-2">{stream.description}</p>
                     )}
 
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
+                    <div className="flex items-center gap-2 text-gray-500 text-sm">
                       <Clock className="w-4 h-4" />
                       {new Date(stream.scheduled_time).toLocaleString('ar-SA', {
                         dateStyle: 'medium',
@@ -186,7 +194,7 @@ export default function LiveStreams() {
                       >
                         <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
                           <Play className="w-5 h-5 ml-2" />
-                          {stream.is_live ? t("انضم للبث المباشر") : stream.recording_url ? t("شاهد التسجيل") : t("تفاصيل البث")}
+                          {stream.is_live ? "انضم للبث المباشر" : stream.recording_url ? "شاهد التسجيل" : "تفاصيل البث"}
                         </Button>
                       </Link>
                     )}
@@ -196,15 +204,17 @@ export default function LiveStreams() {
             ))}
           </div>
         ) : (
-          <Card className="border-0 shadow-2xl bg-gradient-to-br from-purple-100 to-purple-200 dark:from-slate-800 dark:to-slate-700 backdrop-blur-sm rounded-3xl overflow-hidden transition-colors duration-300">
+          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
-              <Video className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 transition-colors duration-300">{t("لا توجد بثوث حالياً")}</h3>
-              <p className="text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                {filter === "live" && t("لا يوجد بث مباشر الآن")}
-                {filter === "upcoming" && t("لا توجد بثوث قادمة")}
-                {filter === "past" && t("لا توجد تسجيلات متاحة")}
-                {filter === "all" && t("لا توجد بثوث متاحة")}
+              <Video className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                لا توجد بثوث حالياً
+              </h3>
+              <p className="text-gray-600">
+                {filter === "live" && "لا يوجد بث مباشر الآن"}
+                {filter === "upcoming" && "لا توجد بثوث قادمة"}
+                {filter === "past" && "لا توجد تسجيلات متاحة"}
+                {filter === "all" && "لا توجد بثوث متاحة"}
               </p>
             </CardContent>
           </Card>

@@ -1,426 +1,448 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
-import { useAuth } from "@/lib/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { BookOpen, Send, Filter, Search, Calendar, User, CheckCircle, Clock, Sparkles } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import ProtectedFeature from "@/components/ProtectedFeature";
+import { Search, MessageSquare, Users, BookOpen, Sparkles, ArrowRight, Heart } from "lucide-react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import FatwaCard from "@/components/FatwaCard";
+import FatwaRequestModal from "@/components/FatwaRequestModal";
+import ContactModal from "@/components/ContactModal";
+import AIFatwaAssistant from "@/components/AIFatwaAssistant";
+import RatingWidget from "@/components/RatingWidget";
+import CommentsSection from "@/components/CommentsSection";
+import ShareButtons from "@/components/ShareButtons";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Fatwa() {
   const { t } = useLanguage();
-  const { user } = useAuth();
-  const { toast } = useToast();
-  
-  // States
-  const [fatwas, setFatwas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  
-  // Form states
-  const [title, setTitle] = useState("");
-  const [question, setQuestion] = useState("");
-  const [category, setCategory] = useState("");
-  
-  // Filter states
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [muftiQuery, setMuftiQuery] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [selectedFatwa, setSelectedFatwa] = useState(null);
+  const [onlineMuftis, setOnlineMuftis] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [user, setUser] = useState(null);
+  const [userFavorites, setUserFavorites] = useState([]);
 
-  // Categories configuration
-  const categories = [
-    { value: "all", label: t("الكل"), icon: BookOpen },
-    { value: "عبادات", label: t("عبادات"), icon: Sparkles },
-    { value: "معاملات", label: t("معاملات"), icon: CheckCircle },
-    { value: "أحوال شخصية", label: t("أحوال شخصية"), icon: User },
-    { value: "عقيدة", label: t("عقيدة"), icon: BookOpen },
-    { value: "أخلاق", label: t("أخلاق و سلوك"), icon: CheckCircle },
-  ];
-
-  // Fetch fatwas on mount
   useEffect(() => {
-    fetchFatwas();
+    supabase.auth.getUser().then(({ data }) => {
+       if (data.user) {
+          setUser(data.user);
+          fetchFavorites(data.user.email);
+       }
+    });
   }, []);
 
-  // Fetch fatwas from database
-  const fetchFatwas = async () => {
+  const fetchFavorites = async (email) => {
+     const { data } = await supabase.from('Favorite').select('item_id').eq('user_email', email).eq('item_type', 'fatwa');
+     if (data) setUserFavorites(data.map(f => f.item_id));
+  };
+
+  const toggleFavorite = async (fatwa) => {
+     if (!user) {
+        alert("يرجى تسجيل الدخول");
+        return;
+     }
+     if (userFavorites.includes(fatwa.id)) {
+        // Remove
+        await supabase.from('Favorite').delete().eq('user_email', user.email).eq('item_id', fatwa.id);
+        setUserFavorites(prev => prev.filter(id => id !== fatwa.id));
+     } else {
+        // Add
+        await supabase.from('Favorite').insert({
+           user_email: user.email,
+           item_type: 'fatwa',
+           item_id: fatwa.id,
+           item_title: fatwa.question,
+           item_data: fatwa
+        });
+        setUserFavorites(prev => [...prev, fatwa.id]);
+     }
+  };
+
+  const categories = [
+    { value: "all", label: "الكل" },
+    { value: "عبادات", label: "عبادات" },
+    { value: "معاملات", label: "معاملات" },
+    { value: "عقيدة", label: "عقيدة" },
+    { value: "أخلاق", label: "أخلاق" },
+    { value: "أسرة", label: "أسرة" },
+  ];
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fatwaId = urlParams.get('id');
+    if (fatwaId && fatwas) {
+      const fatwa = fatwas.find(f => f.id === fatwaId);
+      if (fatwa) setSelectedFatwa(fatwa);
+    }
+    loadOnlineMuftis();
+  }, []);
+
+  const loadOnlineMuftis = async () => {
     try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('Fatwa')
-        .select('*')
-        .eq('status', 'published')
-        .order('created_date', { ascending: false });
-      
-      if (error) throw error;
-      setFatwas(data || []);
+      const { count } = await supabase.from('Scholar').select('*', { count: 'exact' }).eq('type', 'mufti').eq('is_available', true);
+      setOnlineMuftis(count || 0);
     } catch (error) {
-      console.error("Error fetching fatwas:", error);
-      console.error("Error details:", error.message, error.details, error.hint);
-      toast({
-        title: "خطأ",
-        description: `حدث خطأ في تحميل الفتاوى: ${error.message || 'Unknown error'}`,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      console.log('Error loading muftis:', error);
     }
   };
 
-  // Handle form submission
-  const handleSubmitQuestion = async (e) => {
-    e.preventDefault();
-    
-    if (!title.trim() || !question.trim()) {
-      toast({
-        title: "تنبيه",
-        description: "الرجاء ملء جميع الحقول المطلوبة",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const { error } = await supabase
-        .from('FatwaRequest')
-        .insert([{
-          name: user?.full_name || user?.email || 'مستخدم',
-          email: user?.email,
-          question: `${title.trim()}\n\n${question.trim()}`,
-          category: category || null,
-          status: 'pending',
-          created_by: user?.id,
-          created_date: new Date().toISOString(),
-        }]);
-
+  const { data: fatwas, isLoading } = useQuery({
+    queryKey: ['fatwas'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('Fatwa').select('*').order('created_date', { ascending: false });
       if (error) throw error;
-
-      toast({
-        title: "تم الإرسال بنجاح ✓",
-        description: "تم إرسال سؤالك بنجاح، سيتم الرد عليه من قبل علمائنا قريباً إن شاء الله",
-      });
-
-      // Reset form
-      setTitle("");
-      setQuestion("");
-      setCategory("");
-    } catch (error) {
-      console.error("Error submitting question:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ في إرسال السؤال، الرجاء المحاولة مرة أخرى",
-        variant: "destructive",
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Filter fatwas based on search and category
-  const filteredFatwas = fatwas.filter(fatwa => {
-    const matchesSearch = 
-      fatwa.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fatwa.question?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fatwa.answer?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = 
-      selectedCategory === "all" || fatwa.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
+      return data;
+    },
+    initialData: [],
   });
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-12 px-4 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* ==================== HEADER SECTION ==================== */}
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <div className="bg-gradient-to-br from-emerald-100 to-blue-100 dark:from-emerald-900 dark:to-blue-900 p-6 rounded-full shadow-lg">
-              <BookOpen className="w-16 h-16 text-emerald-600 dark:text-emerald-400" />
-            </div>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent">
-            الفتاوى الشرعية
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            اطرح سؤالك الشرعي واحصل على إجابة موثوقة من علمائنا المتخصصين
-          </p>
-        </div>
+  const filteredFatwas = fatwas.filter(fatwa => {
+    const lowerQuery = searchQuery.toLowerCase();
+    const matchesSearch = fatwa.question?.toLowerCase().includes(lowerQuery) || fatwa.answer?.toLowerCase().includes(lowerQuery);
+    const matchesMufti = !muftiQuery || fatwa.mufti?.toLowerCase().includes(muftiQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || fatwa.category === selectedCategory;
+    
+    let matchesDate = true;
+    if (dateFrom && fatwa.created_date) {
+       matchesDate = matchesDate && new Date(fatwa.created_date) >= new Date(dateFrom);
+    }
+    if (dateTo && fatwa.created_date) {
+       matchesDate = matchesDate && new Date(fatwa.created_date) <= new Date(dateTo);
+    }
+    
+    return matchesSearch && matchesMufti && matchesCategory && matchesDate;
+  });
 
-        {/* ==================== ASK QUESTION FORM (PROTECTED) ==================== */}
-        <ProtectedFeature featureName={t("إرسال الأسئلة الشرعية")}>
-          <Card className="shadow-2xl border-2 border-emerald-200 dark:border-emerald-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-900/30 dark:to-blue-900/30">
-              <CardTitle className="flex items-center gap-3 text-2xl text-emerald-700 dark:text-emerald-400">
-                <div className="bg-emerald-100 dark:bg-emerald-900 p-2 rounded-lg">
-                  <Send className="w-6 h-6" />
-                </div>
-                اطرح سؤالك الشرعي
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                سيقوم علماؤنا بالإجابة على سؤالك في أقرب وقت ممكن
-              </CardDescription>
+  const quickActions = [
+    {
+      icon: Search,
+      title: t('search_fatwa'),
+      description: t('search_fatwa_desc'),
+      color: "from-blue-100 to-blue-200",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/ask_your_question_viityb.png",
+      action: () => document.getElementById('search-input')?.focus()
+    },
+    {
+      icon: MessageSquare,
+      title: t('ask_question'),
+      description: t('ask_question_desc'),
+      color: "from-emerald-100 to-emerald-200",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/ask_your_question_viityb.png",
+      action: () => setShowRequestModal(true)
+    },
+    {
+      icon: Users,
+      title: t('contact_scholar'),
+      description: "تحدث مباشرة مع عالم",
+      color: "from-purple-100 to-purple-200",
+      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/Contact_an_Islamic_mufti_glg2c4.png",
+      action: () => setShowContactModal(true),
+      onlineCount: onlineMuftis,
+      countLabel: t('contact_scholar')
+    }
+  ];
+
+  if (selectedFatwa) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-800 p-4 md:p-6">
+        <div className="max-w-4xl mx-auto">
+          <Button
+            onClick={() => setSelectedFatwa(null)}
+            variant="ghost"
+            className="text-white hover:bg-white/20 mb-6"
+          >
+            <ArrowRight className="w-5 h-5 ml-2" />
+            {t('back_to_fatwas')}
+          </Button>
+
+          <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl mb-6">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-t-3xl p-6 md:p-8">
+              <CardTitle className="text-xl md:text-2xl">{selectedFatwa.question}</CardTitle>
             </CardHeader>
-            
-            <CardContent className="pt-6">
-              <form onSubmit={handleSubmitQuestion} className="space-y-6">
-                
-                {/* Title Input */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                    عنوان السؤال <span className="text-red-500">*</span>
-                  </label>
-                  <Input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="مثال: ما حكم صلاة الجماعة في المسجد؟"
-                    className="text-lg py-6 border-2 focus:border-emerald-500 dark:focus:border-emerald-400"
-                    required
-                  />
-                </div>
-
-                {/* Category Select */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                    الفئة (اختياري)
-                  </label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-3 text-lg border-2 rounded-lg focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-400 bg-white dark:bg-slate-900 text-gray-900 dark:text-white transition-colors"
+            <CardContent className="p-6 md:p-8 space-y-6">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-emerald-600" />
+                    {t('answer')}:
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-emerald-600 hover:bg-emerald-50"
+                    onClick={async () => {
+                        try {
+                            const { data, error } = await supabase.functions.invoke('aiAssistant', {
+                                body: { action: 'summarize', text: selectedFatwa.answer }
+                            });
+                            if (error) throw error;
+                            alert("ملخص الجواب:\n" + (data.summary || "تعذر التلخيص"));
+                        } catch (e) {
+                            alert("حدث خطأ أثناء التلخيص");
+                        }
+                    }}
                   >
-                    <option value="">{t("اختر الفئة")}</option>
-                    <option value="عبادات">{t("عبادات")}</option>
-                    <option value="معاملات">{t("معاملات")}</option>
-                    <option value="أحوال شخصية">{t("أحوال شخصية")}</option>
-                    <option value="عقيدة">{t("عقيدة")}</option>
-                    <option value="أخلاق">{t("أخلاق و سلوك")}</option>
-                  </select>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    {t('ai_summarize')}
+                  </Button>
                 </div>
-
-                {/* Question Textarea */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                    السؤال التفصيلي <span className="text-red-500">*</span>
-                  </label>
-                  <Textarea
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="اكتب سؤالك بالتفصيل مع ذكر الملابسات إن وجدت..."
-                    rows={8}
-                    className="text-lg border-2 focus:border-emerald-500 dark:focus:border-emerald-400 leading-relaxed"
-                    required
-                  />
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    كلما كان سؤالك أكثر تفصيلاً، كانت الإجابة أدق وأوضح
+                <div className="bg-emerald-50/50 p-4 md:p-6 rounded-2xl border border-emerald-100">
+                  <p className="text-gray-700 leading-loose text-lg whitespace-pre-wrap">
+                    {selectedFatwa.answer}
                   </p>
                 </div>
+              </div>
 
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white text-lg py-7 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  {submitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      جاري الإرسال...
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center gap-2">
-                      <Send className="w-5 h-5" />
-                      إرسال السؤال
-                    </span>
-                  )}
-                </Button>
-              </form>
+              {selectedFatwa.mufti && (
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <Users className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">{t('answered_by')}</p>
+                    <p className="font-semibold text-gray-800">{selectedFatwa.mufti}</p>
+                  </div>
+                  <div className="mr-auto text-sm text-gray-400">
+                    {new Date(selectedFatwa.created_date).toLocaleDateString('ar-SA')}
+                  </div>
+                </div>
+              )}
+
+              {selectedFatwa.reference && (
+                <div className="flex items-start gap-2 text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+                  <BookOpen className="w-4 h-4 mt-1" />
+                  <p>
+                    <span className="font-semibold">{t('reference')}:</span> {selectedFatwa.reference}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
-        </ProtectedFeature>
 
-        {/* ==================== SEARCH AND FILTER SECTION ==================== */}
-        <Card className="shadow-lg">
-          <CardContent className="pt-6 space-y-4">
-            
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="absolute right-4 top-4 text-gray-400 w-5 h-5" />
-              <Input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="ابحث في الفتاوى المنشورة..."
-                className="pr-12 text-lg py-7 border-2"
-              />
-            </div>
-            
-            {/* Category Filter */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                <Filter className="w-4 h-4" />
-                تصفية حسب الفئة:
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {categories.map((cat) => {
-                  const Icon = cat.icon;
-                  return (
-                    <Badge
-                      key={cat.value}
-                      variant={selectedCategory === cat.value ? "default" : "outline"}
-                      className={`cursor-pointer px-4 py-2 text-sm transition-all duration-200 ${
-                        selectedCategory === cat.value
-                          ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-md"
-                          : "hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                      }`}
-                      onClick={() => setSelectedCategory(cat.value)}
-                    >
-                      <Icon className="w-4 h-4 ml-1" />
-                      {cat.label}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* ==================== FATWAS LIST SECTION ==================== */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              الفتاوى المنشورة ({filteredFatwas.length})
-            </h2>
+          <div className="flex gap-4 mb-8">
+             <Button
+                className="flex-1 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+                onClick={async () => {
+                   const { data: { user } } = await supabase.auth.getUser();
+                   if(!user) { alert('يرجى تسجيل الدخول للحفظ'); return; }
+                   const { error } = await supabase.from('Favorite').insert({
+                      user_email: user.email,
+                      item_type: 'fatwa',
+                      item_id: selectedFatwa.id,
+                      item_title: selectedFatwa.question,
+                      item_data: selectedFatwa
+                   });
+                   if(error) alert('خطأ في الحفظ');
+                   else alert('تم الحفظ في المفضلة');
+                }}
+             >
+                <Heart className="w-4 h-4 mr-2" />
+                حفظ في المفضلة
+             </Button>
+             <ShareButtons title={selectedFatwa.question} url={window.location.href} />
           </div>
 
-          {loading ? (
-            // Loading State
-            <div className="flex justify-center py-20">
-              <div className="text-center space-y-4">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-emerald-600 mx-auto"></div>
-                <p className="text-gray-600 dark:text-gray-400">جاري تحميل الفتاوى...</p>
-              </div>
-            </div>
-          ) : filteredFatwas.length === 0 ? (
-            // Empty State
-            <Card className="p-12 text-center shadow-lg">
-              <BookOpen className="w-20 h-20 mx-auto text-gray-300 dark:text-gray-600 mb-6" />
-              <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                لا توجد فتاوى
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                {searchTerm || selectedCategory !== "all"
-                  ? "لا توجد نتائج مطابقة للبحث"
-                  : "لا توجد فتاوى منشورة حالياً"}
-              </p>
-            </Card>
-          ) : (
-            // Fatwas Grid
-            <div className="grid gap-6">
-              {filteredFatwas.map((fatwa) => (
-                <Card 
-                  key={fatwa.id} 
-                  className="hover:shadow-2xl transition-all duration-300 border-2 hover:border-emerald-200 dark:hover:border-emerald-800"
-                >
-                  {/* Card Header */}
-                  <CardHeader className="bg-gradient-to-r from-gray-50 to-emerald-50 dark:from-slate-800 dark:to-emerald-900/20">
-                    <div className="flex justify-between items-start gap-4">
-                      <div className="flex-1 space-y-3">
-                        <CardTitle className="text-xl md:text-2xl text-gray-900 dark:text-white leading-relaxed">
-                          {fatwa.question.split('\n')[0].substring(0, 100)}{fatwa.question.length > 100 ? '...' : ''}
-                        </CardTitle>
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
-                          <span className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4" />
-                            {new Date(fatwa.created_date).toLocaleDateString('ar-SA', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </span>
-                          {fatwa.mufti && (
-                            <span className="flex items-center gap-2">
-                              <User className="w-4 h-4" />
-                              {fatwa.mufti}
-                            </span>
-                          )}
-                          {fatwa.answer && (
-                            <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-                              <CheckCircle className="w-3 h-3 ml-1" />
-                              تمت الإجابة
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      {fatwa.category && (
-                        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 px-4 py-2">
-                          {fatwa.category}
-                        </Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  
-                  {/* Card Content */}
-                  <CardContent className="pt-6 space-y-6">
-                    
-                    {/* Question Section */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded">
-                          <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <h4 className="font-bold text-lg text-gray-800 dark:text-gray-200">
-                          السؤال:
-                        </h4>
-                      </div>
-                      <p className="text-gray-700 dark:text-gray-300 leading-loose text-lg pr-10">
-                        {fatwa.question}
-                      </p>
-                    </div>
-                    
-                    {/* Answer Section (if exists) */}
-                    {fatwa.answer && (
-                      <div className="bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-900/20 dark:to-blue-900/20 p-6 rounded-xl border-r-4 border-emerald-500 dark:border-emerald-400 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <div className="bg-emerald-100 dark:bg-emerald-900 p-2 rounded">
-                            <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                          </div>
-                          <h4 className="font-bold text-lg text-emerald-800 dark:text-emerald-300">
-                            الجواب:
-                          </h4>
-                        </div>
-                        <p className="text-gray-800 dark:text-gray-200 leading-loose text-lg pr-10">
-                          {fatwa.answer}
-                        </p>
-                        {fatwa.reference && (
-                          <div className="pt-3 border-t border-emerald-200 dark:border-emerald-700">
-                            <p className="text-sm text-emerald-700 dark:text-emerald-400">
-                              <span className="font-semibold">المرجع:</span> {fatwa.reference}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
+          <RatingWidget contentType="fatwa" contentId={selectedFatwa.id} />
+          
+          <div className="mt-8">
+            <CommentsSection contentType="fatwa" contentId={selectedFatwa.id} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-                    {/* Pending Answer Badge */}
-                    {!fatwa.answer && (
-                      <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                        <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400">
-                          <Clock className="w-5 h-5" />
-                          <span className="font-semibold">في انتظار الإجابة من العلماء</span>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12 pt-8"
+        >
+          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-6">
+            <MessageSquare className="w-4 h-4" />
+            {t('fatwa')}
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            {t('fatwa_title')}
+          </h1>
+          <p className="text-xl text-emerald-800 font-amiri mb-4">
+            "فَاسْأَلُوا أَهْلَ الذِّكْرِ إِن كُنتُمْ لَا تَعْلَمُونَ"
+          </p>
+          <div className="text-sm text-emerald-600 font-medium">
+            سورة النحل - آية 43
+          </div>
+          <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+            {t('fatwa_subtitle')}
+          </p>
+        </motion.div>
+
+        <div className="max-w-3xl mx-auto mb-12 relative z-10">
+          <div className="relative">
+            <Input
+              id="search-input"
+              placeholder={t('search_fatwa_placeholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pr-12 py-6 text-lg bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full border-0 shadow-lg dark:text-white dark:placeholder-gray-400"
+            />
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-emerald-500" />
+            
+            <div className="absolute left-2 top-1/2 -translate-y-1/2">
+               <Button 
+                 size="sm" 
+                 variant="ghost" 
+                 onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                 className="bg-white/10 text-white hover:bg-white/20 border-white/20"
+               >
+                 {showAdvancedSearch ? t('advanced_search') : t('advanced_search')}
+               </Button>
+               <Button
+                  size="sm"
+                  variant="ghost"
+                  className="mr-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-full"
+                  onClick={() => {
+                     // AI Summary for all fatwas context (Demo) - In real app, maybe per fatwa
+                     alert("خاصية التلخيص متاحة عند عرض فتوى محددة.");
+                  }}
+               >
+                  <Sparkles className="w-4 h-4" />
+                  {t('summarize_fatwas')}
+               </Button>
+               <Link to={createPageUrl("Favorites")}>
+                  <Button size="sm" variant="ghost" className="mr-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-full">
+                     <Heart className="w-4 h-4" />
+                     {t('favorite_fatwas')}
+                  </Button>
+               </Link>
+            </div>
+          </div>
+
+          {showAdvancedSearch && (
+             <div className="mt-4 p-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                   <label className="text-sm font-medium text-gray-700 mb-1 block">{t('mufti_name')}</label>
+                   <Input 
+                     value={muftiQuery} 
+                     onChange={(e) => setMuftiQuery(e.target.value)}
+                     placeholder={t('mufti_name')}
+                     className="bg-white/80 border-0"
+                   />
+                </div>
+                <div>
+                   <label className="text-sm font-medium text-gray-700 mb-1 block">{t('date_from')}</label>
+                   <Input 
+                     type="date"
+                     value={dateFrom} 
+                     onChange={(e) => setDateFrom(e.target.value)}
+                     className="bg-white/80 border-0"
+                   />
+                </div>
+                <div>
+                   <label className="text-sm font-medium text-gray-700 mb-1 block">{t('date_to')}</label>
+                   <Input 
+                     type="date"
+                     value={dateTo} 
+                     onChange={(e) => setDateTo(e.target.value)}
+                     className="bg-white/80 border-0"
+                   />
+                </div>
+             </div>
+          )}
+        </div>
+
+        <div className="flex justify-center gap-3 mb-12 flex-wrap">
+          {categories.map(cat => (
+            <button
+              key={cat.value}
+              onClick={() => setSelectedCategory(cat.value)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                selectedCategory === cat.value
+                  ? "bg-white text-emerald-700 shadow-lg"
+                  : "bg-emerald-800/50 text-white/80 hover:bg-emerald-800"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {quickActions.map((action, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card 
+                className={`group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br ${action.color} overflow-hidden h-full cursor-pointer`}
+                onClick={action.action}
+              >
+                <CardContent className="p-6 flex items-center gap-4 relative">
+                  {action.onlineCount > 0 && (
+                    <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-emerald-600 flex items-center gap-1 shadow-sm animate-pulse">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                      {action.onlineCount} {action.countLabel}
+                    </div>
+                  )}
+                  
+                  <div className="w-20 h-20 rounded-2xl bg-white/90 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300">
+                    <img src={action.image} alt={action.title} className="w-14 h-14 object-contain" />
+                  </div>
+                  
+                  <div className="flex-1 text-right">
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">{action.title}</h3>
+                    <p className="text-sm text-gray-700">{action.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {isLoading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="animate-spin w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-gray-500">جاري تحميل الفتاوى...</p>
+            </div>
+          ) : filteredFatwas.length > 0 ? (
+            filteredFatwas.map((fatwa, index) => (
+              <FatwaCard 
+                key={fatwa.id} 
+                fatwa={fatwa} 
+                onClick={() => setSelectedFatwa(fatwa)}
+                isFavorited={userFavorites.includes(fatwa.id)}
+                onToggleFavorite={() => toggleFavorite(fatwa)}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12 bg-white/50 rounded-3xl border border-dashed border-gray-300">
+              <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 text-lg">لا توجد نتائج</p>
+              <p className="text-sm text-gray-400">جرب كلمات مفتاحية مختلفة</p>
             </div>
           )}
         </div>
+
+        <FatwaRequestModal open={showRequestModal} onClose={() => setShowRequestModal(false)} />
+        <ContactModal 
+          open={showContactModal} 
+          onClose={() => setShowContactModal(false)}
+          requestType="fatwa"
+        />
       </div>
     </div>
   );
