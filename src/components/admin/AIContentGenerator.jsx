@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2, Sparkles, Save, Copy } from "lucide-react";
 import { toast } from "sonner";
-import { aiAssistant } from "@/functions/aiAssistant";
+import { invokeAIAssistant as aiAssistant } from "@/functions/aiAssistant";
 
 export default function AIContentGenerator() {
   const [activeTab, setActiveTab] = useState("lecture");
