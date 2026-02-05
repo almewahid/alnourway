@@ -4,10 +4,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageCircle, ThumbsUp, Send, User } from "lucide-react";
+import { MessageCircle, ThumbsUp, Send, User, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "./LanguageContext";
 
 export default function CommentsSection({ contentType, contentId, contentTitle }) {
+  const { language } = useLanguage();
   const [user, setUser] = useState(null);
   const [commentText, setCommentText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
@@ -128,6 +130,7 @@ export default function CommentsSection({ contentType, contentId, contentTitle }
                   allComments={comments}
                   onReply={setReplyingTo}
                   index={index}
+                  currentLanguage={language}
                 />
               ))}
             </AnimatePresence>
@@ -143,8 +146,33 @@ export default function CommentsSection({ contentType, contentId, contentTitle }
   );
 }
 
-function CommentItem({ comment, allComments, onReply, index }) {
+function CommentItem({ comment, allComments, onReply, index, currentLanguage }) {
   const replies = allComments.filter(c => c.parent_comment_id === comment.id);
+  const [translatedText, setTranslatedText] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const handleTranslate = async () => {
+    if (translatedText) {
+      setTranslatedText(null);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('aiAssistant', {
+        body: {
+          action: 'translate_content',
+          text: comment.comment_text,
+          context: { targetLang: currentLanguage }
+        }
+      });
+      if (error) throw error;
+      setTranslatedText(data.translated_text);
+    } catch (e) {
+      console.error("Translation failed", e);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
 
   return (
     <motion.div
@@ -166,10 +194,27 @@ function CommentItem({ comment, allComments, onReply, index }) {
                 {new Date(comment.created_date).toLocaleDateString('ar-SA')}
               </span>
             </div>
-            <p className="text-gray-700 leading-relaxed mb-3">{comment.comment_text}</p>
+            <p className="text-gray-700 leading-relaxed mb-3">
+              {comment.comment_text}
+              {translatedText && (
+                <span className="block mt-2 p-2 bg-blue-50 text-blue-800 text-sm rounded border border-blue-100">
+                  <Globe className="w-3 h-3 inline mr-1" /> {translatedText}
+                </span>
+              )}
+            </p>
             <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
+                size="sm"
+                className="text-gray-500 hover:text-blue-600"
+                onClick={handleTranslate}
+                disabled={isTranslating}
+              >
+                <Globe className="w-4 h-4 ml-1" />
+                {isTranslating ? "..." : translatedText ? "الأصل" : "ترجمة"}
+              </Button>
+              <Button 
+                variant="ghost"
                 size="sm" 
                 className="text-blue-600 hover:text-blue-700"
                 onClick={() => onReply(comment)}

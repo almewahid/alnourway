@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,6 @@ import ArticleCard from "@/components/ArticleCard";
 // AI Assistant removed from public page
 
 export default function Blog() {
-  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
 
@@ -45,10 +43,10 @@ export default function Blog() {
             <BookOpen className="w-5 h-5 text-blue-600" />
             <span className="text-blue-800 font-semibold">المدونة الإسلامية</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
             مقالات ومقالات مختارة
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             محتوى متجدد يثري معرفتك ويجيب عن تساؤلاتك
           </p>
         </motion.div>
@@ -59,7 +57,7 @@ export default function Blog() {
               placeholder="ابحث في المقالات..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-10 py-6 text-lg bg-white dark:bg-slate-800 shadow-sm transition-colors duration-300"
+              className="pr-10 py-6 text-lg bg-white shadow-sm"
             />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
@@ -85,10 +83,10 @@ export default function Blog() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white dark:bg-slate-800/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-slate-700 transition-colors duration-300">
+          <div className="text-center py-20 bg-white/50 rounded-3xl border-2 border-dashed border-gray-200">
             <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-400">لا توجد مقالات منشورة بعد</h3>
-            <p className="text-gray-500 dark:text-gray-400 mt-2 transition-colors duration-300">تابعنا لقراءة أحدث المقالات قريباً.</p>
+            <p className="text-gray-500 mt-2">تابعنا لقراءة أحدث المقالات قريباً.</p>
           </div>
         )}
       </div>

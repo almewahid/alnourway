@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table as TableIcon, FileText as RecordIcon, Link as LinkIcon, Activity, Zap, Code, Lock } from "lucide-react";
 import entitiesSchema from "./entitiesSchema";
 import relations from "./relations";
+import { base44 } from "@/api/base44Client";
 
 export default function DBStats() {
     const newTables = [
@@ -11,7 +12,10 @@ export default function DBStats() {
         "FatwaRequest", "ContactRequest", "JoinTeamRequest"
     ];
 
-    const tableCount = Object.keys(entitiesSchema).length;
+    // Use base44 SDK to get the actual dynamic table count
+    const dynamicTables = Object.keys(base44.entities || {});
+    const tableCount = dynamicTables.length > 0 ? dynamicTables.length : Object.keys(entitiesSchema).length;
+    
     const fkCount = JSON.stringify(relations).match(/foreign_key/g)?.length || 0;
     const dynamicRlsCount = Object.values(entitiesSchema).filter(e => e.rls).length;
 
@@ -43,11 +47,11 @@ export default function DBStats() {
 
             <Card className="border-0 shadow-lg">
                 <CardHeader className="bg-gray-50/50 border-b">
-                    <CardTitle className="text-xl">تفاصيل الجداول ({Object.keys(entitiesSchema).length})</CardTitle>
+                    <CardTitle className="text-xl">تفاصيل الجداول ({tableCount})</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {Object.keys(entitiesSchema).map((tableName) => {
+                        {(dynamicTables.length > 0 ? dynamicTables : Object.keys(entitiesSchema)).map((tableName) => {
                             const isNew = newTables.includes(tableName);
                             return (
                                 <div key={tableName} className={`flex items-center p-3 rounded-lg border ${isNew ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-100'}`}>

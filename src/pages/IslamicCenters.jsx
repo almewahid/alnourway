@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +8,6 @@ import { motion } from "framer-motion";
 import Breadcrumb from "@/components/Breadcrumb";
 
 export default function IslamicCenters() {
-  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [userLocation, setUserLocation] = useState(null);
 
@@ -79,7 +77,7 @@ export default function IslamicCenters() {
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-4">
-          <Breadcrumb items={[{ label: t("مراكز الدعوة") }]} />
+          <Breadcrumb items={[{ label: "مراكز الدعوة" }]} />
         </div>
 
         <motion.div
@@ -87,15 +85,19 @@ export default function IslamicCenters() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8 md:mb-12 pt-4"
         >
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-4 transition-colors duration-300">{t('مراكز الدعوة')}</h1>
-          <p className="text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-400 px-4 transition-colors duration-300">{t('اعثر على أقرب مركز دعوة في منطقتك')}</p>
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-gray-900 mb-3 md:mb-4 px-4">
+            مراكز الدعوة
+          </h1>
+          <p className="text-base md:text-lg lg:text-xl text-gray-600 px-4">
+            اعثر على أقرب مركز دعوة في منطقتك
+          </p>
         </motion.div>
 
-        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm mb-6 md:mb-8 transition-colors duration-300">
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mb-6 md:mb-8">
           <CardContent className="p-4 md:p-6">
             <div className="relative">
               <Input
-                placeholder={t("ابحث عن مركز حسب الاسم أو المدينة أو الدولة...")}
+                placeholder="ابحث عن مركز حسب الاسم أو المدينة أو الدولة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="text-base md:text-lg py-5 md:py-6 pr-10 md:pr-12 w-full"
@@ -108,7 +110,7 @@ export default function IslamicCenters() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-            <p className="text-gray-500 dark:text-gray-400 mt-4 transition-colors duration-300">{t('جاري التحميل...')}</p>
+            <p className="text-gray-500 mt-4">جاري التحميل...</p>
           </div>
         ) : sortedCenters.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -119,15 +121,15 @@ export default function IslamicCenters() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-slate-800/90 backdrop-blur-sm h-full transition-colors duration-300">
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white/90 backdrop-blur-sm h-full">
                   <CardContent className="p-4 md:p-6">
                     <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
                       <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center flex-shrink-0 shadow-md">
                         <MapPin className="w-5 h-5 md:w-6 md:h-6 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-1 break-words transition-colors duration-300">{center.name}</h3>
-                        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 transition-colors duration-300">{center.city}, {center.country}</p>
+                        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 break-words">{center.name}</h3>
+                        <p className="text-sm md:text-base text-gray-600">{center.city}, {center.country}</p>
                         {center.distance && (
                           <div className="flex items-center gap-1 mt-2">
                             <Navigation className="w-4 h-4 text-teal-600" />
@@ -142,7 +144,7 @@ export default function IslamicCenters() {
                     {center.address && (
                       <div className="flex items-start gap-2 mb-2 md:mb-3">
                         <MapPin className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
-                        <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm break-words transition-colors duration-300">{center.address}</p>
+                        <p className="text-gray-600 text-xs md:text-sm break-words">{center.address}</p>
                       </div>
                     )}
 
@@ -165,7 +167,7 @@ export default function IslamicCenters() {
                     )}
 
                     {center.description && (
-                      <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm mb-3 md:mb-4 leading-relaxed transition-colors duration-300">{center.description}</p>
+                      <p className="text-gray-600 text-xs md:text-sm mb-3 md:mb-4 leading-relaxed">{center.description}</p>
                     )}
 
                     {center.services && center.services.length > 0 && (
@@ -186,11 +188,13 @@ export default function IslamicCenters() {
             ))}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
             <CardContent className="p-8 md:p-12 text-center">
               <MapPin className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا توجد مراكز')}</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base transition-colors duration-300">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+                لا توجد مراكز
+              </h3>
+              <p className="text-gray-600 text-sm md:text-base">
                 {searchQuery ? "لم نجد نتائج لبحثك" : "لا توجد مراكز دعوة متاحة حالياً"}
               </p>
             </CardContent>

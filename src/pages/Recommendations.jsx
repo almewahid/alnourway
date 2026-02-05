@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import Breadcrumb from "@/components/Breadcrumb";
 import LectureCard from "@/components/LectureCard";
 
 export default function Recommendations() {
-  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState({ lectures: [], stories: [], fatwas: [], books: [] });
 
@@ -159,21 +157,21 @@ export default function Recommendations() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-800 dark:from-slate-900 dark:via-purple-950 dark:to-indigo-950 p-4 md:p-6 flex items-center justify-center transition-colors duration-300">
-        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4 transition-colors duration-300">
+      <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-800 p-4 md:p-6 flex items-center justify-center">
+        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4">
           <CardContent className="p-6 md:p-12 text-center">
             <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-6" />
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
-              {t('يرجى تسجيل الدخول')}
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+              يرجى تسجيل الدخول
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-8 text-sm md:text-base transition-colors duration-300">
-              {t('سجل الدخول للحصول على توصيات مخصصة بناءً على اهتماماتك')}
+            <p className="text-gray-600 mb-8 text-sm md:text-base">
+              سجل الدخول للحصول على توصيات مخصصة بناءً على اهتماماتك
             </p>
             <Link to="/auth">
               <button
-                className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 dark:from-purple-600 dark:to-indigo-700 dark:hover:from-purple-700 dark:hover:to-indigo-800 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold transition-all duration-300"
+                className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
               >
-                {t('تسجيل الدخول')}
+                تسجيل الدخول
               </button>
             </Link>
           </CardContent>
@@ -185,10 +183,10 @@ export default function Recommendations() {
   const isLoading = lecturesLoading || storiesLoading || fatwasLoading || booksLoading;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-800 dark:from-slate-900 dark:via-purple-950 dark:to-indigo-950 p-4 md:p-6 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-800 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-4">
-          <Breadcrumb items={[{ label: t("التوصيات المخصصة") }]} />
+          <Breadcrumb items={[{ label: "التوصيات المخصصة" }]} />
         </div>
 
         <motion.div
@@ -196,23 +194,23 @@ export default function Recommendations() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8 pt-4"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900/50 dark:to-indigo-900/50 px-4 md:px-6 py-2 md:py-3 rounded-full mb-4 md:mb-6 transition-colors duration-300">
-            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400 transition-colors duration-300" />
-            <span className="text-purple-800 dark:text-purple-200 font-semibold text-sm md:text-base transition-colors duration-300">{t('مخصص لك')}</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-indigo-100 px-4 md:px-6 py-2 md:py-3 rounded-full mb-4 md:mb-6">
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
+            <span className="text-purple-800 font-semibold text-sm md:text-base">مخصص لك</span>
           </div>
           
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 md:mb-4 px-4">
-            {t('توصيات مخصصة لك')}
+            توصيات مخصصة لك
           </h1>
-          <p className="text-base md:text-lg lg:text-xl text-white/90 dark:text-white/80 max-w-2xl mx-auto px-4 transition-colors duration-300">
-            {t('محتوى منتقى بعناية بناءً على اهتماماتك وسجل تصفحك')}
+          <p className="text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto px-4">
+            محتوى منتقى بعناية بناءً على اهتماماتك وسجل تصفحك
           </p>
         </motion.div>
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white dark:border-purple-400 mx-auto transition-colors duration-300"></div>
-            <p className="text-white dark:text-purple-200 mt-4 transition-colors duration-300">{t('جاري تحميل التوصيات...')}</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+            <p className="text-white mt-4">جاري تحميل التوصيات...</p>
           </div>
         ) : (
           <div className="space-y-8">
@@ -220,7 +218,7 @@ export default function Recommendations() {
               <div>
                 <div className="flex items-center gap-3 mb-4 px-2">
                   <Video className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                  <h2 className="text-xl md:text-2xl font-bold text-white">{t('محاضرات مقترحة')}</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-white">محاضرات مقترحة</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {recommendations.lectures.map((lecture, index) => (
@@ -242,7 +240,7 @@ export default function Recommendations() {
               <div>
                 <div className="flex items-center gap-3 mb-4 px-2">
                   <Heart className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                  <h2 className="text-xl md:text-2xl font-bold text-white">{t('قصص ملهمة')}</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-white">قصص ملهمة</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {recommendations.stories.map((story, index) => (
@@ -253,13 +251,13 @@ export default function Recommendations() {
                       transition={{ delay: index * 0.05 }}
                     >
                       <Link to={createPageUrl("Stories") + `?id=${story.id}`}>
-                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl transition-colors duration-300">
+                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl">
                           <CardContent className="p-4">
                             <div className="flex items-start gap-2 mb-2">
                               <Star className="w-4 h-4 text-purple-600 flex-shrink-0 mt-1" />
-                              <h3 className="font-bold text-gray-900 dark:text-white text-sm md:text-base line-clamp-2 transition-colors duration-300">{story.title}</h3>
+                              <h3 className="font-bold text-gray-900 text-sm md:text-base line-clamp-2">{story.title}</h3>
                             </div>
-                            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 line-clamp-3 transition-colors duration-300">{story.excerpt || story.content?.substring(0, 100)}</p>
+                            <p className="text-xs md:text-sm text-gray-600 line-clamp-3">{story.excerpt || story.content?.substring(0, 100)}</p>
                           </CardContent>
                         </Card>
                       </Link>
@@ -273,7 +271,7 @@ export default function Recommendations() {
               <div>
                 <div className="flex items-center gap-3 mb-4 px-2">
                   <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                  <h2 className="text-xl md:text-2xl font-bold text-white">{t('كتب مقترحة')}</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-white">كتب مقترحة</h2>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {recommendations.books.map((book, index) => (
@@ -284,16 +282,16 @@ export default function Recommendations() {
                       transition={{ delay: index * 0.05 }}
                     >
                       <Link to={createPageUrl("BookReader") + `?id=${book.id}`}>
-                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-800/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl transition-colors duration-300">
+                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/95 backdrop-blur-sm h-full hover:-translate-y-1 rounded-2xl">
                           <CardContent className="p-3 md:p-4">
                             {book.cover_url && (
                               <img src={book.cover_url} alt={book.title} className="w-full h-32 md:h-48 object-cover rounded-lg mb-2 md:mb-3" />
                             )}
                             <div className="flex items-start gap-2 mb-2">
                               <Star className="w-4 h-4 text-purple-600 flex-shrink-0 mt-1" />
-                              <h3 className="font-bold text-gray-900 dark:text-white text-xs md:text-sm line-clamp-2 transition-colors duration-300">{book.title}</h3>
+                              <h3 className="font-bold text-gray-900 text-xs md:text-sm line-clamp-2">{book.title}</h3>
                             </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate transition-colors duration-300">{book.author}</p>
+                            <p className="text-xs text-gray-600 truncate">{book.author}</p>
                           </CardContent>
                         </Card>
                       </Link>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,7 +14,6 @@ import RatingWidget from "@/components/RatingWidget";
 import ShareButtons from "@/components/ShareButtons";
 
 export default function BookReader() {
-  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const bookId = urlParams.get('id');
 
@@ -80,7 +78,7 @@ export default function BookReader() {
         <Card className="max-w-md">
           <CardContent className="p-12 text-center">
             <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">الكتاب غير موجود</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">الكتاب غير موجود</h2>
             <Link to={createPageUrl("Library")}>
               <Button className="mt-4">العودة إلى المكتبة</Button>
             </Link>
@@ -91,7 +89,7 @@ export default function BookReader() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6 md:p-12 transition-colors duration-300 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6 md:p-12 transition-colors duration-300">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Link to={createPageUrl("Library")}>
@@ -123,14 +121,14 @@ export default function BookReader() {
             <motion.div 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-6 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-6 transition-colors duration-300"
+                className="mb-6 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-6"
             >
-                <h3 className="text-lg font-bold text-purple-900 dark:text-purple-300 mb-3 transition-colors duration-300">ملخص الذكاء الاصطناعي</h3>
-                <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line transition-colors duration-300">{summary}</p>
+                <h3 className="text-lg font-bold text-purple-900 dark:text-purple-300 mb-3">ملخص الذكاء الاصطناعي</h3>
+                <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">{summary}</p>
             </motion.div>
         )}
 
-        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 dark:bg-gray-800/90 backdrop-blur-sm overflow-hidden transition-colors duration-300">
+        <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm overflow-hidden">
           {book.pdf_url ? (
              <div className="w-full h-[80vh]">
                 <iframe 
@@ -141,20 +139,20 @@ export default function BookReader() {
              </div>
           ) : (
              <CardContent className="p-8 md:p-12">
-               <div className="mb-8 pb-6 border-b dark:border-gray-700 transition-colors duration-300">
-                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3 transition-colors duration-300">{book.title}</h1>
-                 <p className="text-xl text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">{book.author}</p>
-                 {book.pages && <p className="text-sm text-gray-500 dark:text-gray-500 dark:text-gray-400 transition-colors duration-300">{book.pages} صفحة</p>}
+               <div className="mb-8 pb-6 border-b dark:border-gray-700">
+                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">{book.title}</h1>
+                 <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">{book.author}</p>
+                 {book.pages && <p className="text-sm text-gray-500 dark:text-gray-500">{book.pages} صفحة</p>}
                </div>
 
                <div
-                 className="prose prose-lg max-w-none leading-relaxed text-gray-800 dark:text-gray-200 transition-colors duration-300"
+                 className="prose prose-lg max-w-none leading-relaxed text-gray-800 dark:text-gray-200"
                  style={{ fontSize: `${fontSize}px`, lineHeight: '2' }}
                >
                  {book.content ? (
                    <div className="whitespace-pre-wrap">{book.content}</div>
                  ) : (
-                   <div className="text-center py-12 text-gray-500 dark:text-gray-400 transition-colors duration-300">
+                   <div className="text-center py-12 text-gray-500 dark:text-gray-400">
                      <p>المحتوى غير متاح للقراءة المباشرة</p>
                    </div>
                  )}

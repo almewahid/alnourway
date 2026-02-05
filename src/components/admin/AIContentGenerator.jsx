@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2, Sparkles, Save, Copy } from "lucide-react";
 import { toast } from "sonner";
+import { aiAssistant } from "@/functions/aiAssistant";
 
 export default function AIContentGenerator() {
   const [activeTab, setActiveTab] = useState("lecture");
@@ -19,11 +20,8 @@ export default function AIContentGenerator() {
     setLoading(true);
     setResult(null);
     try {
-      const { data, error } = await supabase.functions.invoke('aiAssistant', {
-        body: { action, text: input }
-      });
-      if (error) throw error;
-      setResult(data);
+      const response = await aiAssistant({ action, text: input });
+      setResult(response.data);
       toast.success("تم توليد المحتوى بنجاح");
     } catch (error) {
       console.error("Error generating content:", error);

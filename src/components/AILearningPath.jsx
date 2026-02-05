@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Map, BookOpen, Clock, ArrowRight, CheckCircle, PenTool, BrainCircuit, Share2, Save, Trash2 } from "lucide-react";
-import aiAssistant from "@/functions/aiAssistant";
+// Removed invalid import
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/components/api/supabaseClient";
@@ -64,13 +64,18 @@ export default function AILearningPath() {
         goal: "Learn basics of Islam"
       };
 
-      const response = await aiAssistant({
-        action: 'generate_learning_path',
-        context: context
+      const { data: responseData, error: fnError } = await supabase.functions.invoke('aiAssistant', {
+        body: {
+          action: 'generate_learning_path',
+          context: context
+        }
       });
+
+      if (fnError) throw fnError;
       
-      const data = response.data;
-      if (!data.steps) throw new Error("لم يتم استلام خطوات المسار");
+      // The function returns the result directly, so we use responseData
+      const data = responseData;
+      if (!data || !data.steps) throw new Error("لم يتم استلام خطوات المسار");
       
       // Save to DB
       const pathObject = {

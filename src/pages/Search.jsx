@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -128,15 +129,15 @@ export default function Search() {
           <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <SearchIcon className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
             {t('advanced_search')}
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
+          <p className="text-xl text-gray-600">
             {t('search_placeholder')}
           </p>
         </motion.div>
 
-        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm mb-8 transition-colors duration-300">
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mb-8">
           <CardContent className="p-6">
             <div className="relative mb-4">
               <Input
@@ -150,8 +151,8 @@ export default function Search() {
             
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-gray-500 dark:text-gray-400 transition-colors duration-300" />
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('filter_by')}:</span>
+                    <Filter className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-600">{t('filter_by')}:</span>
                 </div>
                 <Button 
                     variant="ghost" 
@@ -178,86 +179,68 @@ export default function Search() {
 
                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                  <SelectTrigger className="w-[180px]">
-                   <SelectValue placeholder={t('country')} />
+                   <SelectValue placeholder="الدولة" />
                  </SelectTrigger>
                  <SelectContent>
                    <SelectItem value="all">{t('all')}</SelectItem>
-                   <SelectItem value="Egypt">مصر</SelectItem>
-                   <SelectItem value="Saudi Arabia">السعودية</SelectItem>
-                   <SelectItem value="Jordan">الأردن</SelectItem>
-                   <SelectItem value="UAE">الإمارات</SelectItem>
+                   <SelectItem value="egypt">مصر</SelectItem>
+                   <SelectItem value="saudi">السعودية</SelectItem>
+                   <SelectItem value="jordan">الأردن</SelectItem>
+                   <SelectItem value="uae">الإمارات</SelectItem>
                  </SelectContent>
                </Select>
             </div>
 
             {showAdvanced && (
-                <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    className="mt-4 pt-4 border-t grid md:grid-cols-3 gap-4"
-                >
-                    <div className="space-y-2">
-                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 transition-colors duration-300">
-                            <Calendar className="w-4 h-4" />
-                            {t('date_from')}
-                        </label>
-                        <Input 
-                            type="date" 
-                            value={dateFrom} 
-                            onChange={(e) => setDateFrom(e.target.value)} 
-                        />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t">
+                    <div>
+                        <label className="text-sm font-medium mb-1 block text-gray-600">{t('date_from')}</label>
+                        <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 transition-colors duration-300">
-                            <Calendar className="w-4 h-4" />
-                            {t('date_to')}
-                        </label>
-                        <Input 
-                            type="date" 
-                            value={dateTo} 
-                            onChange={(e) => setDateTo(e.target.value)} 
-                        />
+                    <div>
+                        <label className="text-sm font-medium mb-1 block text-gray-600">{t('date_to')}</label>
+                        <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 transition-colors duration-300">
-                            <User className="w-4 h-4" />
-                            {t('speaker_author')}
-                        </label>
+                    <div>
+                        <label className="text-sm font-medium mb-1 block text-gray-600">{t('speaker_author')}</label>
                         <Input 
-                            placeholder={t('speaker_author')}
-                            value={speakerAuthor}
+                            placeholder="اسم الشيخ / المؤلف" 
+                            value={speakerAuthor} 
                             onChange={(e) => setSpeakerAuthor(e.target.value)} 
                         />
                     </div>
-                </motion.div>
+                </div>
             )}
           </CardContent>
         </Card>
 
-        <div className="flex justify-center mb-8">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-white dark:bg-slate-800 shadow-lg flex-wrap h-auto transition-colors duration-300">
-              <TabsTrigger value="all" className="gap-2">
-                {t('all')} ({allResults.length})
-              </TabsTrigger>
-              <TabsTrigger value="lectures" className="gap-2">
-                <Video className="w-4 h-4" />
-                {t('lectures')} ({filteredLectures.length})
-              </TabsTrigger>
-              <TabsTrigger value="stories" className="gap-2">
-                <BookOpen className="w-4 h-4" />
-                {t('stories')} ({filteredStories.length})
-              </TabsTrigger>
-              <TabsTrigger value="fatwas" className="gap-2">
-                <FileText className="w-4 h-4" />
-                {t('fatwas')} ({filteredFatwas.length})
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <div className="flex gap-4 mb-8 overflow-x-auto pb-2">
+            {[
+                { id: "all", label: t('all'), count: allResults.length, icon: Globe },
+                { id: "lectures", label: t('lectures'), count: filteredLectures.length, icon: Video },
+                { id: "stories", label: t('stories'), count: filteredStories.length, icon: BookOpen },
+                { id: "fatwas", label: t('fatwas'), count: filteredFatwas.length, icon: FileText },
+            ].map(tab => (
+                <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all whitespace-nowrap ${
+                        activeTab === tab.id 
+                        ? "bg-indigo-600 text-white shadow-lg scale-105" 
+                        : "bg-white text-gray-600 hover:bg-indigo-50"
+                    }`}
+                >
+                    <tab.icon className="w-4 h-4" />
+                    <span>{tab.label}</span>
+                    <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
+                        {tab.count}
+                    </span>
+                </button>
+            ))}
         </div>
 
         {searchQuery ? (
-          <div className="space-y-4">
+          <div className="grid gap-6">
             {displayResults.length > 0 ? (
               displayResults.map((result, index) => (
                 <motion.div
@@ -266,63 +249,51 @@ export default function Search() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+                  <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-indigo-500">
                     <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          result.type === 'lecture' ? 'bg-purple-100' :
-                          result.type === 'story' ? 'bg-amber-100' :
-                          'bg-emerald-100'
-                        }`}>
-                          {result.type === 'lecture' && <Video className="w-6 h-6 text-purple-600" />}
-                          {result.type === 'story' && <BookOpen className="w-6 h-6 text-amber-600" />}
-                          {result.type === 'fatwa' && <FileText className="w-6 h-6 text-emerald-600" />}
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                    {result.type === 'lecture' && <Video className="w-4 h-4 text-purple-500" />}
+                                    {result.type === 'story' && <BookOpen className="w-4 h-4 text-rose-500" />}
+                                    {result.type === 'fatwa' && <FileText className="w-4 h-4 text-emerald-500" />}
+                                    <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full text-gray-600">
+                                        {result.type === 'lecture' ? 'محاضرة' : 
+                                         result.type === 'story' ? 'قصة' : 'فتوى'}
+                                    </span>
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                    {result.title || result.question}
+                                </h3>
+                                <p className="text-gray-600 line-clamp-2">
+                                    {result.type === 'lecture' && (result.speaker || result.description)}
+                                    {result.type === 'story' && (result.excerpt || result.content?.substring(0, 150))}
+                                    {result.type === 'fatwa' && result.answer?.substring(0, 150)}
+                                </p>
+                            </div>
+                            <Button variant="ghost" className="text-indigo-600">
+                                عرض التفاصيل
+                            </Button>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
-                            {result.title || result.question}
-                          </h3>
-                          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 transition-colors duration-300">
-                            {result.type === 'lecture' && (result.speaker || result.description)}
-                            {result.type === 'story' && (result.excerpt || result.content?.substring(0, 150))}
-                            {result.type === 'fatwa' && result.answer?.substring(0, 150)}
-                          </p>
-                          <div className="mt-2">
-                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                              result.type === 'lecture' ? 'bg-purple-50 text-purple-700' :
-                              result.type === 'story' ? 'bg-amber-50 text-amber-700' :
-                              'bg-emerald-50 text-emerald-700'
-                            }`}>
-                              {result.type === 'lecture' ? 'محاضرة' : 
-                               result.type === 'story' ? 'قصة' : 'فتوى'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))
             ) : (
-              <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
-                <CardContent className="p-12 text-center">
-                  <SearchIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
-                    {t('no_results')}
-                  </h3>
-                </CardContent>
-              </Card>
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <SearchIcon className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('no_results')}</h3>
+                <p className="text-gray-500">جرب كلمات مفتاحية مختلفة أو قم بإزالة بعض الفلاتر</p>
+              </div>
             )}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
-            <CardContent className="p-12 text-center">
-              <SearchIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
-              {t('start_search')}
-              </h3>
-            </CardContent>
-          </Card>
+          <div className="text-center py-12 opacity-50">
+            <SearchIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+            <h3 className="text-xl font-medium text-gray-400">{t('start_search')}</h3>
+          </div>
         )}
       </div>
     </div>

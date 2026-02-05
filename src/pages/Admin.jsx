@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +15,6 @@ import CommentsModeration from "@/components/admin/CommentsModeration";
 import AIContentGenerator from "@/components/admin/AIContentGenerator";
 
 export default function Admin() {
-  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("analytics");
   const [showBulkUpload, setShowBulkUpload] = useState(false);
@@ -254,7 +252,7 @@ export default function Admin() {
         { 
           key: "category", 
           label: "التصنيف", 
-          type: "select",
+          type: "select", 
           options: [
             { value: "hadith", label: "الحديث" },
             { value: "tafsir", label: "التفسير" },
@@ -263,7 +261,7 @@ export default function Admin() {
             { value: "seerah", label: "السيرة" },
             { value: "general", label: "عام" }
           ],
-          required: true
+          required: true 
         },
         { key: "language", label: "اللغة", type: "text" },
         { key: "pages", label: "عدد الصفحات", type: "number" },
@@ -284,7 +282,6 @@ export default function Admin() {
       icon: Video,
       entity: "Lecture",
       supportsBulkUpload: true,
-      hasYouTubeAutoFill: true,
       fields: [
         { key: "title", label: "العنوان", type: "text", required: true },
         { key: "speaker", label: "المتحدث", type: "text", required: true },
@@ -292,83 +289,28 @@ export default function Admin() {
         { 
           key: "type", 
           label: "النوع", 
-          type: "select",
+          type: "select", 
           options: [
             { value: "audio", label: "صوتية" },
             { value: "video", label: "مرئية" }
           ],
-          required: true
+          required: true 
         },
         { 
           key: "category", 
           label: "التصنيف", 
-          type: "select",
+          type: "select", 
           options: [
             { value: "learn_islam", label: "التعرف على الإسلام" },
             { value: "repentance", label: "التوبة" },
             { value: "general", label: "عام" }
           ],
-          required: true
+          required: true 
         },
         { key: "topic", label: "الموضوع", type: "text" },
         { key: "url", label: "الرابط", type: "text" },
         { key: "duration", label: "المدة", type: "text" },
-        { key: "thumbnail_url", label: "صورة مصغرة", type: "text" },
-      ]
-    },
-    {
-      id: "live_streams",
-      title: "البث المباشر",
-      icon: Activity,
-      entity: "LiveStream",
-      fields: [
-        { key: "title", label: "عنوان البث", type: "text", required: true },
-        { key: "speaker", label: "المحاضر", type: "text", required: true },
-        { key: "description", label: "الوصف", type: "textarea" },
-        { 
-          key: "category", 
-          label: "النوع", 
-          type: "select",
-          options: [
-            { value: "lecture", label: "محاضرة" },
-            { value: "quran_class", label: "درس قرآن" },
-            { value: "qa_session", label: "أسئلة وأجوبة" },
-            { value: "special_event", label: "حدث خاص" }
-          ],
-          required: true
-        },
-        { key: "scheduled_time", label: "موعد البث", type: "datetime-local", required: true },
-        { key: "stream_url", label: "رابط البث", type: "text" },
-        { key: "thumbnail_url", label: "صورة البث", type: "text" },
-        { 
-          key: "is_live", 
-          label: "على الهواء", 
-          type: "select",
-          options: [
-            { value: true, label: "نعم" },
-            { value: false, label: "لا" }
-          ]
-        },
-        { key: "recording_url", label: "رابط التسجيل", type: "text" },
-      ]
-    },
-    {
-      id: "fatwa_moderation",
-      title: "طلبات الفتاوى",
-      icon: MessageSquare,
-      component: FatwaModeration
-    },
-    {
-      id: "fatwas",
-      title: "أرشيف الفتاوى",
-      icon: BookOpen,
-      entity: "Fatwa",
-      fields: [
-        { key: "question", label: "السؤال", type: "textarea", required: true },
-        { key: "answer", label: "الجواب", type: "textarea", required: true },
-        { key: "mufti", label: "المفتي", type: "text" },
-        { key: "category", label: "التصنيف", type: "text", required: true },
-        { key: "reference", label: "المرجع", type: "text" },
+        { key: "thumbnail_url", label: "الصورة المصغرة", type: "text" },
       ]
     },
     {
@@ -376,469 +318,261 @@ export default function Admin() {
       title: "القصص",
       icon: Heart,
       entity: "Story",
+      supportsBulkUpload: true,
       fields: [
         { key: "title", label: "العنوان", type: "text", required: true },
-        { key: "author", label: "صاحب القصة", type: "text" },
+        { key: "author", label: "المؤلف", type: "text" },
         { key: "content", label: "المحتوى", type: "textarea", required: true },
         { 
           key: "category", 
-          label: "النوع", 
-          type: "select",
+          label: "التصنيف", 
+          type: "select", 
           options: [
-            { value: "convert", label: "المهتدين" },
-            { value: "repentance", label: "التائبين" }
+            { value: "convert", label: "قصص المهتدين" },
+            { value: "repentance", label: "قصص التوبة" }
           ],
-          required: true
+          required: true 
         },
-        { key: "excerpt", label: "مقتطف", type: "textarea" },
-        { key: "image_url", label: "صورة", type: "text" },
-        { key: "country", label: "البلد", type: "text" },
+        { key: "excerpt", label: "مقتطف", type: "text" },
+        { key: "image_url", label: "رابط الصورة", type: "text" },
+        { key: "country", label: "الدولة", type: "text" },
       ]
     },
     {
-      id: "reconciliation_committee",
-      title: "أعضاء لجنة الإصلاح",
-      icon: Users,
-      entity: "ReconciliationCommittee",
+      id: "fatwas",
+      title: "الفتاوى",
+      icon: MessageSquare,
+      entity: "Fatwa",
+      supportsBulkUpload: true,
       fields: [
-        { key: "name", label: "الاسم الكامل", type: "text", required: true },
-        { key: "title", label: "اللقب العلمي", type: "text", required: true },
-        { key: "position", label: "المنصب", type: "text", required: true },
-        { key: "photo_url", label: "رابط الصورة", type: "text" },
-        { key: "bio", label: "النبذة التعريفية", type: "textarea" },
-        { key: "experience_years", label: "سنوات الخبرة", type: "number" },
-        { key: "contact_email", label: "البريد الإلكتروني", type: "email" },
-        { key: "contact_phone", label: "رقم الهاتف", type: "text" },
-        { 
-          key: "is_active", 
-          label: "نشط", 
-          type: "select",
-          options: [
-            { value: true, label: "نعم" },
-            { value: false, label: "لا" }
-          ]
-        },
-        { key: "order", label: "ترتيب العرض", type: "number" },
+        { key: "question", label: "السؤال", type: "text", required: true },
+        { key: "answer", label: "الجواب", type: "textarea", required: true },
+        { key: "mufti", label: "المفتي", type: "text" },
+        { key: "category", label: "التصنيف", type: "text", required: true },
+        { key: "reference", label: "المرجع", type: "text" },
       ]
     },
     {
-      id: "reconciliation_requests",
-      title: "طلبات الإصلاح",
-      icon: Heart,
-      entity: "ReconciliationRequest",
-      fields: [
-        { key: "applicant_name", label: "الاسم", type: "text", required: true },
-        { key: "applicant_email", label: "البريد الإلكتروني", type: "email" },
-        { key: "applicant_phone", label: "رقم الهاتف", type: "text" },
-        { key: "case_title", label: "عنوان القضية", type: "text", required: true },
-        { key: "case_description", label: "وصف القضية", type: "textarea", required: true },
-        { 
-          key: "status", 
-          label: "الحالة", 
-          type: "select",
-          options: [
-            { value: "pending", label: "معلق" },
-            { value: "under_review", label: "قيد المراجعة" },
-            { value: "scheduled", label: "تم الجدولة" },
-            { value: "in_progress", label: "جاري الحل" },
-            { value: "resolved", label: "تم الحل" },
-            { value: "rejected", label: "مرفوض" }
-          ],
-          required: true
-        },
-        { key: "assigned_mediator", label: "الوسيط المعين", type: "text" },
-        { key: "notes", label: "ملاحظات اللجنة", type: "textarea" },
-      ]
+      id: "fatwa_moderation",
+      title: "طلبات الفتوى",
+      icon: Shield,
+      component: FatwaModeration
     },
     {
-      id: "scholars",
-      title: "العلماء والدعاة",
-      icon: GraduationCap,
-      entity: "Scholar",
-      fields: [
-        { key: "name", label: "الاسم", type: "text", required: true },
-        { 
-          key: "type", 
-          label: "النوع", 
-          type: "select",
-          options: [
-            { value: "mufti", label: "مفتي" },
-            { value: "preacher", label: "داعية" },
-            { value: "scholar", label: "شيخ" },
-            { value: "teacher", label: "محفظ" }
-          ],
-          required: true
-        },
-        { 
-          key: "specialization", 
-          label: "التخصص", 
-          type: "select",
-          options: [
-            { value: "fiqh", label: "فقه" },
-            { value: "hadith", label: "حديث" },
-            { value: "tafsir", label: "تفسير" },
-            { value: "aqeedah", label: "عقيدة" },
-            { value: "quran", label: "قرآن" },
-            { value: "general", label: "عام" }
-          ]
-        },
-        { 
-          key: "gender", 
-          label: "الجنس", 
-          type: "select",
-          options: [
-            { value: "male", label: "ذكر" },
-            { value: "female", label: "أنثى" }
-          ]
-        },
-        { key: "country", label: "البلد", type: "text" },
-        { key: "bio", label: "النبذة", type: "textarea" },
-        { key: "phone", label: "الهاتف", type: "text" },
-        { key: "whatsapp", label: "واتساب", type: "text" },
-        { key: "email", label: "البريد الإلكتروني", type: "email" },
-        { key: "google_meet_link", label: "رابط Google Meet", type: "text" },
-        { 
-          key: "is_available", 
-          label: "متاح", 
-          type: "select",
-          options: [
-            { value: true, label: "نعم" },
-            { value: false, label: "لا" }
-          ]
-        },
-      ]
-    },
-    {
-      id: "centers",
-      title: "مراكز الدعوة",
-      icon: Building2,
-      entity: "IslamicCenter",
-      fields: [
-        { key: "name", label: "الاسم", type: "text", required: true },
-        { key: "city", label: "المدينة", type: "text", required: true },
-        { key: "country", label: "الدولة", type: "text", required: true },
-        { key: "address", label: "العنوان", type: "text" },
-        { key: "description", label: "الوصف", type: "textarea" },
-        { key: "phone", label: "الهاتف", type: "text" },
-        { key: "email", label: "البريد الإلكتروني", type: "email" },
-      ]
-    },
-    {
-      id: "courses",
-      title: "دورات القرآن",
-      icon: BookOpen,
-      entity: "QuranCourse",
-      fields: [
-        { key: "title", label: "عنوان الدورة", type: "text", required: true },
-        { key: "teacher_name", label: "اسم المحفظ", type: "text", required: true },
-        { key: "description", label: "الوصف", type: "textarea" },
-        { 
-          key: "type", 
-          label: "نوع الدورة", 
-          type: "select",
-          options: [
-            { value: "memorization", label: "تحفيظ" },
-            { value: "recitation", label: "تلاوة" },
-            { value: "tajweed", label: "تجويد" }
-          ],
-          required: true
-        },
-        { 
-          key: "gender", 
-          label: "الجنس", 
-          type: "select",
-          options: [
-            { value: "male", label: "رجال" },
-            { value: "female", label: "نساء" }
-          ],
-          required: true
-        },
-        { 
-          key: "level", 
-          label: "المستوى", 
-          type: "select",
-          options: [
-            { value: "beginner", label: "مبتدئ" },
-            { value: "intermediate", label: "متوسط" },
-            { value: "advanced", label: "متقدم" }
-          ]
-        },
-        { key: "schedule", label: "الموعد", type: "text" },
-        { key: "duration", label: "المدة", type: "text" },
-        { key: "max_students", label: "أقصى عدد طلاب", type: "number" },
-        { key: "google_meet_link", label: "رابط Google Meet", type: "text" },
-        { key: "start_date", label: "تاريخ البدء", type: "date" },
-        { 
-          key: "is_active", 
-          label: "نشطة", 
-          type: "select",
-          options: [
-            { value: true, label: "نعم" },
-            { value: false, label: "لا" }
-          ]
-        },
-      ]
-    },
-    {
-      id: "moderation",
-      title: "الإشراف والتعليقات",
+      id: "comments_moderation",
+      title: "إدارة التعليقات",
       icon: MessageCircleMore,
       component: CommentsModeration
-    },
-    {
-      id: "ratings",
-      title: "التقييمات",
-      icon: Star,
-      entity: "Rating",
-      fields: [
-        { key: "user_email", label: "البريد الإلكتروني", type: "email" },
-        { key: "content_type", label: "نوع المحتوى", type: "text" },
-        { key: "rating", label: "التقييم", type: "number" },
-        { key: "review", label: "المراجعة", type: "textarea" },
-      ]
-    },
-    {
-      id: "settings",
-      title: "إعدادات التطبيق",
-      icon: Shield,
-      component: AppSettingsAdmin
     },
     {
       id: "users_management",
       title: "إدارة المستخدمين",
       icon: Users,
       component: UsersManagement
+    },
+    {
+      id: "islamic_centers",
+      title: "المراكز الإسلامية",
+      icon: Building2,
+      entity: "IslamicCenter",
+      supportsBulkUpload: true,
+      fields: [
+        { key: "name", label: "الاسم", type: "text", required: true },
+        { key: "city", label: "المدينة", type: "text", required: true },
+        { key: "country", label: "الدولة", type: "text", required: true },
+        { key: "address", label: "العنوان", type: "text" },
+        { key: "phone", label: "الهاتف", type: "text" },
+        { key: "email", label: "البريد", type: "text" },
+        { key: "latitude", label: "خط العرض", type: "number" },
+        { key: "longitude", label: "خط الطول", type: "number" },
+      ]
+    },
+    {
+      id: "scholars",
+      title: "العلماء والدعاة",
+      icon: User,
+      entity: "Scholar",
+      supportsBulkUpload: true,
+      fields: [
+        { key: "name", label: "الاسم", type: "text", required: true },
+        { 
+          key: "type", 
+          label: "النوع", 
+          type: "select", 
+          options: [
+            { value: "mufti", label: "مفتي" },
+            { value: "preacher", label: "داعية" },
+            { value: "teacher", label: "محفظ" },
+            { value: "scholar", label: "عالم" }
+          ],
+          required: true 
+        },
+        { key: "specialization", label: "التخصص", type: "text" },
+        { key: "country", label: "الدولة", type: "text" },
+        { key: "phone", label: "الهاتف", type: "text" },
+        { key: "whatsapp", label: "واتساب", type: "text" },
+        { key: "bio", label: "نبذة", type: "textarea" },
+      ]
+    },
+    {
+      id: "app_settings",
+      title: "إعدادات التطبيق",
+      icon: Sparkles,
+      component: AppSettingsAdmin
     }
   ];
 
-  if (!user || (user.role !== 'admin' && user.role !== 'moderator')) {
+  if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mb-4"></div>
+        <p className="text-gray-500">جاري التحميل...</p>
       </div>
     );
   }
 
-  // Filter sections for moderator
-  const visibleSections = user.role === 'moderator' 
-    ? sections.filter(s => !['settings', 'users_management'].includes(s.id))
-    : sections;
+  // تصفية الأقسام للمشرفين (Moderators)
+  const allowedSectionsForModerator = ['comments_moderation', 'fatwa_moderation', 'lectures', 'stories'];
+  const filteredSections = user.role === 'admin' 
+    ? sections 
+    : sections.filter(s => allowedSectionsForModerator.includes(s.id));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-6 md:p-12">
+    <div className="min-h-screen bg-gray-50/50 p-4 md:p-8" dir="rtl">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <Shield className="w-8 h-8 text-white" />
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">لوحة التحكم</h1>
+            <p className="text-gray-500">مرحباً {user.email}، لديك صلاحية {user.role === 'admin' ? 'مدير النظام' : 'مشرف محتوى'}</p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
-            لوحة التحكم
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
-            إدارة محتوى التطبيق والإحصائيات
-          </p>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={exportToText}>
+              <Upload className="w-4 h-4 ml-2" />
+              تصدير التقرير
+            </Button>
+          </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white dark:bg-slate-800 shadow-lg p-2 flex-wrap h-auto gap-2 transition-colors duration-300">
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
+          <TabsList className="bg-white p-1 border shadow-sm w-full md:w-auto overflow-x-auto justify-start h-auto">
+            <TabsTrigger value="analytics" className="px-6 py-2.5">
+              <Activity className="w-4 h-4 ml-2" />
               الإحصائيات
             </TabsTrigger>
-            {visibleSections.map((section) => (
-              <TabsTrigger
-                key={section.id}
-                value={section.id}
-                className="flex items-center gap-2"
-              >
-                <section.icon className="w-4 h-4" />
-                <span>{section.title}</span>
+            {filteredSections.map(section => (
+              <TabsTrigger key={section.id} value={section.id} className="px-6 py-2.5">
+                <section.icon className="w-4 h-4 ml-2" />
+                {section.title}
               </TabsTrigger>
             ))}
           </TabsList>
 
-          <TabsContent value="analytics">
-            <div className="space-y-6">
-              <div className="flex justify-end">
-                <Button 
-                  onClick={exportToText}
-                  className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg"
-                >
-                  📄 تصدير التقرير
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {statsCards.map((stat, index) => (
-                  <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-3 shadow-md`}>
-                        <stat.icon className="w-6 h-6 text-white" />
-                      </div>
-                      <p className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{stat.value}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{stat.title}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {/* إحصائيات هذا الأسبوع */}
-              <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-cyan-50">
-                <CardHeader>
-                  <CardTitle>محتوى هذا الأسبوع</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <Video className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{lecturesThisWeek}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">محاضرة جديدة</p>
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {statsCards.map((stat, index) => (
+                <Card key={index} className="overflow-hidden hover:shadow-lg transition-all border-0 shadow-md">
+                  <div className={`h-2 bg-gradient-to-r ${stat.color}`}></div>
+                  <CardContent className="p-6 flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-500 text-sm mb-1">{stat.title}</p>
+                      <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
                     </div>
-                    <div className="text-center">
-                      <Heart className="w-8 h-8 mx-auto mb-2 text-rose-600" />
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{storiesThisWeek}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">قصة جديدة</p>
-                    </div>
-                    <div className="text-center">
-                      <MessageSquare className="w-8 h-8 mx-auto mb-2 text-emerald-600" />
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{fatwasThisWeek}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">فتوى جديدة</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* أكثر المحاضرات مشاهدة */}
-              <Card className="border-0 shadow-xl">
-                <CardHeader>
-                  <CardTitle>أكثر المحاضرات مشاهدة</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {topLectures.map((lecture, idx) => (
-                      <div key={lecture.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900 rounded-lg transition-colors duration-300">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                            {idx + 1}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-900 dark:text-white transition-colors duration-300">{lecture.title}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{lecture.speaker}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                          <Eye className="w-4 h-4" />
-                          <span className="font-semibold">{lecture.views_count || 0}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-xl">
-                <CardHeader>
-                  <CardTitle>إحصائيات المحتوى</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {contentStats.map((item, index) => (
-                      <div key={index} className={`${item.color} rounded-xl p-6 text-center`}>
-                        <item.icon className="w-8 h-8 mx-auto mb-3" />
-                        <p className="text-3xl font-bold mb-1">{item.count}</p>
-                        <p className="text-sm font-medium">{item.title}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                <Card className="border-0 shadow-lg bg-gradient-to-br from-yellow-50 to-amber-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 transition-colors duration-300">التعليقات المعلقة</p>
-                        <p className="text-3xl font-bold text-amber-700">{pendingComments}</p>
-                      </div>
-                      <MessageCircleMore className="w-12 h-12 text-amber-400" />
+                    <div className={`p-4 rounded-full bg-gray-50 text-gray-600`}>
+                      <stat.icon className="w-6 h-6" />
                     </div>
                   </CardContent>
                 </Card>
+              ))}
+            </div>
 
-                <Card className="border-0 shadow-lg bg-gradient-to-br from-red-50 to-rose-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 transition-colors duration-300">بث مباشر الآن</p>
-                        <p className="text-3xl font-bold text-red-700">{liveNow}</p>
-                      </div>
-                      <Activity className="w-12 h-12 text-red-400" />
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+               <Card className="border-0 shadow-md">
+                  <CardHeader>
+                     <CardTitle className="text-lg">إحصائيات المحتوى</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <div className="space-y-4">
+                        {contentStats.map((stat, index) => (
+                           <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                              <div className="flex items-center gap-3">
+                                 <div className={`p-2 rounded-lg ${stat.color}`}>
+                                    <stat.icon className="w-5 h-5" />
+                                 </div>
+                                 <span className="font-medium">{stat.title}</span>
+                              </div>
+                              <span className="font-bold text-lg">{stat.count}</span>
+                           </div>
+                        ))}
+                     </div>
                   </CardContent>
-                </Card>
+               </Card>
 
-                <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-cyan-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 transition-colors duration-300">بثوث قادمة</p>
-                        <p className="text-3xl font-bold text-blue-700">{upcomingStreams}</p>
-                      </div>
-                      <Calendar className="w-12 h-12 text-blue-400" />
-                    </div>
+               <Card className="border-0 shadow-md">
+                  <CardHeader>
+                     <CardTitle className="text-lg">أكثر المحاضرات مشاهدة</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <div className="space-y-4">
+                        {topLectures.map((lecture, index) => (
+                           <div key={lecture.id} className="flex items-center gap-4">
+                              <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                                 {index + 1}
+                              </span>
+                              <div className="flex-1">
+                                 <h4 className="font-medium text-sm line-clamp-1">{lecture.title}</h4>
+                                 <p className="text-xs text-gray-500">{lecture.speaker}</p>
+                              </div>
+                              <span className="text-sm font-semibold text-gray-600">
+                                 {lecture.views_count || 0}
+                              </span>
+                           </div>
+                        ))}
+                        {topLectures.length === 0 && (
+                           <p className="text-center text-gray-500 py-4">لا توجد بيانات كافية</p>
+                        )}
+                     </div>
                   </CardContent>
-                </Card>
-              </div>
+               </Card>
             </div>
           </TabsContent>
 
-          {visibleSections.map((section) => (
+          {filteredSections.map(section => (
             <TabsContent key={section.id} value={section.id}>
-              <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <section.icon className="w-5 h-5 text-emerald-600" />
-                      {section.title}
-                    </CardTitle>
+              {section.component ? (
+                <section.component />
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                      <section.icon className="w-6 h-6" />
+                      إدارة {section.title}
+                    </h2>
                     {section.supportsBulkUpload && (
-                      <Button
-                        onClick={() => handleBulkUpload(section.entity)}
-                        variant="outline"
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                      >
+                      <Button onClick={() => handleBulkUpload(section.entity)} variant="outline">
                         <Upload className="w-4 h-4 ml-2" />
-                        رفع جماعي
+                        رفع جماعي (Excel)
                       </Button>
                     )}
                   </div>
-                </CardHeader>
-                <CardContent>
-                  {section.component ? (
-                    <section.component />
-                  ) : (
-                    <AdminTable
-                      entity={section.entity}
-                      fields={section.fields}
-                      showPendingOnly={section.showPendingOnly}
-                    />
-                  )}
-                </CardContent>
-              </Card>
+                  <AdminTable 
+                    entity={section.entity} 
+                    fields={section.fields} 
+                    title={section.title}
+                  />
+                </div>
+              )}
             </TabsContent>
           ))}
         </Tabs>
-      </div>
 
-      <BulkUploadModal
-        open={showBulkUpload}
-        onClose={() => {
-          setShowBulkUpload(false);
-          setBulkUploadEntity(null);
-        }}
-        entityType={bulkUploadEntity}
-      />
+        {showBulkUpload && (
+          <BulkUploadModal 
+            entityName={bulkUploadEntity} 
+            isOpen={showBulkUpload} 
+            onClose={() => setShowBulkUpload(false)} 
+          />
+        )}
+      </div>
     </div>
   );
 }

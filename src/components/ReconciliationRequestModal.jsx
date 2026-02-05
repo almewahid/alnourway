@@ -19,14 +19,14 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
   const [submitted, setSubmitted] = useState(false);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    applicant_name: user?.full_name || "",
-    applicant_email: user?.email || "",
-    applicant_phone: "",
-    whatsapp_number: "",
-    age: "",
-    gender: "",
-    country: "",
-    city: "",
+    requester_name: user?.full_name || "",
+    requester_email: user?.email || "",
+    requester_phone: "",
+    requester_whatsapp: "",
+    requester_age: "",
+    requester_gender: "",
+    requester_country: "",
+    requester_city: "",
     conflict_type: "",
     conflict_description: "",
     conflict_duration: "",
@@ -36,8 +36,7 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
     urgency_level: "medium",
     preferred_contact_method: "phone",
     preferred_meeting_time: "",
-    additional_notes: "",
-    status: "pending"
+    additional_notes: ""
   });
 
   const createRequestMutation = useMutation({
@@ -53,14 +52,14 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
         setSubmitted(false);
         setStep(1);
         setFormData({
-          applicant_name: user?.full_name || "",
-          applicant_email: user?.email || "",
-          applicant_phone: "",
-          whatsapp_number: "",
-          age: "",
-          gender: "",
-          country: "",
-          city: "",
+          requester_name: user?.full_name || "",
+          requester_email: user?.email || "",
+          requester_phone: "",
+          requester_whatsapp: "",
+          requester_age: "",
+          requester_gender: "",
+          requester_country: "",
+          requester_city: "",
           conflict_type: "",
           conflict_description: "",
           conflict_duration: "",
@@ -70,8 +69,7 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
           urgency_level: "medium",
           preferred_contact_method: "phone",
           preferred_meeting_time: "",
-          additional_notes: "",
-          status: "pending"
+          additional_notes: ""
         });
       }, 3000);
     },
@@ -82,14 +80,7 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      // تنظيف البيانات: تحويل strings فارغة إلى null للحقول integer
-      const cleanedData = {
-        ...formData,
-        age: formData.age === "" ? null : parseInt(formData.age) || null,
-        parties_count: formData.parties_count === "" ? null : formData.parties_count,
-      };
-      
-      createRequestMutation.mutate(cleanedData);
+      createRequestMutation.mutate(formData);
     }
   };
 
@@ -107,7 +98,7 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
             </div>
             <h3 className="text-3xl font-bold text-gray-900 mb-3">تم إرسال طلبك بنجاح</h3>
             <p className="text-lg text-gray-600 mb-2">
-              سنراجع طلبك ونتواصل معك في أقرب وقت ممكن إن شاء الله
+              تم استقبال رسالتكم وسيتم الرد عليها في أقرب وقت
             </p>
             <p className="text-md text-gray-500">
               نسأل الله أن يوفقنا لإصلاح ذات البين
@@ -138,20 +129,20 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
                   
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="applicant_name">الاسم الكامل *</Label>
+                      <Label htmlFor="requester_name">الاسم الكامل *</Label>
                       <Input
-                        id="applicant_name"
-                        value={formData.applicant_name}
-                        onChange={(e) => setFormData({...formData, applicant_name: e.target.value})}
+                        id="requester_name"
+                        value={formData.requester_name}
+                        onChange={(e) => setFormData({...formData, requester_name: e.target.value})}
                         required
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="gender">الجنس *</Label>
+                      <Label htmlFor="requester_gender">الجنس *</Label>
                       <Select
-                        value={formData.gender}
-                        onValueChange={(value) => setFormData({...formData, gender: value})}
+                        value={formData.requester_gender}
+                        onValueChange={(value) => setFormData({...formData, requester_gender: value})}
                         required
                       >
                         <SelectTrigger>
@@ -167,23 +158,23 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="applicant_email">البريد الإلكتروني *</Label>
+                      <Label htmlFor="requester_email">البريد الإلكتروني *</Label>
                       <Input
-                        id="applicant_email"
+                        id="requester_email"
                         type="email"
-                        value={formData.applicant_email}
-                        onChange={(e) => setFormData({...formData, applicant_email: e.target.value})}
+                        value={formData.requester_email}
+                        onChange={(e) => setFormData({...formData, requester_email: e.target.value})}
                         required
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="applicant_phone">رقم الهاتف *</Label>
+                      <Label htmlFor="requester_phone">رقم الهاتف *</Label>
                       <Input
-                        id="applicant_phone"
+                        id="requester_phone"
                         type="tel"
-                        value={formData.applicant_phone}
-                        onChange={(e) => setFormData({...formData, applicant_phone: e.target.value})}
+                        value={formData.requester_phone}
+                        onChange={(e) => setFormData({...formData, requester_phone: e.target.value})}
                         required
                         placeholder="+966..."
                       />
@@ -192,43 +183,43 @@ export default function ReconciliationRequestModal({ open, onClose, user }) {
 
                   <div className="grid md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="whatsapp_number">رقم الواتساب</Label>
+                      <Label htmlFor="requester_whatsapp">رقم الواتساب</Label>
                       <Input
-                        id="whatsapp_number"
+                        id="requester_whatsapp"
                         type="tel"
-                        value={formData.whatsapp_number}
-                        onChange={(e) => setFormData({...formData, whatsapp_number: e.target.value})}
+                        value={formData.requester_whatsapp}
+                        onChange={(e) => setFormData({...formData, requester_whatsapp: e.target.value})}
                         placeholder="+966..."
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="age">العمر</Label>
+                      <Label htmlFor="requester_age">العمر</Label>
                       <Input
-                        id="age"
+                        id="requester_age"
                         type="number"
-                        value={formData.age}
-                        onChange={(e) => setFormData({...formData, age: e.target.value})}
+                        value={formData.requester_age}
+                        onChange={(e) => setFormData({...formData, requester_age: e.target.value})}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="country">الدولة *</Label>
+                      <Label htmlFor="requester_country">الدولة *</Label>
                       <Input
-                        id="country"
-                        value={formData.country}
-                        onChange={(e) => setFormData({...formData, country: e.target.value})}
+                        id="requester_country"
+                        value={formData.requester_country}
+                        onChange={(e) => setFormData({...formData, requester_country: e.target.value})}
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city">المدينة</Label>
+                    <Label htmlFor="requester_city">المدينة</Label>
                     <Input
-                      id="city"
-                      value={formData.city}
-                      onChange={(e) => setFormData({...formData, city: e.target.value})}
+                      id="requester_city"
+                      value={formData.requester_city}
+                      onChange={(e) => setFormData({...formData, requester_city: e.target.value})}
                     />
                   </div>
                 </div>

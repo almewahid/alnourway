@@ -28,8 +28,7 @@ export default function ContactModal({ open, onClose, requestType }) {
 
   const createRequestMutation = useMutation({
     mutationFn: async (data) => {
-      // Ensure table exists or use 'ContactRequest' if defined
-      const { error } = await supabase.from('ContactRequest').insert([data]);
+      const { error } = await supabase.from('ContactRequest').insert(data);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -64,7 +63,7 @@ export default function ContactModal({ open, onClose, requestType }) {
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">تم الإرسال بنجاح</h3>
-            <p className="text-gray-600">سنتواصل معك قريباً إن شاء الله</p>
+            <p className="text-gray-600">تم استقبال رسالتكم وسيتم الرد عليها في أقرب وقت</p>
           </div>
         ) : (
           <>

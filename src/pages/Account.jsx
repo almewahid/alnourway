@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import { User, Mail, LogOut, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Account() {
-  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -51,48 +49,48 @@ export default function Account() {
           <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <User className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
             حسابي
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">
+          <p className="text-xl text-gray-600">
             إدارة معلوماتك الشخصية
           </p>
         </motion.div>
 
         {user ? (
           <div className="space-y-6">
-            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl">المعلومات الشخصية</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-slate-900 rounded-xl transition-colors duration-300">
+                <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">الاسم الكامل</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">{user.full_name || "غير محدد"}</p>
+                    <p className="text-sm text-gray-500 mb-1">الاسم الكامل</p>
+                    <p className="text-lg font-semibold text-gray-900">{user.full_name || "غير محدد"}</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-slate-900 rounded-xl transition-colors duration-300">
+                <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
                   <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">البريد الإلكتروني</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">{user.email}</p>
+                    <p className="text-sm text-gray-500 mb-1">البريد الإلكتروني</p>
+                    <p className="text-lg font-semibold text-gray-900">{user.email}</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-slate-900 rounded-xl transition-colors duration-300">
+                <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
                   <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">نوع الحساب</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
+                    <p className="text-sm text-gray-500 mb-1">نوع الحساب</p>
+                    <p className="text-lg font-semibold text-gray-900">
                       {user.role === 'admin' ? 'مدير' : 'مستخدم'}
                     </p>
                   </div>
@@ -100,7 +98,7 @@ export default function Account() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardContent className="p-6">
                 <Button
                   onClick={handleLogout}
@@ -115,13 +113,13 @@ export default function Account() {
             </Card>
           </div>
         ) : (
-          <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+          <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
               <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 غير مسجل دخول
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 transition-colors duration-300">
+              <p className="text-gray-600 mb-6">
                 يرجى تسجيل الدخول للوصول إلى حسابك
               </p>
               <Button

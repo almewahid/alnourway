@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +12,6 @@ import RatingWidget from "@/components/RatingWidget";
 import ShareButtons from "@/components/ShareButtons";
 
 export default function Stories() {
-  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const typeParam = urlParams.get('type');
   
@@ -37,16 +35,18 @@ export default function Stories() {
   // عرض القصة المختارة
   if (selectedStory) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 dark:from-slate-900 dark:via-amber-950 dark:to-rose-950 p-6 md:p-12 transition-colors duration-300">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 p-6 md:p-12">
         <div className="max-w-5xl mx-auto">
           <Button 
             variant="outline" 
             onClick={() => setSelectedStory(null)}
             className="mb-6"
-          >{t('← العودة إلى القصص')}</Button>
+          >
+            ← العودة إلى القصص
+          </Button>
 
           <div className="space-y-6">
-            <Card className="border-0 shadow-xl bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               {selectedStory.image_url && (
                 <div className="h-64 overflow-hidden rounded-t-xl">
                   <img 
@@ -58,29 +58,29 @@ export default function Stories() {
               )}
               <CardContent className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{selectedStory.title}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900">{selectedStory.title}</h1>
                   <ShareButtons 
                     title={selectedStory.title}
-                    description={selectedStory.excerpt || t('قصة ملهمة')}
+                    description={selectedStory.excerpt || 'قصة ملهمة'}
                   />
                 </div>
 
                 {selectedStory.author && (
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                  <div className="flex items-center gap-2 text-gray-600">
                     <Heart className="w-5 h-5" />
-                    <span className="font-semibold">{t('صاحب القصة:')}</span>
+                    <span className="font-semibold">صاحب القصة:</span>
                     <span>{selectedStory.author}</span>
                   </div>
                 )}
 
                 {selectedStory.country && (
-                  <div className="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-900/30 px-4 py-2 transition-colors duration-300 rounded-full">
-                    <span className="text-amber-700 dark:text-amber-300 font-semibold transition-colors duration-300">{selectedStory.country}</span>
+                  <div className="inline-flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-full">
+                    <span className="text-amber-700 font-semibold">{selectedStory.country}</span>
                   </div>
                 )}
 
                 <div className="prose prose-lg max-w-none">
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-lg transition-colors duration-300">
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap text-lg">
                     {selectedStory.content}
                   </p>
                 </div>
@@ -104,34 +104,44 @@ export default function Stories() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 dark:from-slate-900 dark:via-amber-950 dark:to-rose-950 p-6 md:p-12 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{t('قصص ملهمة')}</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('رحلات إيمانية حقيقية تلامس القلوب')}</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+            قصص ملهمة
+          </h1>
+          <p className="text-xl text-gray-600">
+            رحلات إيمانية حقيقية تلامس القلوب
+          </p>
         </motion.div>
 
         <div className="flex justify-center mb-8">
           <Tabs value={selectedType} onValueChange={setSelectedType}>
-            <TabsList className="bg-white dark:bg-slate-800/90 shadow-lg backdrop-blur-sm transition-colors duration-300 transition-colors duration-300">
+            <TabsList className="bg-white shadow-lg">
               <TabsTrigger value="all" className="gap-2">
-                <BookOpen className="w-4 h-4" />{t('جميع القصص')}</TabsTrigger>
+                <BookOpen className="w-4 h-4" />
+                جميع القصص
+              </TabsTrigger>
               <TabsTrigger value="convert" className="gap-2">
-                <Heart className="w-4 h-4" />{t('قصص المهتدين')}</TabsTrigger>
+                <Heart className="w-4 h-4" />
+                قصص المهتدين
+              </TabsTrigger>
               <TabsTrigger value="repentance" className="gap-2">
-                <Heart className="w-4 h-4" />{t('قصص التائبين')}</TabsTrigger>
+                <Heart className="w-4 h-4" />
+                قصص التائبين
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 dark:border-amber-400 mx-auto transition-colors duration-300"></div>
-            <p className="text-gray-500 dark:text-gray-400 mt-4 transition-colors duration-300">{t('جاري التحميل...')}</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
+            <p className="text-gray-500 mt-4">جاري التحميل...</p>
           </div>
         ) : filteredStories.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -149,11 +159,15 @@ export default function Stories() {
             ))}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg bg-white dark:bg-slate-800/90 backdrop-blur-sm transition-colors duration-300">
+          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
-              <Heart className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4 transition-colors duration-300" />
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('لا توجد قصص حالياً')}</h3>
-              <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{t('سنضيف المزيد من القصص الملهمة قريباً')}</p>
+              <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                لا توجد قصص حالياً
+              </h3>
+              <p className="text-gray-600">
+                سنضيف المزيد من القصص الملهمة قريباً
+              </p>
             </CardContent>
           </Card>
         )}

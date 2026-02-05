@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +13,6 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 export default function LiveStreamWatch() {
-  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const [stream, setStream] = useState(null);
@@ -38,7 +36,7 @@ export default function LiveStreamWatch() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
@@ -46,8 +44,8 @@ export default function LiveStreamWatch() {
 
   if (!stream) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 gap-4 transition-colors duration-300">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">البث غير موجود</h1>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+        <h1 className="text-2xl font-bold text-gray-900">البث غير موجود</h1>
         <Link to={createPageUrl("LiveStreams")}>
           <Button>العودة للقائمة</Button>
         </Link>
@@ -56,10 +54,10 @@ export default function LiveStreamWatch() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-4 md:p-6">
         <div className="mb-4">
-          <Link to={createPageUrl("LiveStreams")} className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-purple-600 transition-colors transition-colors duration-300">
+          <Link to={createPageUrl("LiveStreams")} className="inline-flex items-center text-gray-600 hover:text-purple-600 transition-colors">
             <ArrowRight className="w-5 h-5 ml-2" />
             عودة للبث المباشر
           </Link>
@@ -87,8 +85,8 @@ export default function LiveStreamWatch() {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">{stream.title}</h1>
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                    <h1 className="text-2xl font-bold text-gray-900 mb-2">{stream.title}</h1>
+                    <div className="flex items-center gap-2 text-gray-600">
                       <span className="font-semibold text-purple-600">{stream.speaker}</span>
                       <span>•</span>
                       <span className="text-sm">{new Date(stream.scheduled_time).toLocaleString('ar-SA')}</span>
@@ -99,7 +97,7 @@ export default function LiveStreamWatch() {
                   </Button>
                 </div>
 
-                <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400 border-t pt-4 transition-colors duration-300">
+                <div className="flex items-center gap-6 text-sm text-gray-500 border-t pt-4">
                   <div className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
                     <span>{stream.viewers_count} مشاهد</span>
@@ -111,7 +109,7 @@ export default function LiveStreamWatch() {
                 </div>
 
                 {stream.description && (
-                  <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed transition-colors duration-300">
+                  <p className="mt-4 text-gray-700 leading-relaxed">
                     {stream.description}
                   </p>
                 )}

@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Calendar, User, Share2 } from "lucide-react";
+import { ArrowRight, Calendar, User, Share2, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ShareButtons from "@/components/ShareButtons";
 import CommentsSection from "@/components/CommentsSection";
-import ProtectedFeature from "@/components/ProtectedFeature";
 
 export default function ArticleView() {
-  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
   const [article, setArticle] = useState(null);
@@ -40,20 +37,11 @@ export default function ArticleView() {
     }
   };
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-    </div>
-  );
-  
-  if (!article) return (
-    <div className="min-h-screen flex items-center justify-center">
-      المقال غير موجود
-    </div>
-  );
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
+  if (!article) return <div className="min-h-screen flex items-center justify-center">المقال غير موجود</div>;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-800 transition-colors duration-300">
+    <div className="min-h-screen bg-white">
       {/* Header Image */}
       <div className="h-[40vh] md:h-[50vh] relative w-full bg-gray-900">
         <img 
@@ -83,7 +71,7 @@ export default function ArticleView() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto p-6 md:p-12 -mt-10 relative z-10 bg-white dark:bg-slate-800 rounded-t-3xl md:rounded-3xl shadow-xl min-h-[500px] transition-colors duration-300">
+      <div className="max-w-4xl mx-auto p-6 md:p-12 -mt-10 relative z-10 bg-white rounded-t-3xl md:rounded-3xl shadow-xl min-h-[500px]">
         <Link to={createPageUrl("Blog")}>
           <Button variant="ghost" className="mb-8 pl-0 hover:pl-2 transition-all">
             <ArrowRight className="w-4 h-4 ml-2" />
@@ -91,7 +79,7 @@ export default function ArticleView() {
           </Button>
         </Link>
 
-        <div className="prose prose-lg prose-blue max-w-none mb-12 leading-loose text-gray-800 dark:text-white transition-colors duration-300">
+        <div className="prose prose-lg prose-blue max-w-none mb-12 leading-loose text-gray-800">
           {article.content.split('\n').map((paragraph, idx) => (
             <p key={idx} className="mb-6">{paragraph}</p>
           ))}
@@ -105,15 +93,8 @@ export default function ArticleView() {
           <ShareButtons title={article.title} description={article.meta_description} />
         </div>
 
-        {/* التعليقات محمية */}
         <div className="mt-12">
-          <ProtectedFeature featureName="التعليقات">
-            <CommentsSection 
-              contentType="article" 
-              contentId={article.id} 
-              contentTitle={article.title} 
-            />
-          </ProtectedFeature>
+          <CommentsSection contentType="article" contentId={article.id} contentTitle={article.title} />
         </div>
       </div>
     </div>

@@ -1,160 +1,121 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Video, Music, Clock, User, Heart, Eye, ThumbsUp, Share2, Play } from "lucide-react";
-import { supabase } from "@/components/api/supabaseClient";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import ShareButtons from "./ShareButtons";
+import { Badge } from "@/components/ui/badge";
+import { Play, Mic, Clock, User, Share2, Heart } from "lucide-react";
 import VideoPlayer from "./VideoPlayer";
-import { getYouTubeThumbnail } from "@/utils/youtubeUtils";
+import { motion } from "framer-motion";
+import { supabase } from "@/components/api/supabaseClient";
+import { toast } from "sonner";
 
-export default function LectureCard({ lecture, onClick, isDetailView = false }) {
-  const [user, setUser] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [viewsCounted, setViewsCounted] = useState(false);
-  const queryClient = useQueryClient();
+export default function LectureCard({ lecture, isDetailView = false, onClick }) {
+  const [isFavorited, setIsFavorited] = React.useState(false);
 
-  // 🎯 هنا نحصل على صورة اليوتيوب تلقائياً من الرابط
-  const thumbnailUrl = getYouTubeThumbnail(lecture.url);
+  React.useEffect(() => {
+    checkFavorite();
+  }, [lecture.id]);
 
-  useEffect(() => {
-    loadUser();
-  }, []);
-
-  useEffect(() => {
-    if (!viewsCounted && lecture.id && isDetailView) {
-      incrementViews();
-      setViewsCounted(true);
-    }
-  }, [lecture.id, isDetailView]);
-
-  const loadUser = async () => {
-    try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const userData = { ...authUser, role: 'user' };
-        setUser(userData);
-        checkIfFavorite(userData.email);
-      }
-    } catch (error) {
-      console.log("User not logged in");
+  const checkFavorite = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase.from('Favorite')
+        .select('id')
+        .eq('user_email', user.email)
+        .eq('item_id', lecture.id)
+        .single();
+      setIsFavorited(!!data);
     }
   };
 
-  const checkIfFavorite = async (email) => {
-    try {
-      const { data: favorites } = await supabase.from('Favorite').select('*').eq('user_email', email).eq('item_type', 'lecture').eq('item_id', lecture.id);
-      setIsFavorite(favorites && favorites.length > 0);
-    } catch (error) {
-      console.log("Error checking favorite");
+  const toggleFavorite = async (e) => {
+    e.stopPropagation();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("يرجى تسجيل الدخول للإضافة للمفيدة");
+      return;
+    }
+
+    if (isFavorited) {
+      await supabase.from('Favorite').delete().eq('user_email', user.email).eq('item_id', lecture.id);
+      setIsFavorited(false);
+      toast.success("تم الحذف من المفضلة");
+    } else {
+      await supabase.from('Favorite').insert({
+        user_email: user.email,
+        item_type: 'lecture',
+        item_id: lecture.id,
+        item_title: lecture.title,
+        item_data: lecture
+      });
+      setIsFavorited(true);
+      toast.success("تم الإضافة للمفيدة");
     }
   };
 
-  const incrementViews = async () => {
-    try {
-      await supabase.from('Lecture').update({ views_count: (lecture.views_count || 0) + 1 }).eq('id', lecture.id);
-    } catch (error) {
-      console.log("Error incrementing views");
+  const handleShare = (e) => {
+    e.stopPropagation();
+    if (navigator.share) {
+      navigator.share({
+        title: lecture.title,
+        text: lecture.description,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("تم نسخ الرابط");
     }
-  };
-
-  const toggleFavoriteMutation = useMutation({
-    mutationFn: async () => {
-      if (isFavorite) {
-        const { data: favorites } = await supabase.from('Favorite').select('*').eq('user_email', user.email).eq('item_type', 'lecture').eq('item_id', lecture.id);
-        if (favorites && favorites[0]) {
-          await supabase.from('Favorite').delete().eq('id', favorites[0].id);
-        }
-      } else {
-        await supabase.from('Favorite').insert({
-          user_email: user.email,
-          item_type: 'lecture',
-          item_id: lecture.id,
-          item_title: lecture.title,
-          item_data: lecture
-        });
-      }
-    },
-    onSuccess: () => {
-      setIsFavorite(!isFavorite);
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
-    },
-  });
-
-  const categoryLabels = {
-    learn_islam: "التعرف على الإسلام",
-    repentance: "التوبة",
-    general: "عام"
   };
 
   if (isDetailView) {
     return (
-      <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl overflow-hidden">
-        <CardContent className="p-4 md:p-8 space-y-6">
-          {lecture.url && <VideoPlayer url={lecture.url} title={lecture.title} />}
-
-          <div className="space-y-4">
-            <div className="flex items-start justify-between gap-4">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{lecture.title}</h2>
-              <button
-                onClick={() => user && toggleFavoriteMutation.mutate()}
-                className={`p-3 rounded-full transition-all duration-300 flex-shrink-0 ${
-                  isFavorite 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-red-500 hover:text-white'
-                }`}
+      <Card className="border-0 shadow-xl overflow-hidden bg-white">
+        <div className="w-full">
+          {lecture.type === 'video' && lecture.url ? (
+            <VideoPlayer url={lecture.url} title={lecture.title} />
+          ) : (
+            <div className="aspect-video bg-gray-900 flex items-center justify-center text-white">
+              <Mic className="w-16 h-16" />
+            </div>
+          )}
+        </div>
+        <CardContent className="p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">{lecture.title}</h1>
+              <div className="flex items-center gap-2 text-gray-600">
+                <User className="w-4 h-4" />
+                <span className="font-semibold">{lecture.speaker}</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="icon" onClick={handleShare}>
+                <Share2 className="w-5 h-5 text-gray-600" />
+              </Button>
+              <Button 
+                variant={isFavorited ? "default" : "outline"} 
+                size="icon" 
+                onClick={toggleFavorite}
+                className={isFavorited ? "bg-rose-500 hover:bg-rose-600 border-rose-500" : ""}
               >
-                <Heart className={`w-6 h-6 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
+                <Heart className={`w-5 h-5 ${isFavorited ? "text-white fill-current" : "text-rose-500"}`} />
+              </Button>
             </div>
+          </div>
 
-            <div className="flex items-center gap-3 text-gray-600">
-              <User className="w-5 h-5" />
-              <span className="font-semibold text-lg">{lecture.speaker}</span>
-            </div>
-
-            {lecture.topic && (
-              <p className="text-gray-700 leading-relaxed">{lecture.topic}</p>
+          <div className="flex gap-2 mb-6">
+            <Badge variant="secondary" className="bg-purple-50 text-purple-700">
+              {lecture.category}
+            </Badge>
+            {lecture.duration && (
+              <Badge variant="outline" className="flex gap-1">
+                <Clock className="w-3 h-3" />
+                {lecture.duration}
+              </Badge>
             )}
+          </div>
 
-            <div className="flex flex-wrap items-center gap-6 text-gray-600">
-              <div className="flex items-center gap-2">
-                <Eye className="w-5 h-5" />
-                <span>{lecture.views_count || 0} مشاهدة</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ThumbsUp className="w-5 h-5" />
-                <span>{lecture.likes_count || 0}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Share2 className="w-5 h-5" />
-                <span>{lecture.shares_count || 0}</span>
-              </div>
-              {lecture.duration && (
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  <span>{lecture.duration}</span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="px-4 py-2 bg-purple-100 text-purple-700 rounded-full font-medium">
-                {categoryLabels[lecture.category] || lecture.category}
-              </span>
-              {lecture.type && (
-                <span className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-medium flex items-center gap-2">
-                  {lecture.type === "video" ? <Video className="w-4 h-4" /> : <Music className="w-4 h-4" />}
-                  {lecture.type === "video" ? "مرئية" : "صوتية"}
-                </span>
-              )}
-            </div>
-
-            <ShareButtons 
-              title={lecture.title}
-              description={`محاضرة ${lecture.speaker}`}
-              url={window.location.href}
-            />
+          <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {lecture.description}
           </div>
         </CardContent>
       </Card>
@@ -162,115 +123,39 @@ export default function LectureCard({ lecture, onClick, isDetailView = false }) 
   }
 
   return (
-    <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm h-full group hover:-translate-y-1 overflow-hidden">
-      <CardContent className="p-0">
-        {thumbnailUrl ? (
-          <div className="relative h-48 overflow-hidden">
-            <img
-              src={thumbnailUrl}
-              alt={lecture.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              onError={(e) => {
-                // صورة بديلة في حالة فشل التحميل
-                e.target.src = 'https://via.placeholder.com/640x360/8b5cf6/ffffff?text=فيديو';
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-                <Play className="w-8 h-8 text-purple-600 mr-1" />
-              </div>
-            </div>
-            <div className="absolute top-3 left-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  user && toggleFavoriteMutation.mutate();
-                }}
-                className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
-                  isFavorite 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-white/80 text-gray-700 hover:bg-red-500 hover:text-white'
-                }`}
-              >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
-            </div>
-            <div className="absolute bottom-3 left-3 right-3">
-              <div className="flex items-center gap-2 text-white">
-                {lecture.type === "video" ? (
-                  <Video className="w-5 h-5" />
-                ) : (
-                  <Music className="w-5 h-5" />
-                )}
-                <span className="text-sm font-medium">
-                  {lecture.type === "video" ? "مرئية" : "صوتية"}
-                </span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="h-48 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center relative">
-            <div className="absolute top-3 left-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  user && toggleFavoriteMutation.mutate();
-                }}
-                className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
-                  isFavorite 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-white/80 text-gray-700 hover:bg-red-500 hover:text-white'
-                }`}
-              >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
-            </div>
-            {lecture.type === "video" ? (
-              <Video className="w-16 h-16 text-white/80" />
-            ) : (
-              <Music className="w-16 h-16 text-white/80" />
-            )}
-          </div>
-        )}
-
-        <div className="p-4 md:p-5 space-y-3">
-          <h3 className="text-base md:text-lg font-bold text-gray-900 line-clamp-2 leading-snug">
-            {lecture.title}
-          </h3>
-
-          <div className="flex items-center gap-2 text-gray-600">
-            <User className="w-4 h-4 flex-shrink-0" />
-            <span className="text-sm font-medium truncate">{lecture.speaker}</span>
-          </div>
-
-          {lecture.topic && (
-            <p className="text-sm text-gray-600 line-clamp-2">{lecture.topic}</p>
-          )}
-
-          <div className="flex items-center gap-3 md:gap-4 text-xs text-gray-500 pt-2">
-            <div className="flex items-center gap-1">
-              <Eye className="w-4 h-4" />
-              <span>{lecture.views_count || 0}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ThumbsUp className="w-4 h-4" />
-              <span>{lecture.likes_count || 0}</span>
-            </div>
-            {lecture.duration && (
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                <span>{lecture.duration}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between pt-2 flex-wrap gap-2">
-            <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
-              {categoryLabels[lecture.category] || lecture.category}
-            </span>
+    <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col group overflow-hidden bg-white/80 backdrop-blur-sm">
+      <div className="relative aspect-video overflow-hidden">
+        <img 
+          src={lecture.thumbnail_url || "https://placehold.co/600x400/e2e8f0/1e293b?text=Lecture"} 
+          alt={lecture.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+            {lecture.type === 'video' ? <Play className="w-6 h-6 text-white fill-current" /> : <Mic className="w-6 h-6 text-white" />}
           </div>
         </div>
+        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {lecture.duration || '00:00'}
+        </div>
+      </div>
+      <CardContent className="p-4 flex-1 flex flex-col">
+        <div className="mb-2">
+          <Badge variant="secondary" className="text-xs bg-purple-50 text-purple-700 mb-2">
+            {lecture.category}
+          </Badge>
+          <h3 className="font-bold text-gray-900 line-clamp-2 mb-1 group-hover:text-purple-700 transition-colors">
+            {lecture.title}
+          </h3>
+          <p className="text-sm text-gray-600 flex items-center gap-1">
+            <User className="w-3 h-3" />
+            {lecture.speaker}
+          </p>
+        </div>
+        <p className="text-xs text-gray-500 line-clamp-2 mt-auto">
+          {lecture.description}
+        </p>
       </CardContent>
     </Card>
   );

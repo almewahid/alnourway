@@ -174,63 +174,60 @@ export default function DocsBackend() {
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-emerald-100 rounded-lg">
-                                        <Layout className="w-5 h-5 text-emerald-700" />
+                                        {page.type === "System" ? <Layout className="w-5 h-5 text-emerald-600" /> : <FileCode className="w-5 h-5 text-emerald-600" />}
                                     </div>
                                     <div>
-                                        <CardTitle className="text-lg flex items-center gap-2">
+                                        <CardTitle className="text-lg font-bold flex items-center gap-2">
                                             {page.name}
                                             {page.type === "System" && <Badge variant="secondary" className="text-xs">System</Badge>}
                                         </CardTitle>
-                                        <div className="text-sm text-gray-500 font-mono mt-1">{page.path}</div>
+                                        <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                                            <code className="bg-gray-200 px-1 py-0.5 rounded text-xs">{page.path}</code>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    {page.type === "Page" && (
-                                        <Button 
-                                            variant="outline" 
-                                            size="sm" 
-                                            onClick={() => optimizeMeta(page)}
-                                            disabled={optimizingPage === page.name}
-                                            className="text-purple-600 border-purple-200 hover:bg-purple-50 gap-2"
-                                        >
-                                            {optimizingPage === page.name ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
-                                            تحسين Meta
-                                        </Button>
-                                    )}
-                                    <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full border shadow-sm h-9">
-                                        <Eye className="w-4 h-4 text-gray-400" />
-                                        <span className="font-bold text-gray-700">{getViews(page.name)}</span>
-                                        <span className="text-xs text-gray-400">مشاهدة</span>
-                                    </div>
-                                </div>
+                                
+                                {page.type === "Page" && (
+                                    <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        onClick={() => optimizeMeta(page)}
+                                        disabled={optimizingPage === page.name}
+                                        className="text-purple-600 border-purple-200 hover:bg-purple-50 gap-2"
+                                    >
+                                        {optimizingPage === page.name ? <Wand2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                                        تحسين Meta
+                                    </Button>
+                                )}
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="bg-gray-50/30">
-                                        <TableHead className="text-right w-1/3">القسم الداخلي</TableHead>
-                                        <TableHead className="text-right">الوصف / الوظيفة</TableHead>
-                                        <TableHead className="text-right w-24">النوع</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {page.sections.map((section, sIndex) => (
-                                        <TableRow key={sIndex}>
-                                            <TableCell className="font-medium flex items-center gap-2">
-                                                <Layers className="w-4 h-4 text-gray-400" />
-                                                {section}
-                                            </TableCell>
-                                            <TableCell className="text-gray-500">
-                                                جزء من صفحة {page.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className="bg-gray-50">UI Section</Badge>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                        <CardContent className="pt-4">
+                            <p className="text-gray-600 mb-4 text-sm">{page.description}</p>
+                            
+                            <div className="flex items-center gap-2 mb-4 text-sm text-gray-500 bg-gray-50 p-2 rounded">
+                                <Eye className="w-4 h-4" />
+                                <span className="font-semibold">{getViews(page.name)}</span> مشاهدة
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="grid grid-cols-3 text-xs font-semibold text-gray-500 border-b pb-2">
+                                    <div>القسم الداخلي</div>
+                                    <div>الوصف / الوظيفة</div>
+                                    <div className="text-left">النوع</div>
+                                </div>
+                                {page.sections.map((section, sIndex) => (
+                                    <div key={sIndex} className="grid grid-cols-3 text-sm items-center hover:bg-gray-50 p-1 rounded transition-colors">
+                                        <div className="flex items-center gap-2">
+                                            <Layers className="w-3 h-3 text-gray-400" />
+                                            {section}
+                                        </div>
+                                        <div className="text-gray-500 text-xs truncate">جزء من صفحة {page.name}</div>
+                                        <div className="text-left">
+                                            <Badge variant="outline" className="text-[10px] font-normal">UI Section</Badge>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </CardContent>
                     </Card>
                 ))}

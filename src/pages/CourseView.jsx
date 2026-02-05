@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +12,6 @@ import { Progress } from "@/components/ui/progress";
 import jsPDF from "jspdf";
 
 export default function CourseView() {
-  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const courseId = urlParams.get('id');
   const [activeLesson, setActiveLesson] = useState(null);
@@ -145,7 +143,7 @@ export default function CourseView() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-4 md:p-8 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex justify-between items-center">
           <Link to={createPageUrl("Courses")}>
@@ -184,7 +182,7 @@ export default function CourseView() {
                  </div>
                  <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
-                       <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{activeLesson.title}</h2>
+                       <h2 className="text-2xl font-bold text-gray-900">{activeLesson.title}</h2>
                        <Button 
                          onClick={() => updateProgressMutation.mutate(activeLesson.id)}
                          disabled={userProgress?.completed_lessons?.includes(activeLesson.id)}
@@ -198,7 +196,7 @@ export default function CourseView() {
                          ) : "تحديد كمكتمل"}
                        </Button>
                     </div>
-                    <div className="prose max-w-none text-gray-700 dark:text-gray-300 leading-relaxed transition-colors duration-300">
+                    <div className="prose max-w-none text-gray-700 leading-relaxed">
                        {activeLesson.text_content}
                     </div>
                     {activeLesson.attachment_url && (
@@ -214,21 +212,21 @@ export default function CourseView() {
                  </CardContent>
               </Card>
             ) : (
-              <Card className="border-0 shadow-lg bg-white dark:bg-slate-800 p-8 text-center transition-colors duration-300">
+              <Card className="border-0 shadow-lg bg-white p-8 text-center">
                  <GraduationCap className="w-20 h-20 text-teal-600 mx-auto mb-6" />
-                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">{course.title}</h1>
-                 <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 transition-colors duration-300">{course.description}</p>
-                 <p className="text-gray-500 dark:text-gray-400 transition-colors duration-300">اختر درساً من القائمة لبدء التعلم</p>
+                 <h1 className="text-3xl font-bold text-gray-900 mb-4">{course.title}</h1>
+                 <p className="text-xl text-gray-600 mb-8">{course.description}</p>
+                 <p className="text-gray-500">اختر درساً من القائمة لبدء التعلم</p>
               </Card>
             )}
           </div>
 
           <div className="lg:col-span-1">
-             <Card className="border-0 shadow-lg sticky top-6 dark:bg-slate-800 transition-colors duration-300">
-                <CardHeader className="bg-teal-50 dark:bg-teal-900/30 border-b border-teal-100 dark:border-teal-800 transition-colors duration-300">
-                   <CardTitle className="text-gray-900 dark:text-white transition-colors duration-300">محتوى الدورة</CardTitle>
+             <Card className="border-0 shadow-lg sticky top-6">
+                <CardHeader className="bg-teal-50 border-b border-teal-100">
+                   <CardTitle>محتوى الدورة</CardTitle>
                    <div className="mt-4">
-                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">
+                      <div className="flex justify-between text-sm text-gray-600 mb-2">
                          <span>نسبة الإنجاز</span>
                          <span>{Math.round(progressPercentage)}%</span>
                       </div>
@@ -241,8 +239,8 @@ export default function CourseView() {
                          <AccordionItem key={module.id} value={module.id} className="border-b px-4">
                             <AccordionTrigger className="hover:no-underline py-4">
                                <div className="text-right">
-                                  <div className="font-bold text-gray-900 dark:text-white text-base transition-colors duration-300">{module.title}</div>
-                                  <div className="text-xs text-gray-500 dark:text-gray-400 font-normal mt-1 transition-colors duration-300">{module.CourseLesson.length} دروس</div>
+                                  <div className="font-bold text-gray-900 text-base">{module.title}</div>
+                                  <div className="text-xs text-gray-500 font-normal mt-1">{module.CourseLesson.length} دروس</div>
                                </div>
                             </AccordionTrigger>
                             <AccordionContent>
@@ -255,15 +253,13 @@ export default function CourseView() {
                                            key={lesson.id}
                                            onClick={() => setActiveLesson(lesson)}
                                            className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors text-right ${
-                                              isActive 
-                                                ? "bg-teal-100 dark:bg-teal-900/40 text-teal-900 dark:text-teal-200" 
-                                                : "hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300"
+                                              isActive ? "bg-teal-100 text-teal-900" : "hover:bg-gray-50 text-gray-700"
                                            }`}
                                         >
                                            {isCompleted ? (
                                               <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
                                            ) : (
-                                              <div className="w-4 h-4 rounded-full border-2 border-gray-300 dark:border-slate-600 flex-shrink-0 transition-colors duration-300" />
+                                              <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0" />
                                            )}
                                            <span className="text-sm font-medium line-clamp-1">{lesson.title}</span>
                                            {lesson.content_type === 'video' ? (

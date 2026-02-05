@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/components/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +14,6 @@ import {
 import { motion } from "framer-motion";
 
 export default function AdvancedAnalytics() {
-  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [dateRange, setDateRange] = useState('7days');
 
@@ -186,8 +184,8 @@ export default function AdvancedAnalytics() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">لوحة التحليلات المتقدمة</h1>
-          <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">تحليلات شاملة لأداء المنصة وتفاعل المستخدمين</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة التحليلات المتقدمة</h1>
+          <p className="text-gray-600">تحليلات شاملة لأداء المنصة وتفاعل المستخدمين</p>
         </motion.div>
 
         {/* بطاقات الإحصائيات */}
@@ -207,8 +205,8 @@ export default function AdvancedAnalytics() {
                     </div>
                     <span className="text-sm font-semibold text-emerald-600">{stat.change}</span>
                   </div>
-                  <h3 className="text-gray-600 dark:text-gray-400 text-sm mb-1 transition-colors duration-300">{stat.title}</h3>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{stat.value}</p>
+                  <h3 className="text-gray-600 text-sm mb-1">{stat.title}</h3>
+                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -277,10 +275,10 @@ export default function AdvancedAnalytics() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-gray-900 dark:text-white transition-colors duration-300">{item.query}</span>
-                          <span className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{item.count} مرة</span>
+                          <span className="font-semibold text-gray-900">{item.query}</span>
+                          <span className="text-sm text-gray-600">{item.count} مرة</span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2 transition-colors duration-300">
+                        <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
                             className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-500"
                             style={{ width: `${(item.count / searchData[0].count) * 100}%` }}
@@ -339,10 +337,10 @@ export default function AdvancedAnalytics() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-gray-900 dark:text-white transition-colors duration-300">{item.country || 'غير محدد'}</span>
-                          <span className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{item.count} مستخدم</span>
+                          <span className="font-semibold text-gray-900">{item.country || 'غير محدد'}</span>
+                          <span className="text-sm text-gray-600">{item.count} مستخدم</span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2 transition-colors duration-300">
+                        <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
                             className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
                             style={{ width: `${(item.count / topCountries[0].count) * 100}%` }}
